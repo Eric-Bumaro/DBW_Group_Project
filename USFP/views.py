@@ -52,11 +52,11 @@ def register(request):
             photoName = str(CommonUser.objects.last().uID + 1) + "." + phototype
         except:
             photoName = "1." + phototype
-        photoLocation = os.path.join(".", ".", os.getcwd(), "media", "user_image", photoName)
+        photoLocation = os.path.join(".", ".", os.getcwd(), "media", "userImage", photoName)
         photo_resize = Image.open(photo)
         photo_resize.thumbnail((371, 475), Image.ANTIALIAS)
         photo_resize.save(photoLocation)
-        user=CommonUser.objects.create(cuName=cuName, cuPassword=cuPassword, cuEmail=cuEmail, cuImage="user_image/" +
+        user=CommonUser.objects.create(cuName=cuName, cuPassword=cuPassword, cuEmail=cuEmail, cuImage="userImage/" +
                                                                                                  photoName,
                                   area=Area.object.get(arID=random.randint(1, len(areaIDList) + 1)))
     except Exception as e:

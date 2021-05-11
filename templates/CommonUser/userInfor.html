@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>User information</title>
+    <base href="/">
+    <link rel="stylesheet" type="text/css" href="/static/CommonUser/userInfor.css">
+</head>
+<body>
+<h2>Welcome to the website of XDW</h2>
+<br>
+<h1>Here is your personal information:</h1>
+<br>
+<table border="1" cellspacing="0">
+    <tr>
+        <th>Key</th>
+        <th>Value</th>
+        <th>Operation</th>
+    </tr>
+    <tr>
+        <td>ID</td>
+        <td>{{ user.cuID }}</td>
+        <td>Change ID is not allowed!</td>
+    </tr>
+    <tr>
+        <td>Name</td>
+        <td>{{ user.cuName }}</td>
+        <td><a href="{% url 'USFG:userChangeInfor' 'name' %}">Click here to change!</a></td>
+    </tr>
+    <tr>
+        <td>Image</td>
+        <td><img src="/media/{{ user.cuImage }}"/></td>
+        <td><a href="{% url 'USFG:userChangeInfor' 'image' %}">Click here to change!</a></td>
+    </tr>
+    <tr>
+        <td>Email</td>
+        <td>{{ user.cuEmail }}</td>
+        <td><a href="{% url 'USFG:userChangeInfor' 'emailAdd' %}">Click here to change!</a></td>
+    </tr>
+    <tr>
+        <td>Area</td>
+        <td>{{ user.area.arName }}</td>
+        <td>You are not allowed to change your area!</td>
+    </tr>
+    <tr>
+        <td>Verified</td>
+        {% ifequal verified 1%}
+           <td>You have verified!</td>
+        {% else %}
+            <td>You haven't verified! But you can verify through using UIC email.</td>
+        {% endifequal %}
+    </tr>
+</table>
+<a href="{% url 'USFG:userChangeInfor' 'password' %}">Click here to change your password!</a><br>
+<a href="{% url 'welcome' 1 %}">Logout</a>
+</body>
+</html>

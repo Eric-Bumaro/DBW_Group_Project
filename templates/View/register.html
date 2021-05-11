@@ -3,8 +3,39 @@
 <script src="/static/jquery-3.4.1.min.js"></script>
 <script>
     var adkey;
+    var cuKey;
+    function sendHideCuCheck() {
+        var emailAdd=document.getElementById('cuEmail').value
+        $.ajax({
+            type: "POST",
+            url: "{%  url 'sendCheckKey'%}",
+            data: {
+                csrfmiddlewaretoken: '{{ csrf_token }}',
+                emailAdd:emailAdd
+            },
+            success: function (response) {
+                if(response!="1") {
+                    adkey = response
+                }else{
+                    document.getElementById("checkRes").innerHTML = "Wrong email!";
+                }
+            }
+        });
+        var sendCuKeybutton = document.getElementById("sendCuKeybutton")
+        for (let i = 0; i <= 60; i++) {
+            (function (j) {
+                    setTimeout(function () {
+                        sendCuKeybutton.innerHTML = "<label>You can try again after " + (60 - j) + " seconds!</label>"
+                        if (j == 60) {
+                            sendCuKeybutton.innerHTML = "<button onclick='sendHideAdCheck()'>Click here to send!</button>"
+                        }
+                    }, 1000 * i)
+                }
+            )(i);
+        }
+    }
 
-    function sendHide() {
+    function sendHideAdCheck() {
         $.ajax({
             type: "POST",
             url: "{%  url 'getadKey'%}",
@@ -13,13 +44,13 @@
                 adkey = response
             }
         });
-        var sendKeybutton = document.getElementById("sendKeybutton")
+        var sendAdKeyButton = document.getElementById("sendAdKeyButton")
         for (let i = 0; i <= 60; i++) {
             (function (j) {
                     setTimeout(function () {
-                        sendKeybutton.innerHTML = "<label>You can try again after " + (60 - j) + " seconds!</label>"
+                        sendAdKeyButton.innerHTML = "<label>You can try again after " + (60 - j) + " seconds!</label>"
                         if (j == 60) {
-                            sendKeybutton.innerHTML = "<button onclick='sendHide()'>Click here to send!</button>"
+                            sendAdKeyButton.innerHTML = "<button onclick='sendHideAdCheck()'>Click here to send!</button>"
                         }
                     }, 1000 * i)
                 }
@@ -99,6 +130,13 @@
         <label for="photo">&emsp;&emsp;Profile Photo:</label><input type="file" name="photo" id="photo"
                                                                     accept="image/*">
     </p>
+    <p>
+        <label for="cuKey">Send a check-id key to the Email of the administrator and check it:</label>
+        <input type="text" id="cuKey" name="cuKey" required>
+        <label id="sendCuKeyButton">
+            <button onclick="sendHideCuCheck()">Click here to send!</button>
+        </label>
+    </p>
     <p id="chooseToBeAdmin" style="display: none">
         <label for="wantToBeAdmin">If you want to ba an admin, please click</label>
         <input type="radio" name="wantToBeAdmin" value="wantToBeAdmin" id="wantToBeAdmin" onclick="showHideCheckAdmin(this)">
@@ -106,8 +144,8 @@
     <p id="adminCheck" style="display: none">
         <label for="adminKey">Send a check-id key to the Email of the administrator and check it:</label>
         <input type="text" id="adminKey" name="adminKey">
-        <label id="sendKeybutton">
-            <button onclick="sendHide()">Click here to send!</button>
+        <label id="sendAdKeyButton">
+            <button onclick="sendHideAdCheck()">Click here to send!</button>
         </label>
     </p>
     <p>

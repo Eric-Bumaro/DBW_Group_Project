@@ -31,8 +31,9 @@ def getAdKey(request):
     return HttpResponse(sendAdKey())
 
 
-def sendCheckKey(request, emailAdd):
+def sendCheckKey(request):
     try:
+        emailAdd = request.POST.get('emailAdd')
         key = sendEmail(emailAdd)
         return HttpResponse(key)
     except:

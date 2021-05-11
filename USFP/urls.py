@@ -1,6 +1,6 @@
 from django.conf.urls import url
 
-from . import views
+from . import views,commonUser,myAdmin
 from .models import *
 
 urlpatterns = [
@@ -9,5 +9,5 @@ urlpatterns = [
     url(r'^register/successful/$', views.suRegister, name="suRegister"),
     url(r'^forgetPassword/$', views.forgetPassword, name="forgetPassword"),
     url(r'^suChangePwd/$', views.suChangePwd, name="suChangePwd"),
-
+    url(r'^CommonUser/userInfor/$', commonUser.userInfor, name="userInfor"),
 ]

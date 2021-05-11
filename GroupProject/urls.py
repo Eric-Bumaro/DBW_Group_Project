@@ -26,8 +26,8 @@ urlpatterns = [
     url(r'^welcome/#logout=(?P<logout>[1])$', views.welcome, name='welcome'),
     url(r'^USFP/', include(('USFP.urls', 'USFP'))),
     path('getAdKey/', views.getAdKey, name='getadKey'),
-    url(r'^getUserKey/#type=(?P<type>[0-1]{1})&id=(?P<id>.*)', views.getUserKey, name='getUserKey'),
-    url(r'^sendCheckKey/#emailAdd=(?P<emailAdd>.*)', views.sendCheckKey, name='sendCheckKey'),
+    url(r'^getUserKey/#cuID=(?P<cuID>.*)', views.getUserKey, name='getUserKey'),
+    url(r'^sendCheckKey/', views.sendCheckKey, name='sendCheckKey'),
     url(r'^media/(?P<path>.*)', serve, {'document_root': MEDIA_ROOT}),
     url(r'^static/(?P<path>.*)', serve, {'document_root': STATICFILES_DIRS[0]}),
 ]
