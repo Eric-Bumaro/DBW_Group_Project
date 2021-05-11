@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<script src="/static/jquery-3.4.1.min.js"></script>
+<script>
+    var adkey;
+
+    function sendHide() {
+        $.ajax({
+            type: "POST",
+            url: "{%  url 'getadKey'%}",
+            data: {csrfmiddlewaretoken: '{{ csrf_token }}'},
+            success: function (response) {
+                adkey = response
+            }
+        });
+        var sendKeybutton = document.getElementById("sendKeybutton")
+        for (let i = 0; i <= 60; i++) {
+            (function (j) {
+                    setTimeout(function () {
+                        sendKeybutton.innerHTML = "<label>You can try again after " + (60 - j) + " seconds!</label>"
+                        if (j == 60) {
+                            sendKeybutton.innerHTML = "<button onclick='sendHide()'>Click here to send!</button>"
+                        }
+                    }, 1000 * i)
+                }
+            )(i);
+        }
+    }
+
+    function check() {
+        var pwOne = document.getElementById("cuPassword").value;
+        var pwTwo = document.getElementById("checkPassword").value;
+        if (pwOne !== pwTwo) {
+            document.getElementById("checkRes").innerHTML = "Not the same password";
+            return false;
+        } else if (pwOne.length < 3) {
+            document.getElementById("checkRes").innerHTML = "The length of the password must be larger than three!";
+            return false;
+        }
+        if (document.getElementById("toBeAdmin").checked) {
+            if (document.getElementById("adminKey").value !== adkey) {
+                document.getElementById("checkRes").innerHTML = "Wrong check-key!";
+                return false;
+            }
+        }
+        return true;
+    }
+
+    function showWantAdmin(){
+        if(document.getElementById('cuEmail').value.endsWith('@mail.uic.edu.cn')){
+            document.getElementById('chooseToBeAdmin').style.display='block'
+        }else{
+            document.getElementById('chooseToBeAdmin').style.display='None'
+        }
+    }
+
+    function showHideCheckAdmin(element){
+        var radio = $(element);
+        if (radio.data('waschecked')) {
+            radio.prop('checked', false);
+            radio.data('waschecked', false)
+            document.getElementById('adminCheck').style.display='None'
+            $('#adminKey').attr("required", false)
+        } else {
+            radio.prop('checked', true);
+            radio.data('waschecked', true)
+            document.getElementById('adminCheck').style.display='block'
+            $('#adminKey').attr("required", true)
+        }
+    }
+</script>
+<head>
+    <meta charset="UTF-8">
+    <title>New Register</title>
+    <base href="/">
+    <link rel="stylesheet" type="text/css" href="/static/View/register.css">
+</head>
+<body>
+<form action="/loginModel/register/" method="post" name="registForm" onsubmit="return check()"
+      enctype="multipart/form-data">
+    {% csrf_token %}
+    <p>
+        <label for="cuName">&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;Name:</label><input type="text" name="cuName" id="cuName"
+                                                                                  maxlength=20 required>
+    </p>
+    <p>
+        <label for="cuPassword">&emsp;&emsp;&emsp;&emsp;Password:</label><input type="password" name="cuPassword" id="cuPassword"
+                                                                         maxlength=20 required>
+    </p>
+    <p>
+        <label for="checkPassword"> Confirm Password:</label><input type="password" name="checkPassword" maxlength=20
+                                                                id="checkPassword" required>
+    </p>
+    <p>
+        <label for="cuEmail">&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;Email:</label><input type="email" id="cuEmail" name="cuEmail"
+                                                                                    oninput="showWantAdmin()" required>
+    </p>
+    <p>
+        <label for="photo">&emsp;&emsp;Profile Photo:</label><input type="file" name="photo" id="photo"
+                                                                    accept="image/*">
+    </p>
+    <p id="chooseToBeAdmin" style="display: none">
+        <label for="wantToBeAdmin">If you want to ba an admin, please click</label>
+        <input type="radio" name="wantToBeAdmin" value="wantToBeAdmin" id="wantToBeAdmin" onclick="showHideCheckAdmin(this)">
+    </p>
+    <p id="adminCheck" style="display: none">
+        <label for="adminKey">Send a check-id key to the Email of the administrator and check it:</label>
+        <input type="text" id="adminKey" name="adminKey">
+        <label id="sendKeybutton">
+            <button onclick="sendHide()">Click here to send!</button>
+        </label>
+    </p>
+    <p>
+        <label id="checkResult" style="color: #ea2020"></label>
+    </p>
+    <p>
+        <label>&emsp;&emsp;&emsp;</label><input type="submit" value="Register">
+        &emsp;
+        <a href="/welcome/">Back to the Welcome Page</a>
+    </p>
+</form>
+</body>
+</html>

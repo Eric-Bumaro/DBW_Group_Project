@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Welcome</title>
+    <base href="/">
+    <link rel="stylesheet" type="text/css" href="/static/View/welcome.css">
+</head>
+<body>
+<h5>Welcome!</h5>
+{% if cuID %}
+    <p>userID:{{ cuID }}</p>
+    <p>userName:{{ cuName }}</p>
+    <p>userImage:<img src="{{ MEDIA_URL }}{{ cuImage }}"/></p>
+    <p><a href="{% url 'USFP:userInfor' %}">View profile</a></p>
+    <p><a href="{% url 'welcome' 1 %}">Logout</a></p>
+{% else %}
+    <br><a href="{% url 'USFP:login' 0 %}">Login</a>
+    <a href="/USFP/register/">Register</a>
+{% endif %}
+</body>
+</html>

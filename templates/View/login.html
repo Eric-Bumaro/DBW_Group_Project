@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Login in</title>
+    <link rel="stylesheet" type="text/css" href="/static/View/login.css">
+</head>
+<script src="/static/jquery-3.4.1.min.js"></script>
+<body>
+<form action="{% url 'loginModel:login' 0 %}" method="post">
+    {% csrf_token %}
+    <p>
+        <label class="tipText" for="userID">ID:</label><br><input type="text"
+                                                                  name="userID"
+                                                                  id="userID"
+                                                                  value="{{ cuID }}"
+                                                                  required/>
+    </p>
+    <p>
+        <label class="tipText" for="cuPassword">Password:</label>
+    <p>
+        <input type="password" name="cuPassword" id="cuPassword" value="{{ cuPassword }}" required/>
+    </p>
+    <p>
+    <h3 id="errormsg"></h3>
+    </p>
+    <p>
+        <input type="checkbox" name="cookie" value=1>Remember the id and password(3 days)
+    </p>
+    <p>
+        <label>&emsp;&emsp;&emsp;</label><input type="submit" value="Login"/>
+        &emsp;<a href="{% url 'USFD:forgetPassword' %}">Forget password</a>
+    </p>
+    <br>
+    <a href="/welcome/">Back to the Welcome Page</a>
+</form>
+</body>
+<script>
+
+    if({{ error|safe }}== "1")
+    {
+        document.getElementById("errormsg").innerText = "ID or passsword is wrong!!!";
+    }
+
+</script>
+</html>

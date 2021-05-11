@@ -1,0 +1,88 @@
+<html>
+<head>
+    <title>Forget the password</title>
+    <link rel="stylesheet" type="text/css" href="/static/View/forgetpwd.css">
+</head>
+<script src="/static/jquery-3.4.1.min.js"></script>
+<script>
+    var userKey;
+
+    function sendHide() {
+        var cuID = document.getElementById("cuID").value
+        $.ajax({
+            type: "POST",
+            url: "/getUserKey/",
+            data: {
+                csrfmiddlewaretoken: '{{ csrf_token }}',
+                cuID: cuID
+            },
+            success: function (response) {
+                userKey = response
+            }
+        });
+        if (userKey == 1) {
+            document.getElementById("errormsg").innerHTML = "Wrong ID!";
+        }
+        var sendKeybutton = document.getElementById("sendKeybutton")
+        for (let i = 0; i <= 60; i++) {
+            (function (j) {
+                    setTimeout(function () {
+                        sendKeybutton.innerHTML = "<label>You can try again after " + (60 - j) + " seconds!</label>"
+                        if (j == 60) {
+                            sendKeybutton.innerHTML = "<button onclick='sendHide()'>Click here to send!</button>"
+                        }
+                    }, 1000 * i)
+                }
+            )(i);
+        }
+    }
+
+    function check() {
+        var pwOne = document.forms["forPassForm"]["pwd"].value;
+        var pwTwo = document.forms["forPassForm"]["checkPwd"].value;
+        if (pwOne != pwTwo) {
+            document.getElementById("errormsg").innerHTML = "Not the same password";
+            return false;
+        } else if (pwOne.length < 3) {
+            document.getElementById("errormsg").innerHTML = "The length of the password must be larger than three!";
+            return false;
+        }
+        if (document.getElementById("userKey").value != userKey) {
+            document.getElementById("errormsg").innerHTML = "Wrong check-key!";
+            return false;
+        }
+        return true;
+    }
+</script>
+<body>
+<form action="{% url 'loginModel:forgetpwd' %}" method="post" name="forPassForm" onsubmit="return check()">
+    {% csrf_token %}
+    <p>
+        <label class="tipText" for="uID">&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;ID:</label>
+        <input type="text" name="cuID" id="cuID"/>
+    </p>
+
+    <p>
+        <label for="pwd">&emsp;&emsp;&emsp;&emsp;Password:</label><input type="password" name="cuPassword"
+                                                                         id="cuPassword" required>
+    </p>
+    <p>
+        <label for="checkPwd"> Confirm Password:</label><input type="password" name="checkPwd" id="checkPwd"
+                                                               required>
+    </p>
+    <p>
+        <label for="userKey">Send a check-id key to your Email address and check it:</label>
+        <input type="text" id="userKey" name="userKey" required>
+        <label id="sendKeybutton">
+            <button onclick="sendHide()">Click here to send!</button>
+        </label>
+    </p>
+    <p>
+    <h3 id="errormsg"></h3>
+    </p>
+    <label>&emsp;&emsp;&emsp;</label><input type="submit" value="Change">
+    &emsp;
+    <a href="/welcome/">Back to the Welcome Page</a>
+</form>
+</body>
+</html>
