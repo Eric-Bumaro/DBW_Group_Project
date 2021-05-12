@@ -68,7 +68,7 @@
             document.getElementById("checkRes").innerHTML = "The length of the password must be larger than three!";
             return false;
         }
-        if (document.getElementById("toBeAdmin").checked) {
+        if (document.getElementById("wantToBeAdmin").checked) {
             if (document.getElementById("adminKey").value !== adkey) {
                 document.getElementById("checkRes").innerHTML = "Wrong check-key!";
                 return false;

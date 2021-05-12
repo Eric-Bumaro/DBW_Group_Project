@@ -25,17 +25,17 @@
     <tr>
         <td>Name</td>
         <td>{{ user.cuName }}</td>
-        <td><a href="{% url 'USFG:userChangeInfor' 'name' %}">Click here to change!</a></td>
+        <td><a href="{% url 'USFP:userChangeInfor' 'Name' %}">Click here to change!</a></td>
     </tr>
     <tr>
         <td>Image</td>
         <td><img src="/media/{{ user.cuImage }}"/></td>
-        <td><a href="{% url 'USFG:userChangeInfor' 'image' %}">Click here to change!</a></td>
+        <td><a href="{% url 'USFP:userChangeInfor' 'Image' %}">Click here to change!</a></td>
     </tr>
     <tr>
         <td>Email</td>
         <td>{{ user.cuEmail }}</td>
-        <td><a href="{% url 'USFG:userChangeInfor' 'emailAdd' %}">Click here to change!</a></td>
+        <td><a href="{% url 'USFP:userChangeInfor' 'EmailAdd' %}">Click here to change!</a></td>
     </tr>
     <tr>
         <td>Area</td>
@@ -51,7 +51,7 @@
         {% endifequal %}
     </tr>
 </table>
-<a href="{% url 'USFG:userChangeInfor' 'password' %}">Click here to change your password!</a><br>
+<a href="{% url 'USFP:userChangeInfor' 'Password' %}">Click here to change your password!</a><br>
 <a href="{% url 'welcome' 1 %}">Logout</a>
 </body>
 </html>

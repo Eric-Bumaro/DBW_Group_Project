@@ -8,12 +8,20 @@
 </head>
 <body>
 <h5>Welcome!</h5>
-{% if cuID %}
-    <p>userID:{{ cuID }}</p>
-    <p>userName:{{ cuName }}</p>
-    <p>userImage:<img src="{{ MEDIA_URL }}{{ cuImage }}"/></p>
-    <p><a href="{% url 'USFP:userInfor' %}">View profile</a></p>
-    <p><a href="{% url 'welcome' 1 %}">Logout</a></p>
+{% if user.cuID %}
+    <p>userID:{{ user.cuID }}</p>
+    <p>userName:{{ user.cuName }}</p>
+    <p>userImage:<img src="{{ MEDIA_URL }}{{ user.cuImage }}"/></p>
+    {% if isAdmin %}
+        <p>
+            <a href="{% url 'USFP:adminInfor' %}">View profile</a>
+        </p>
+    {% else %}
+        <p>
+            <a href="{% url 'USFP:userInfor' %}">View profile</a>
+        </p>
+    {% endif %}
+        <p><a href="{% url 'welcome' 1 %}">Logout</a></p>
 {% else %}
     <br><a href="{% url 'USFP:login' 0 %}">Login</a>
     <a href="/USFP/register/">Register</a>
