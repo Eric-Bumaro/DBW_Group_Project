@@ -56,8 +56,8 @@ def userChange(request,changeType):
         photo_resize.thumbnail((371, 475), Image.ANTIALIAS)
         if os.path.isfile(os.path.join(".", ".", os.getcwd(), "media", str(user[0].uImage))):
             os.remove(os.path.join(".", ".", os.getcwd(), "media", str(user[0].uImage)))
-        photo_resize.save(os.path.join(".", ".", os.getcwd(), "media", "user_image", photoName))
-        user.update(cuImage="user_image/"+photoName)
+        photo_resize.save(os.path.join(".", ".", os.getcwd(), "media", "userImage", photoName))
+        user.update(cuImage="userImage/"+photoName)
     if (changeType == "Name"):
         newName = request.POST.get("newName", "")
         user.update(cuName=newName)

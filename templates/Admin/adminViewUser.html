@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin view user</title>
+    <base href="/">
+    <link rel="stylesheet" type="text/css" href="/static/Admin/adminViewUser.css">
+</head>
+<script src="/static/jquery-3.4.1.min.js"></script>
+<script>
+    var nodeList = document.getElementsByClassName("Change_fun");
+    var checkResult = true;
+
+    function showChange() {
+        checkResult = true;
+        for (var i = 0; i < nodeList.length; i++) {
+            nodeList[i].style.display = "block";
+        }
+        document.getElementById("toChangeButton").style.display = "none"
+    }
+
+    function cancelChange() {
+        for (var i = 0; i < nodeList.length; i++) {
+            nodeList[i].style.display = "none";
+        }
+        document.getElementById("toChangeButton").style.display = "block"
+        checkResult = false;
+    }
+
+    window.onload = function () {
+        var date_now = new Date();
+        var year = date_now.getFullYear();
+        var month = date_now.getMonth() + 1 < 10 ? "0" + (date_now.getMonth() + 1) : (date_now.getMonth() + 1);
+        var day = date_now.getDate() < 10 ? "0" + date_now.getDate() : date_now.getDate();
+        var hour = date_now.getHours() < 10 ? "0" + date_now.getHours() : date_now.getHours();
+        var minutes = date_now.getMinutes() < 10 ? "0" + date_now.getMinutes() : date_now.getMinutes()
+        var seconds = date_now.getSeconds() < 10 ? "0" + date_now.getSeconds() : date_now.getSeconds()
+        $("#VIPDateToCh").attr("min", year + "-" + month + "-" + day + "T" + hour + ":" + minutes + ":" + seconds);
+        $("#newVIPDate").attr("min", year + "-" + month + "-" + day + "T" + hour + ":" + minutes + ":" + seconds);
+    }
+
+    function showDateCh() {
+        var radio = $(document.getElementById("changeVIPDate"));
+        if (radio.data('waschecked')) {
+            radio.prop('checked', false);
+            document.getElementById("VIPDateToCh").style.display = "none"
+            $('#VIPDateToCh').attr("required", false);
+            radio.data('waschecked', false)
+        } else {
+            radio.prop('checked', true);
+            document.getElementById("VIPDateToCh").style.display = "block"
+            $('#VIPDateToCh').attr("required", true);
+            radio.data('waschecked', true)
+        }
+    }
+
+    function checked() {
+        return checkResult;
+    }
+
+    function changeDPCh() {
+        var radio = $(document.getElementById("deletePhoto"));
+        if (radio.data('waschecked')) {
+            radio.prop('checked', false);
+            radio.data('waschecked', false)
+        } else {
+            radio.prop('checked', true);
+            radio.data('waschecked', true)
+        }
+    }
+
+    function changeDVCh() {
+        var radio = $(document.getElementById("deleteVIP"));
+        if (radio.data('waschecked')) {
+            radio.prop('checked', false);
+            radio.data('waschecked', false)
+        } else {
+            radio.prop('checked', true);
+            radio.data('waschecked', true)
+        }
+    }
+
+    function changeUserArea() {
+        var radio = $(document.getElementById("changeArea"));
+        if (radio.data('waschecked')) {
+            radio.prop('checked', false);
+            document.getElementById("newArName").style.display = "none"
+            radio.data('waschecked', false)
+        } else {
+            radio.prop('checked', true);
+            document.getElementById("newArName").style.display = "block"
+            radio.data('waschecked', true)
+        }
+    }
+
+    function changeGVch() {
+        var radio = $(document.getElementById("getVIPBack"));
+        if (radio.data('waschecked')) {
+            radio.prop('checked', false);
+            radio.data('waschecked', false)
+        } else {
+            radio.prop('checked', true);
+            radio.data('waschecked', true)
+        }
+    }
+
+    function giveUserVIP() {
+        var radio = $(document.getElementById("giveVIP"));
+        if (radio.data('waschecked')) {
+            document.getElementById("giveVIP").checked = false;
+            document.getElementById("newVIPDate").style.display = "none";
+            radio.data('waschecked', false)
+            $('#newVIPDate').attr("required", false);
+        } else {
+            radio.prop('checked', true);
+            document.getElementById("newVIPDate").style.display = "block"
+            radio.data('waschecked', true)
+            $('#newVIPDate').attr("required", true);
+        }
+    }
+</script>
+<body>
+<button onclick="showChange()" id="toChangeButton">Click here if you want to make changes</button>
+<h1>For this user:</h1>
+<br>
+<form action={% url 'loginModel:updateUser' user.ar.arID user.uID %} method="post" onsubmit="return checked()">
+    {% csrf_token %}
+    <table border="1" cellspacing="0">
+        <tr>
+            <th>Key</th>
+            <th>Value</th>
+            <th class="Change_fun" style="display: none">
+                To choose
+            </th>
+        </tr>
+        <tr>
+            <td>ID</td>
+            <td>{{ user.uID }}</td>
+        </tr>
+        <tr>
+            <td>Name</td>
+            <td>{{ user.uName }}</td>
+        </tr>
+        <tr>
+            <td>Image</td>
+            <td><img src=" {{ MEDIA_URL }}{{ user.uImage }}"/></td>
+            <td class="Change_fun"><input type="radio" name="deletePhoto" id="deletePhoto" class="Change_fun"
+                                          onclick="changeDPCh()" style="display: none" value="1">
+                <label for="deletePhoto" class="Change_fun" style="display: none">Delete the photo</label></td>
+        </tr>
+        <tr>
+            <td>Email</td>
+            <td>{{ user.uEmail }}</td>
+        </tr>
+        <tr>
+            <td>VIP ID</td>
+            {% if user.isVIP and not user.isVIPDelete %}
+                <td>
+                    Is VIP
+                    <br>
+                    The due date:{{ user.vEnd }}
+                </td>
+                <td class="Change_fun">
+                    <input type="radio" name="deleteVIP" class="Change_fun" onclick="changeDVCh()" style="display: none"
+                           value="1" id="deleteVIP">
+                    <label for="deleteVIP" class="Change_fun" style="display: none">Delete the VIP</label>
+                    <br>
+                    <input type="radio" name="changeVIPDate" class="Change_fun" onclick="showDateCh()"
+                           style="display: none" value="1" id="changeVIPDate">
+                    <label for="changeVIPDate" class="Change_fun" style="display: none">Click to choose the DDL for this
+                        VIP:</label>
+                    <input type="datetime-local" name="VIPDateToCh" id="VIPDateToCh" style="display: none"/>
+                </td>
+            {% else %}
+                <td>The user is not a VIP.
+                    {% if user.isVIPDelete %}
+                        <input type="radio" name="getVIPBack" class="Change_fun" onclick="changeGVch()"
+                               style="display: none" value="1" id="getVIPBack"/>
+                        <label for="getVIPBack" style="display: none" class="Change_fun">Get the deleted VIP
+                            back!</label>
+                    {% else %}
+                        <input type="radio" name="giveVIP" class="Change_fun" onclick="giveUserVIP()"
+                               style="display: none" value="1" id="giveVIP"/>
+                        <label for="giveVIP" style="display: none" class="Change_fun">Click to give and choose the DDL
+                            for this VIP:</label>
+                        <input type="datetime-local" name="newVIPDate" id="newVIPDate" style="display: none"/>
+                    {% endif %}
+                </td>
+            {% endif %}
+        </tr>
+        <tr>
+            <td>Area</td>
+            <td>{{ user.ar.arName }}</td>
+            <td class="Change_fun" style="display: none">
+                <input type="radio" name="changeArea" class="Change_fun" onclick="changeUserArea()"
+                       style="display: none" value="1" id="changeArea">
+                <label for="changeArea" class="Change_fun" style="display: none">Click to change the area</label>
+                <select style="display: none" name="newArName" id="newArName">
+                    {% for i in areaNameList %}
+                        {% ifequal i user.ar.arName %}
+                            <option selected value="{{ i }}">{{ i }}</option>
+                        {% else %}
+                            <option value="{{ i }}">{{ i }}</option>
+                        {% endifequal %}
+                    {% endfor %}
+                </select>
+            </td>
+        </tr>
+    </table>
+    <input type="submit" class="Change_fun" style="display: none" value="Click here to submit"/>
+    <button onclick="cancelChange()" class="Change_fun" style="display: none">Cancel</button>
+</form>
+<a href="{% url 'loginModel:adViewArea' 1 user.ar.arID %}">To view the area</a>
+<a href="{% url 'loginModel:adInfor' %}">Back to your information.</a>
+</body>
+</html>

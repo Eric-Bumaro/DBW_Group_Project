@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>View your operations</title>
+    <link rel="stylesheet" type="text/css" href="/static/Admin/viewOperations.css">
+</head>
+<body>
+<h1>Your Area Operation history:</h1>
+<table border="1" cellspacing="0">
+    <tr>
+        <th>
+            Count
+        </th>
+        <th>
+            Operation Type
+        </th>
+        <th>
+            The ID of the area
+        </th>
+        <th>
+            Datetime
+        </th>
+        <th>
+            Content
+        </th>
+    </tr>
+    {% for i in areaPrepageData %}
+        <tr>
+            <td>
+                {{ forloop.counter }}
+            </td>
+            <td>
+                {{ i.oType }}
+            </td>
+            <td>
+                {{ i.area.arID }}
+            </td>
+            <td>
+                {{ i.oTakeDate }}
+            </td>
+            <td >
+                {{ i.content }}
+            </td>
+        </tr>
+    {% endfor %}
+</table>
+<br>
+{% if areaPrepageData.has_previous %}
+    <a href="{% url 'USFP:viewOperations' areaPrepageData.previous_page_number userOpNum%}">Last Page</a>
+{% endif %}&emsp;
+{% for n in  areaPageList %}
+    <a href="{% url 'USFP:viewOperations' n userOpNum%}">{{ n }}</a> &emsp;
+{% endfor %}
+{% if areaPrepageData.has_next %}
+    <a href="{% url 'USFP:viewOperations' areaPrepageData.next_page_number userOpNum%}">Next Page</a>
+{% endif %}&emsp;
+<br>
+<h1>Your User Operation history:</h1>
+<table border="1" cellspacing="0">
+    <tr>
+        <th>
+            Count
+        </th>
+        <th>
+            Operation Type
+        </th>
+        <th>
+            The ID of the User
+        </th>
+        <th>
+            Datetime
+        </th>
+        <th>
+            Content
+        </th>
+    </tr>
+    {% for i in userPrepageData %}
+        <tr>
+            <td>
+                {{ forloop.counter }}
+            </td>
+            <td>
+                {{ i.oType }}
+            </td>
+            <td>
+                {{ i.user.cuID }}
+            </td>
+            <td>
+                {{ i.oTakeDate }}
+            </td>
+            <td >
+                {{ i.content }}
+            </td>
+        </tr>
+    {% endfor %}
+</table>
+<br>
+{% if userPrepageData.has_previous %}
+    <a href="{% url 'USFP:viewOperations' areaOpNum userPrepageData.previous_page_number %}">Last Page</a>
+{% endif %}&emsp;
+{% for n in  userPageList %}
+    <a href="{% url 'USFP:viewOperations' areaOpNum n %}">{{ n }}</a> &emsp;
+{% endfor %}
+{% if userPrepageData.has_next %}
+    <a href="{% url 'USFP:viewOperations' areaOpNum userPrepageData.next_page_number %}">Next Page</a>
+{% endif %}&emsp;
+<br>
+<a href="{% url 'USFP:adminInfor' %}">Back to your personal inforamtion</a>
+</body>
+</html>

@@ -17,7 +17,7 @@ def adminInfor(request):
         return HttpResponseRedirect(reverse("welcome", args=(1,)))
     area = admin.area.filter(isDelete=False)
     if request.method=="GET":
-        return render(request, "Admin/adminInfor.html", {"admin": admin, "area_set": area,"area_IDs_js":json.dumps(list(area.values("arID")))})
+        return render(request, "Admin/adminInfor.html", {"admin": admin, "areaSet": area,"areaIDs_js":json.dumps(list(area.values("arID")))})
     else:
         for i in area:
             try:
@@ -69,8 +69,8 @@ def adminChangeInfor(request,changeType):
         photo_resize.thumbnail((371, 475), Image.ANTIALIAS)
         if os.path.isfile(os.path.join(".", ".", os.getcwd(), "media", str(admin.uImage))):
             os.remove(os.path.join(".", ".", os.getcwd(), "media", str(admin.uImage)))
-        photo_resize.save(os.path.join(".", ".", os.getcwd(), "media", "user_image", photoName))
-        admin.cuImage="user_image/"+photoName
+        photo_resize.save(os.path.join(".", ".", os.getcwd(), "media", "userImage", photoName))
+        admin.cuImage="userImage/"+photoName
     admin.save()
     return HttpResponseRedirect(reverse("USFD:adminSuChange", args=(changeType,)))
 
@@ -81,3 +81,118 @@ def adminSuChange(request,changeType):
     except KeyError:
         return HttpResponseRedirect(reverse("welcome", args=(1,)))
     return render(request, "Admin/adminSuChange.html", {"changeType": changeType})
+
+
+def adminViewArea(request,num,arID):
+    try:
+        CommonUser.object.get(cuID=request.session["cuID"]).VerifiedUser
+    except KeyError:
+        return HttpResponseRedirect(reverse("welcome",args=(1,)))
+    area=Area.object.get(arID=arID)
+    users=[]
+    for i in area.CommonUser.filter(isDelete=False):
+        try:
+            VerifiedUser.objects.get(cu=i)
+        except:
+            users.append(i)
+    if int(num) < 1:
+        num = 1
+    else:
+        num = int(num)
+    pager = Paginator(users, 10)
+    try:
+        prepageData=pager.page(num)
+    except EmptyPage:
+        prepageData=pager.page(pager.num_pages)
+    begin=(num-int(math.ceil(10.0/2)))
+    if begin<1:
+        begin=1
+    end=begin+4
+    if end>pager.num_pages:
+        end=pager.num_pages
+    if end<=5:
+        begin=1
+    else:
+        begin=end-4
+    pagelist=range(begin,end+1)
+    return render(request, "Admin/adminViewArea.html",
+                  {"pager": pager, 'prepageData': prepageData, "pageList": pagelist, "arID": arID,"arName":Area.object.get(arID=arID)})
+
+
+def adminDeleteUser(request):
+    try:
+        try:
+            cuID = request.session['cuID']
+        except KeyError:
+            return HttpResponseRedirect(reverse("welcome", args=(1,)))
+        listToDelete = request.POST.get("listToDelete")
+        delete_list = listToDelete.split("-")
+        delete_list = [i for i in delete_list if len(i) != 0]
+        try:
+            for i in delete_list:
+                userToDelete = CommonUser.object.get(cuID=int(i))
+                userToDelete.isDelete = True
+                userToDelete.deleteDate = datetime.now()
+                userToDelete.save()
+                UserOperation.objects.create(user=userToDelete, oType='delUser',content="Delete the user",
+                                         vu=CommonUser.objects.get(cuID=cuID))
+        except Exception as e:
+            print(e)
+            return HttpResponse("Fail")
+        return HttpResponse("Success")
+    except:
+        return HttpResponse("Fail")
+
+
+def viewOperations(request,areaOpNum,userOpNum):
+    try:
+        user = CommonUser.objects.get(cuID=request.session['cuID'])
+        user.VerifiedUser
+    except KeyError:
+        return HttpResponseRedirect(reverse("welcome",args=(1,)))
+    areaOperations=AreaOperation.objects.filter(cu=user).order_by("-oTakeDate")
+    if int(areaOpNum) < 1:
+        areaOpNum = 1
+    else:
+        areaOpNum = int(areaOpNum)
+    areaPager = Paginator(areaOperations, 10)
+    try:
+        areaPrepageData = areaPager.page(areaOpNum)
+    except EmptyPage:
+        areaPrepageData = areaPager.page(areaPager.num_pages)
+    begin = (areaOpNum - int(math.ceil(10.0 / 2)))
+    if begin < 1:
+        begin = 1
+    end = begin + 4
+    if end > areaPager.num_pages:
+        end = areaPager.num_pages
+    if end <= 5:
+        begin = 1
+    else:
+        begin = end - 4
+    areaPageList = range(begin, end + 1)
+    userOperations=UserOperation.objects.filter(cu=user).order_by("-oTakeDate")
+    if int(userOpNum) < 1:
+        userOpNum = 1
+    else:
+        userOpNum = int(userOpNum)
+    userPager = Paginator(userOperations, 10)
+    try:
+        userPrepageData = userPager.page(userOpNum)
+    except EmptyPage:
+        userPrepageData = userPager.page(userPager.num_pages)
+    begin = (userOpNum - int(math.ceil(10.0 / 2)))
+    if begin < 1:
+        begin = 1
+    end = begin + 4
+    if end > userPager.num_pages:
+        end = userPager.num_pages
+    if end <= 5:
+        begin = 1
+    else:
+        begin = end - 4
+    userPageList = range(begin, end + 1)
+    return render(request, "Admin/viewOperations.html",
+                  {"areaCurPage": areaOpNum, 'areaPrepageData': areaPrepageData, "areaPageList": areaPageList,
+                   "userCurPage":userOpNum,"userPrepageData":userPrepageData,"userPageList":userPageList},
+                  )

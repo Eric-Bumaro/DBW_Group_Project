@@ -11,7 +11,7 @@ class ReDefinedManager(models.Manager):
 
 class Area(models.Model):
     arID = models.AutoField(primary_key=True, )
-    arName = models.CharField(max_length=10, null=False, blank=False)
+    arName = models.CharField(max_length=10, null=False, blank=False,unique=True)
     arStart = models.DateTimeField(auto_created=True, null=False, blank=False)
     isDelete = models.BooleanField(null=False, blank=False, default=False)
     deleteDate = models.DateTimeField(blank=True, null=True)
@@ -33,7 +33,7 @@ class CommonUser(models.Model):
     cuPassword = models.CharField(max_length=20, null=False, blank=False)
     isDelete = models.BooleanField(blank=False, null=False, default=False)
     deleteDate = models.DateTimeField(blank=True, null=True)
-    area = models.ForeignKey(Area, on_delete=models.CASCADE, on_ipdate=models.CASCADE, null=False, blank=False,
+    area = models.ForeignKey(Area, on_delete=models.CASCADE, on_update=models.CASCADE, null=False, blank=False,
                              related_name="CommonUser")
     object = ReDefinedManager()
     objects = models.Manager()
@@ -47,7 +47,7 @@ class CommonUser(models.Model):
 
 class VerifiedUser(models.Model):
     isAdmin = models.BooleanField(null=False, blank=False, default=False)
-    cu = models.OneToOneField(CommonUser, on_delete=models.CASCADE, on_ipdate=models.CASCADE, null=False, blank=False,
+    cu = models.OneToOneField(CommonUser, on_delete=models.CASCADE, on_update=models.CASCADE, null=False, blank=False,
                               related_name="VerifiedUser",
                               primary_key=True)
     area = models.ManyToManyField(Area, related_name="VerifiedUser")
@@ -77,11 +77,11 @@ class Suggestion(models.Model):
 
 class ReplySuggestion(models.Model):
     rs = models.ForeignKey(Suggestion, primary_key=True, related_name="Self", on_delete=models.CASCADE,
-                           on_ipdate=models.CASCADE, )
+                           on_update=models.CASCADE, )
     s = models.ForeignKey(Suggestion, null=False, blank=False, related_name="ReplySuggestion", on_delete=models.CASCADE,
-                          on_ipdate=models.CASCADE, )
+                          on_update=models.CASCADE, )
     vf = models.ForeignKey(VerifiedUser, null=False, blank=False, related_name="ReplySuggestion",
-                           on_delete=models.CASCADE, on_ipdate=models.CASCADE, )
+                           on_delete=models.CASCADE, on_update=models.CASCADE, )
 
     class Meta:
         db_table = 'ReplySuggestion'
@@ -93,11 +93,11 @@ class ReplySuggestion(models.Model):
 class UserOperation(models.Model):
     uoID = models.AutoField(primary_key=True, )
     user = models.ForeignKey(CommonUser, null=False, blank=False, related_name="UserOperation",
-                             on_delete=models.CASCADE, on_ipdate=models.CASCADE, )
+                             on_delete=models.CASCADE, on_update=models.CASCADE, )
     oType = models.CharField(max_length=10, choices=((1, 'delUser'), (2, 'upUser')))
     oTakeDate = models.DateTimeField(auto_created=True, null=False, blank=False)
     content = models.TextField(blank=False, null=False)
-    vu = models.ForeignKey(VerifiedUser, null=False, blank=False, on_delete=models.CASCADE, on_ipdate=models.CASCADE, )
+    vu = models.ForeignKey(VerifiedUser, null=False, blank=False, on_delete=models.CASCADE, on_update=models.CASCADE, )
 
     class Meta:
         db_table = 'ReplySuggestion'
@@ -109,11 +109,11 @@ class UserOperation(models.Model):
 class AreaOperation(models.Model):
     aoID = models.AutoField(primary_key=True, )
     area = models.ForeignKey(Area, null=False, blank=False, related_name="UserOperation", on_delete=models.CASCADE,
-                             on_ipdate=models.CASCADE, )
+                             on_update=models.CASCADE, )
     aoType = models.CharField(max_length=10, choices=((1, 'delArea'), (2, 'upArea')))
     oTakeDate = models.DateTimeField(auto_created=True, null=False, blank=False)
     content = models.TextField(blank=False, null=False)
-    vu = models.ForeignKey(VerifiedUser, null=False, blank=False, on_delete=models.CASCADE, on_ipdate=models.CASCADE, )
+    vu = models.ForeignKey(VerifiedUser, null=False, blank=False, on_delete=models.CASCADE, on_update=models.CASCADE, )
 
     class Meta:
         db_table = 'ReplySuggestion'

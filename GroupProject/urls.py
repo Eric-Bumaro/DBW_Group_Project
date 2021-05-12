@@ -23,6 +23,7 @@ from GroupProject.settings import *
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    url(r'^welcome/$', views.welcome, name='welcome'),
     url(r'^welcome/#logout=(?P<logout>[1])$', views.welcome, name='welcome'),
     url(r'^USFP/', include(('USFP.urls', 'USFP'))),
     path('getAdKey/', views.getAdKey, name='getadKey'),

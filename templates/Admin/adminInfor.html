@@ -26,12 +26,12 @@
     <tr>
         <td>Name</td>
         <td>{{ admin.cuName }}</td>
-        <td><a href="{% url 'UDFP:adminChangeInfor' 'Name' %}">Click here to change!</a></td>
+        <td><a href="{% url 'USFP:adminChangeInfor' 'Name' %}">Click here to change!</a></td>
     </tr>
     <tr>
         <td>Email</td>
         <td>{{ admin.cuEmail }}</td>
-        <td><a href="{% url 'UDFP:adminChangeInfor' 'Email' %}">Click here to change!</a></td>
+        <td><a href="{% url 'USFP:adminChangeInfor' 'Email' %}">Click here to change!</a></td>
     </tr>
     <tr>
         <td>Image</td>
@@ -55,7 +55,7 @@ You can view the area you administrate here:
                 To view
             </th>
         </tr>
-        {% for i in area_set %}
+        {% for i in areaSet %}
             <tr>
                 <td>
                     {{ i.arID }}
@@ -64,19 +64,19 @@ You can view the area you administrate here:
                     {{ i.arName }}
                 </td>
                 <td>
-                    <a href="{% url 'UDFP:adminViewArea' 1 i.arID %}">To view</a>
+                    <a href="{% url 'USFP:adminViewArea' 1 i.arID %}">To view</a>
                 </td>
-                <td class="Choose_Unit" style="display: none">
+                <td class="ChooseUnit" style="display: none">
                 </td>
             </tr>
         {% endfor %}
     </table>
-    <a href="{% url 'UDFP:adminChangeInfor' 'Password' %}">Here to change your password!</a>
-    <input type="submit" class="Change_fun" style="display: none" value="Click here to submit"/>
-    <button onclick="cancelChange()" class="Change_fun" style="display: none">Cancel</button>
+    <a href="{% url 'USFP:adminChangeInfor' 'Password' %}">Here to change your password!</a>
+    <input type="submit" class="ChangeFunction" style="display: none" value="Click here to submit"/>
+    <button onclick="cancelChange()" class="ChangeFunction" style="display: none">Cancel</button>
 </form>
 <br>
-<a href="{% url 'UDFP:viewOperations' 1 %}">Operation History</a>
+<a href="{% url 'USFP:viewOperations' 1 %}">Operation History</a>
 {% ifequal admin.cuID 1%}
     <button onclick="toRefreshDB()">Refresh The Database</button>
 {% endifequal %}
@@ -89,8 +89,8 @@ You can view the area you administrate here:
     var checkResult = true;
 
     function showChange() {
-        var unitList = document.getElementsByClassName("Choose_Unit");
-        var nodeList = document.getElementsByClassName("Change_fun");
+        var unitList = document.getElementsByClassName("ChooseUnit");
+        var nodeList = document.getElementsByClassName("ChangeFunction");
         for (var j = 0; j < unitList.length; j++) {
             unitList[j].style.display = "block";
         }
@@ -102,8 +102,8 @@ You can view the area you administrate here:
     }
 
     function cancelChange() {
-        var unitList = document.getElementsByClassName("Choose_Unit");
-        var nodeList = document.getElementsByClassName("Change_fun");
+        var unitList = document.getElementsByClassName("ChooseUnit");
+        var nodeList = document.getElementsByClassName("ChangeFunction");
         for (var j = 0; j < nodeList.length; j++) {
             nodeList[j].style.display = "none";
         }
@@ -146,13 +146,13 @@ You can view the area you administrate here:
         }
     }
 
-    var areaIDs ={{area_IDs_js|safe}};
-    var unitList = document.getElementsByClassName("Choose_Unit");
+    var areaIDs ={{areaIDs_js|safe}};
+    var unitList = document.getElementsByClassName("ChooseUnit");
     for (var j = 0; j < unitList.length; j++) {
-        unitList[j].innerHTML = "<input type='radio' name='deleteArea" + areaIDs[i].arID + "'class='Change_fun'  onclick='deleteArea(this)' style='display: none' value='1' id='deleteArea" + areaIDs[i].arID + "'/>"
-            + "<label for='deleteArea" + areaIDs[i].arID + "' style='display: none' class='Change_fun'>Click to  delete the area</label>"
-            + "<input type='radio' name='updataAreaName" + areaIDs[i].arID + "' class='Change_fun'  onclick='updataAreaName(this)' style='display: none' value='1' id='updataAreaName" + areaIDs[i].arID + "'/>"
-            + "<label for='updataAreaName" + areaIDs[i].arID + "' style='display: none' class='Change_fun'>Click to  change the area's name</label>"
+        unitList[j].innerHTML = "<input type='radio' name='deleteArea" + areaIDs[i].arID + "'class='ChangeFunction'  onclick='deleteArea(this)' style='display: none' value='1' id='deleteArea" + areaIDs[i].arID + "'/>"
+            + "<label for='deleteArea" + areaIDs[i].arID + "' style='display: none' class='ChangeFunction'>Click to  delete the area</label>"
+            + "<input type='radio' name='updataAreaName" + areaIDs[i].arID + "' class='ChangeFunction'  onclick='updataAreaName(this)' style='display: none' value='1' id='updataAreaName" + areaIDs[i].arID + "'/>"
+            + "<label for='updataAreaName" + areaIDs[i].arID + "' style='display: none' class='ChangeFunction'>Click to  change the area's name</label>"
             + "<input maxlength='20' style='display: none' name='newAreaName" + areaIDs[i].arID + "' id='newAreaName" + areaIDs[i].arID + "'/>"
         i++;
     }
@@ -162,8 +162,7 @@ You can view the area you administrate here:
             url: '/refreshDB/',
             data: {csrfmiddlewaretoken: '{{ csrf_token }}'},
             success: function (response) {
-                {#window.location.reload();#}
-                console.log(response)
+                window.location.reload();
             }
         });
     }
