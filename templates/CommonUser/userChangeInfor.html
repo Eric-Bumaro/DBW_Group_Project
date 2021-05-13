@@ -12,7 +12,7 @@
     var adminKey;
 
     function sendHideForPass() {
-        var cuID = {{cuID|safe}};
+        var commonUserID = {{commonUserID|safe}};
         $.ajax({
             type: "POST",
             url: "/getUserKey/",

@@ -15,25 +15,26 @@ def login(request, error):
     if request.method == "GET":
         if 'login' in request.COOKIES.keys():
             login = request.get_signed_cookie("login", salt="hello").split(',')
-            cuID = login[0]
-            cuPassword = login[1]
+            commonUserID = login[0]
+            commonUserPassword = login[1]
             return render(request, "View/login.html",
-                          {"error": json.dumps(error), "cuID": cuID, "cuPassword": cuPassword})
+                          {"error": json.dumps(error), "commonUserID": commonUserID,
+                           "commonUserPassword": commonUserPassword})
         else:
             return render(request, "View/login.html", {"error": json.dumps(error)})
-    cuPassword = request.POST.get("cuPassword", "")
+    commonUserPassword = request.POST.get("commonUserPassword", "")
     remind = request.POST.get("cookie", "")
-    cuID = int(request.POST.get("uID", "1"))
-    result = CommonUser.object.filter(cuID=cuID, cuPassword=cuPassword)
+    commonUserID = int(request.POST.get("commonUserID", "1"))
+    result = CommonUser.object.filter(commonUserID=commonUserID, commonUserPassword=commonUserPassword)
     if (len(result) == 0):
         response = HttpResponseRedirect(reverse('USFP:login', args=(1,)))
         response.delete_cookie("login")
         return response
     request.session.set_expiry(3 * 60 * 60)
-    request.session['cuID'] = cuID
+    request.session['commonUserID'] = commonUserID
     response = redirect("welcome")
     if remind == "1":
-        response.set_signed_cookie('login', str(cuID) + "," + cuPassword,
+        response.set_signed_cookie('login', str(commonUserID) + "," + commonUserPassword,
                                    max_age=24 * 60 * 60 * 3, salt="hello")
     return response
 
@@ -41,50 +42,52 @@ def login(request, error):
 def register(request):
     if request.method == 'GET':
         return render(request, "View/register.html")
-    cuName = request.POST.get("cuName", "")
-    cuPassword = request.POST.get("cuPassword", "")
-    cuEmail = request.POST.get("cuEmail", "")
+    commonUserName = request.POST.get("commonUserName", "")
+    commonUserPassword = request.POST.get("commonUserPassword", "")
+    commonUserEmail = request.POST.get("commonUserEmail", "")
     areaIDList = Area.object.all()
     try:
         photo = request.FILES.get("photo", "")
         phototype = photo.name.split(".")[-1]
         try:
-            photoName = str(CommonUser.objects.last().uID + 1) + "." + phototype
+            photoName = str(CommonUser.objects.last().commonUserID + 1) + "." + phototype
         except:
             photoName = "1." + phototype
         photoLocation = os.path.join(".", ".", os.getcwd(), "media", "userImage", photoName)
         photo_resize = Image.open(photo)
         photo_resize.thumbnail((371, 475), Image.ANTIALIAS)
         photo_resize.save(photoLocation)
-        user=CommonUser.objects.create(cuName=cuName, cuPassword=cuPassword, cuEmail=cuEmail, cuImage="userImage/" +
-                                                                                                 photoName,
-                                  area=Area.object.get(arID=random.randint(1, len(areaIDList) + 1)))
+        user = CommonUser.objects.create(commonUserName=commonUserName, commonUserPassword=commonUserPassword,
+                                         commonUserEmail=commonUserEmail, cuImage="userImage/" +
+                                                                                  photoName,
+                                         area=Area.object.get(arID=random.randint(1, len(areaIDList) + 1)))
     except Exception as e:
-        user=CommonUser.objects.create(cuName=cuName, cuPassword=cuPassword, uEmail=cuEmail,
-                                  area=Area.object.get(arID=random.randint(1, len(areaIDList) + 1)))
-    if(cuEmail.endswith('@mail.uic.edu.cn')):
-        if request.POST.get('wantToBeAdmin','')=='wantToBeAdmin':
-            VerifiedUser.objects.create(cu=user,isAdmin=True)
+        user = CommonUser.objects.create(commonUserName=commonUserName, commonUserPassword=commonUserPassword,
+                                         commonUserEmail=commonUserEmail,
+                                         area=Area.object.get(arID=random.randint(1, len(areaIDList) + 1)))
+    if (commonUserEmail.endswith('@mail.uic.edu.cn')):
+        if request.POST.get('wantToBeAdmin', '') == 'wantToBeAdmin':
+            VerifiedUser.objects.create( commonUser=user, isAdmin=True)
         else:
-            VerifiedUser.objects.create(cu=user, isAdmin=False)
-    return HttpResponseRedirect(reverse('loginModel:suRegister'))
+            VerifiedUser.objects.create(commonUser=user, isAdmin=False)
+    return HttpResponseRedirect(reverse('USFD:suRegister'))
 
 
 def suRegister(request):
-    return render(request, "View/suRegister.html", {"cuID": CommonUser.objects.last().cuID})
-
+    return render(request, "View/suRegister.html", {"commonUserID": CommonUser.objects.last().commonUserID})
 
 
 def forgetPassword(request):
     if request.method == 'GET':
         return render(request, "View/forgetpwd.html")
-    cuPassword = request.POST.get("cuPassword", "")
-    cuID = request.POST.get("cuID", "")
+    commonUserPassword = request.POST.get("commonUserPassword", "")
+    commonUserID = request.POST.get("commonUserID", "")
     try:
-        CommonUser.object.filter(uID=int(cuID)).update(uPassword=cuPassword)
+        CommonUser.object.filter(commonUserID=int(commonUserID)).update(commonUserPassword=commonUserPassword)
         return redirect('loginModel:suChangePwd')
     except Exception as e:
         return HttpResponse("Fail")
 
+
 def suChangePwd(request):
-    return render(request,"View/suChangePwd.html")
+    return render(request, "View/suChangePwd.html")

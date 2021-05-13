@@ -8,10 +8,10 @@
 </head>
 <body>
 <h5>Welcome!</h5>
-{% if user.cuID %}
-    <p>userID:{{ user.cuID }}</p>
-    <p>userName:{{ user.cuName }}</p>
-    <p>userImage:<img src="{{ MEDIA_URL }}{{ user.cuImage }}"/></p>
+{% if user.commonUserID %}
+    <p>userID:{{ user.commonUserID }}</p>
+    <p>userName:{{ user.commonUserName }}</p>
+    <p>userImage:<img src="{{ MEDIA_URL }}{{ user.commonUserImage }}"/></p>
     {% if isAdmin %}
         <p>
             <a href="{% url 'USFP:adminInfor' %}">View profile</a>

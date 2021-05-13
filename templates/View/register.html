@@ -2,8 +2,8 @@
 <html lang="en">
 <script src="/static/jquery-3.4.1.min.js"></script>
 <script>
-    var adkey;
-    var cuKey;
+    var adminkey;
+    var commonUserKey;
     function sendHideCuCheck() {
         var emailAdd=document.getElementById('cuEmail').value
         $.ajax({
@@ -41,7 +41,7 @@
             url: "{%  url 'getadKey'%}",
             data: {csrfmiddlewaretoken: '{{ csrf_token }}'},
             success: function (response) {
-                adkey = response
+                adminkey = response
             }
         });
         var sendAdKeyButton = document.getElementById("sendAdKeyButton")
@@ -111,11 +111,11 @@
       enctype="multipart/form-data">
     {% csrf_token %}
     <p>
-        <label for="cuName">&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;Name:</label><input type="text" name="cuName" id="cuName"
+        <label for="commonUserName">&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;Name:</label><input type="text" name="commonUserName" id="commonUserName"
                                                                                   maxlength=20 required>
     </p>
     <p>
-        <label for="cuPassword">&emsp;&emsp;&emsp;&emsp;Password:</label><input type="password" name="cuPassword" id="cuPassword"
+        <label for="commonUserPassword">&emsp;&emsp;&emsp;&emsp;Password:</label><input type="password" name="commonUserPassword" id="commonUserPassword"
                                                                          maxlength=20 required>
     </p>
     <p>
@@ -123,7 +123,7 @@
                                                                 id="checkPassword" required>
     </p>
     <p>
-        <label for="cuEmail">&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;Email:</label><input type="email" id="cuEmail" name="cuEmail"
+        <label for="commonUserEmail">&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;Email:</label><input type="email" id="commonUserEmail" name="commonUserEmail"
                                                                                     oninput="showWantAdmin()" required>
     </p>
     <p>
@@ -131,8 +131,8 @@
                                                                     accept="image/*">
     </p>
     <p>
-        <label for="cuKey">Send a check-id key to the Email of the administrator and check it:</label>
-        <input type="text" id="cuKey" name="cuKey" required>
+        <label for="commonUserKey">Send a check-id key to the Email of the administrator and check it:</label>
+        <input type="text" id="commonUserKey" name="commonUserKey" required>
         <label id="sendCuKeyButton">
             <button onclick="sendHideCuCheck()">Click here to send!</button>
         </label>

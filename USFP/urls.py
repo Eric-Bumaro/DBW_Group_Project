@@ -13,9 +13,12 @@ urlpatterns = [
     url(r'^CommonUser/userChange/#changeType=(?P<changeType>.*)$', commonUser.userChange, name="userChangeInfor"),
     url(r'^CommonUser/userSuChange#changeType=(?P<changeType>.*)$', commonUser.userSuChange, name="userSuChange"),
     url(r'^Admin/adminInfor/$', myAdmin.adminInfor, name="adminInfor"),
-    url(r'^Admin/adminInfor/viewOperations/#areaOpNum=(?P<areaOpNum>\d*)&userOpNum=(?P<userOpNum>\d*)$', myAdmin.viewOperations, name="viewOperations"),
+    url(r'^Admin/adminInfor/viewOperations/#areaOperationNum=(?P<areaOperationNum>\d*)&userOperationNum=(?P<userOperationNum>\d*)$',
+        myAdmin.viewOperations, name="viewOperations"),
     url(r'^Admin/adminChangeInfor/#changeType=(?P<changeType>.*)$', myAdmin.adminChangeInfor, name="adminChangeInfor"),
     url(r'^Admin/adminSuChange/#changeType=(?P<changeType>.*)$', myAdmin.adminSuChange, name="adminSuChange"),
-    url(r'^Admin/adminInfor/adminViewArea/#num=(?P<num>\d*)&arID=(?P<arID>\d*)$', myAdmin.adminViewArea, name="adminViewArea"),
+    url(r'^Admin/adminInfor/adminViewArea/#num=(?P<num>\d*)&areaID=(?P<areaID>\d*)$', myAdmin.adminViewArea, name="adminViewArea"),
     url(r'^Admin/adminDeleteUser/$', myAdmin.adminDeleteUser,name="adminDeleteUser"),
+    url(r'^Admin/adminInfor/adminViewUser/#commonUserID=(?P<commonUserID>\d*)$',myAdmin.adminViewUser,name="adminViewUser"),
+    url(r'^Admin/adminInfor/adminUpdateUser/#commonUserID=(?P<commonUserID>\d*)$',myAdmin.adminUpdateUser,name="adminUpdateUser")
 ]

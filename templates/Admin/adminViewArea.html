@@ -60,7 +60,7 @@
     }
 </script>
 <body>
-<h1>For the area:{{ arName }}</h1>
+<h1>For the area:{{ areaName }}</h1>
 <button onclick="showChoose()" id="tochooseButton">Click to choose</button>
 <button onclick="allChoose()" class="ChooseFunction" style="display: none">Select all</button>
 <button onclick="toDelete()" class="ChooseFunction" style="display: none">Delete</button>
@@ -92,32 +92,32 @@
                 {{ forloop.counter }}
             </td>
             <td>
-                {{ i.cuID }}
+                {{ i.commonUserID }}
             </td>
             <td>
-                {{ i.cuName }}
+                {{ i.commonUserName }}
             </td>
             <td>
-                <img src="{{ MEDIA_URL }}{{ i.cuImage }}">
+                <img src="{{ MEDIA_URL }}{{ i.commonUserImage }}">
             </td>
             <td>
-                <a href="{% url 'USFD:adminViewUser' i.uID %}">View the user</a>
+                <a href="{% url 'USFD:adminViewUser' i.commonUserID %}">View the user</a>
             </td>
             <td class="ChooseFunction" style="display: none">
-                <input type="checkbox" name="uToDelete" class="ChooseFunction" value={{ i.uID }} onclick="onechoose(this)">
+                <input type="checkbox" name="uToDelete" class="ChooseFunction" value={{ i.commonUserID }} onclick="onechoose(this)">
             </td>
         </tr>
     {% endfor %}
 </table>
 <br>
 {% if prepageData.has_previous %}
-    <a href="{% url 'USFD:adminViewArea' prepageData.previous_page_number arID %}">Last Page</a>
+    <a href="{% url 'USFD:adminViewArea' prepageData.previous_page_number areaID %}">Last Page</a>
 {% endif %}&emsp;
 {% for n in  pageList %}
-    <a href="{% url 'USFD:adminViewArea' n arID %}">{{ n }}</a> &emsp;
+    <a href="{% url 'USFD:adminViewArea' n areaID %}">{{ n }}</a> &emsp;
 {% endfor %}
 {% if prepageData.has_next %}
-    <a href="{% url 'USFD:adminViewArea' prepageData.next_page_number arID %}">Next Page</a>
+    <a href="{% url 'USFD:adminViewArea' prepageData.next_page_number areaID %}">Next Page</a>
 {% endif %}&emsp;
 <br>
 <a href="{% url 'USFD:adminInfor' %}">Back</a>

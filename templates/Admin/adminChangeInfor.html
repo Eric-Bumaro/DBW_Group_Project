@@ -9,13 +9,13 @@
     var userKey;
 
     function sendHidePassword() {
-        var adID = "{{adID|safe}}"
+        var commonUserID = "{{commonUserID|safe}}"
         $.ajax({
             type: "POST",
             url: "/getUserKey/",
             data: {
                 csrfmiddlewaretoken: '{{ csrf_token }}',
-                cuID:adID,
+                cuID:commonUserID,
             },
             success: function (response) {
                 if (userKey == "1") {
@@ -73,8 +73,8 @@
     function check() {
         if ({{ changeType_js|safe }}=="Password")
         {
-            var pwOne = document.forms["adChaForm"]["Password"].value;
-            var pwTwo = document.forms["adChaForm"]["checkPassword"].value;
+            var pwOne = document.forms["adminChangeForm"]["Password"].value;
+            var pwTwo = document.forms["adminChangeForm"]["checkPassword"].value;
             if (pwOne != pwTwo) {
                 document.getElementById("errormsg").innerHTML = "Not the same password";
                 return false;
@@ -82,14 +82,14 @@
                 document.getElementById("errormsg").innerHTML = "The length of the password must be larger than three!";
                 return false;
             }
-            if (document.forms["adChaForm"]["userKey"].value != userKey) {
+            if (document.forms["adminChangeForm"]["userKey"].value != userKey) {
                 document.getElementById("errormsg").innerHTML = "Wrong check-key!";
                 return false;
             }
         }
         if ({{ changeType_js|safe }}=="Email")
         {
-            if (document.forms["adChaForm"]["userKey"].value != userKey) {
+            if (document.forms["adminChangeForm"]["userKey"].value != userKey) {
                 document.getElementById("errormsg").innerHTML = "Wrong check-key!";
                 return false;
             }
@@ -98,7 +98,7 @@
     }
 </script>
 <body>
-<form action="{% url 'USFP:adminChangeInfor' changeType_py %}" method="post" name="adChaForm"
+<form action="{% url 'USFP:adminChangeInfor' changeType_py %}" method="post" name="adminChangeForm"
       enctype="multipart/form-data" onsubmit="return check()">
     {% csrf_token %}
     {% ifequal changeType_py "Email" %}

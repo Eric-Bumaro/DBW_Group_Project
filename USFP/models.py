@@ -10,9 +10,9 @@ class ReDefinedManager(models.Manager):
 
 
 class Area(models.Model):
-    arID = models.AutoField(primary_key=True, )
-    arName = models.CharField(max_length=10, null=False, blank=False,unique=True)
-    arStart = models.DateTimeField(auto_created=True, null=False, blank=False)
+    areaID = models.AutoField(primary_key=True, )
+    areaName = models.CharField(max_length=10, null=False, blank=False,unique=True)
+    areaStart = models.DateTimeField(auto_created=True, null=False, blank=False)
     isDelete = models.BooleanField(null=False, blank=False, default=False)
     deleteDate = models.DateTimeField(blank=True, null=True)
     object = ReDefinedManager()
@@ -22,15 +22,15 @@ class Area(models.Model):
         db_table = 'Area'
 
     def __str__(self):
-        return u'Area:%s' % self.arName
+        return u'Area:%s' % self.areaName
 
 
 class CommonUser(models.Model):
-    cuID = models.AutoField(primary_key=True, )
-    cuName = models.CharField(max_length=20, null=False, blank=False)
-    cuEmail = models.EmailField(null=False)
-    cuImage = models.ImageField(upload_to="userImage", null=False, blank=False)
-    cuPassword = models.CharField(max_length=20, null=False, blank=False)
+    commonUserID = models.AutoField(primary_key=True, )
+    commonUserName = models.CharField(max_length=20, null=False, blank=False)
+    commonUserEmail = models.EmailField(null=False)
+    commonUserImage = models.ImageField(upload_to="userImage", null=False, blank=False)
+    commonUserPassword = models.CharField(max_length=20, null=False, blank=False)
     isDelete = models.BooleanField(blank=False, null=False, default=False)
     deleteDate = models.DateTimeField(blank=True, null=True)
     area = models.ForeignKey(Area, on_delete=models.CASCADE, on_update=models.CASCADE, null=False, blank=False,
@@ -42,25 +42,25 @@ class CommonUser(models.Model):
         db_table = 'CommonUser'
 
     def __str__(self):
-        return u'CommonUser:%s' % self.cuID
+        return u'CommonUser:%s' % self.commonUserID
 
 
 class VerifiedUser(models.Model):
     isAdmin = models.BooleanField(null=False, blank=False, default=False)
-    cu = models.OneToOneField(CommonUser, on_delete=models.CASCADE, on_update=models.CASCADE, null=False, blank=False,
+    commonUser = models.OneToOneField(CommonUser, on_delete=models.CASCADE, on_update=models.CASCADE, null=False, blank=False,
                               related_name="VerifiedUser",
                               primary_key=True)
-    area = models.ManyToManyField(Area, related_name="VerifiedUser")
+    adminArea = models.ManyToManyField(Area, related_name="VerifiedUser")
 
     class Meta:
         db_table = 'VerifiedUser'
 
     def __str__(self):
-        return u'VerifiedUser:%s' % self.cu.cuID
+        return u'VerifiedUser:%s' % self.commonUser.commonUserID
 
 
 class Suggestion(models.Model):
-    sID = models.AutoField(primary_key=True, )
+    suggesionID = models.AutoField(primary_key=True, )
     postTime = models.DateTimeField(auto_created=True, null=False, blank=False)
     modifyTime = models.DateTimeField(auto_now=True, null=False, blank=False)
     visible = models.BooleanField(blank=False, null=False, default=False)
@@ -72,51 +72,69 @@ class Suggestion(models.Model):
         db_table = 'Suggestion'
 
     def __str__(self):
-        return u'Suggestion:%s' % self.sID
+        return u'Suggestion:%s' % self.suggesionID
 
 
 class ReplySuggestion(models.Model):
-    rs = models.ForeignKey(Suggestion, primary_key=True, related_name="Self", on_delete=models.CASCADE,
+    replySuggestion = models.ForeignKey(Suggestion, primary_key=True, related_name="Self", on_delete=models.CASCADE,
                            on_update=models.CASCADE, )
-    s = models.ForeignKey(Suggestion, null=False, blank=False, related_name="ReplySuggestion", on_delete=models.CASCADE,
+    suggestion = models.ForeignKey(Suggestion, null=False, blank=False, related_name="ReplySuggestion", on_delete=models.CASCADE,
                           on_update=models.CASCADE, )
-    vf = models.ForeignKey(VerifiedUser, null=False, blank=False, related_name="ReplySuggestion",
+    verifiedUser = models.ForeignKey(VerifiedUser, null=False, blank=False, related_name="ReplySuggestion",
                            on_delete=models.CASCADE, on_update=models.CASCADE, )
 
     class Meta:
         db_table = 'ReplySuggestion'
 
     def __str__(self):
-        return u'ReplySuggestion:%s' % self.rs.sID
+        return u'ReplySuggestion:%s' % self.replySuggestion.suggesionID
 
 
 class UserOperation(models.Model):
-    uoID = models.AutoField(primary_key=True, )
-    user = models.ForeignKey(CommonUser, null=False, blank=False, related_name="UserOperation",
-                             on_delete=models.CASCADE, on_update=models.CASCADE, )
-    oType = models.CharField(max_length=10, choices=((1, 'delUser'), (2, 'upUser')))
-    oTakeDate = models.DateTimeField(auto_created=True, null=False, blank=False)
+    userOperationID = models.AutoField(primary_key=True, )
+    commonUser = models.ForeignKey(CommonUser, null=False, blank=False, related_name="UserOperation",
+                                   on_delete=models.CASCADE, on_update=models.CASCADE, )
+    operationType = models.CharField(max_length=10, choices=((1, 'delUser'), (2, 'upUser')))
+    operationTakeDate = models.DateTimeField(auto_created=True, null=False, blank=False)
     content = models.TextField(blank=False, null=False)
-    vu = models.ForeignKey(VerifiedUser, null=False, blank=False, on_delete=models.CASCADE, on_update=models.CASCADE, )
+    verifiedUser = models.ForeignKey(VerifiedUser, null=False, blank=False, on_delete=models.CASCADE, on_update=models.CASCADE, )
 
     class Meta:
-        db_table = 'ReplySuggestion'
+        db_table = 'UserOperation'
 
     def __str__(self):
-        return u'ReplySuggestion:%s' % self.uoID
+        return u'UserOperation:%s' % self.userOperationID
 
 
 class AreaOperation(models.Model):
-    aoID = models.AutoField(primary_key=True, )
-    area = models.ForeignKey(Area, null=False, blank=False, related_name="UserOperation", on_delete=models.CASCADE,
+    areaOperaionID = models.AutoField(primary_key=True, )
+    area = models.ForeignKey(Area, null=False, blank=False, related_name="AreaOperation", on_delete=models.CASCADE,
                              on_update=models.CASCADE, )
-    aoType = models.CharField(max_length=10, choices=((1, 'delArea'), (2, 'upArea')))
-    oTakeDate = models.DateTimeField(auto_created=True, null=False, blank=False)
+    opearionType = models.CharField(max_length=10, choices=((1, 'delArea'), (2, 'upArea')))
+    opearionTakeDate = models.DateTimeField(auto_created=True, null=False, blank=False)
     content = models.TextField(blank=False, null=False)
-    vu = models.ForeignKey(VerifiedUser, null=False, blank=False, on_delete=models.CASCADE, on_update=models.CASCADE, )
+    verifiedUser = models.ForeignKey(VerifiedUser, null=False, blank=False, on_delete=models.CASCADE,
+                                     on_update=models.CASCADE, )
 
     class Meta:
-        db_table = 'ReplySuggestion'
+        db_table = 'AreaOperation'
 
     def __str__(self):
-        return u'ReplySuggestion:%s' % self.aoID
+        return u'AreaOperation:%s' % self.areaOperaionID
+
+
+class SuggestionOperation(models.Model):
+    suggestionOperaionID = models.AutoField(primary_key=True, )
+    suggestion = models.ForeignKey(Suggestion, null=False, blank=False, related_name="SuggestionOperation", on_delete=models.CASCADE,
+                             on_update=models.CASCADE, )
+    opearionType = models.CharField(max_length=10, choices=((1, 'delSuggestion'), (2, 'upSuggestion')))
+    opearionTakeDate = models.DateTimeField(auto_created=True, null=False, blank=False)
+    content = models.TextField(blank=False, null=False)
+    verifiedUser = models.ForeignKey(VerifiedUser, null=False, blank=False, on_delete=models.CASCADE,
+                                     on_update=models.CASCADE, )
+
+    class Meta:
+        db_table = 'SuggestionOperation'
+
+    def __str__(self):
+        return u'SuggestionOperation:%s' % self.suggestionOperaionID

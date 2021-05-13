@@ -8,13 +8,13 @@
     var userKey;
 
     function sendHide() {
-        var cuID = document.getElementById("cuID").value
+        var commonUserID = document.getElementById("commonUserID").value
         $.ajax({
             type: "POST",
             url: "/getUserKey/",
             data: {
                 csrfmiddlewaretoken: '{{ csrf_token }}',
-                cuID: cuID
+                commonUserID: commonUserID
             },
             success: function (response) {
                 userKey = response
@@ -38,8 +38,8 @@
     }
 
     function check() {
-        var pwOne = document.forms["forPassForm"]["pwd"].value;
-        var pwTwo = document.forms["forPassForm"]["checkPwd"].value;
+        var pwOne = document.forms["forPassForm"]["commonUserPassword"].value;
+        var pwTwo = document.forms["forPassForm"]["checkPassword"].value;
         if (pwOne != pwTwo) {
             document.getElementById("errormsg").innerHTML = "Not the same password";
             return false;
@@ -58,16 +58,16 @@
 <form action="{% url 'loginModel:forgetpwd' %}" method="post" name="forPassForm" onsubmit="return check()">
     {% csrf_token %}
     <p>
-        <label class="tipText" for="uID">&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;ID:</label>
-        <input type="text" name="cuID" id="cuID"/>
+        <label class="tipText" for="commonUserID">&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;ID:</label>
+        <input type="text" name="commonUserID" id="commonUserID"/>
     </p>
 
     <p>
-        <label for="pwd">&emsp;&emsp;&emsp;&emsp;Password:</label><input type="password" name="cuPassword"
-                                                                         id="cuPassword" required>
+        <label for="pwd">&emsp;&emsp;&emsp;&emsp;Password:</label><input type="password" name="commonUserPassword"
+                                                                         id="commonUserPassword" required>
     </p>
     <p>
-        <label for="checkPwd"> Confirm Password:</label><input type="password" name="checkPwd" id="checkPwd"
+        <label for="checkPassword"> Confirm Password:</label><input type="password" name="checkPassword" id="checkPassword"
                                                                required>
     </p>
     <p>

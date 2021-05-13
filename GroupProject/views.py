@@ -12,20 +12,20 @@ def welcome(request, logout=0):
         request.session.clear()
         return render(request, 'View/welcome.html')
     try:
-        user = CommonUser.object.get(cuID=request.session['cuID'])
+        user = CommonUser.object.get(commonUserID=request.session['commonUserID'])
         try:
             if user.VerifiedUser.isAdmin:
                 return render(request, 'View/welcome.html', {'user': user,'isAdmin':True})
         except:
             return render(request, 'View/welcome.html', {'user': user, 'isAdmin': False})
     except KeyError as e:
-        return render(request, 'View/welcome.html',{'user.cuID':0})
+        return render(request, 'View/welcome.html',{'user.commonUserID':0})
 
 
 def getUserKey(request):
     try:
-        cuID=request.POST.get('cuID',"")
-        to_add = CommonUser.object.get(cuID=int(cuID)).cuEmail
+        commonUserID=request.POST.get('commonUserID',"")
+        to_add = CommonUser.object.get(commonUserID=int(commonUserID)).cuEmail
         key = sendEmail(to_add)
         return HttpResponse(key)
     except Exception as e:
