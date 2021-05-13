@@ -20,7 +20,7 @@
     function toDelete() {
         $.ajax({
             type: "POST",
-            url: "{% url 'USFD:adminDeleteUser' %}",
+            url: "{% url 'USFP:adminDeleteUser' %}",
             data: {
                 csrfmiddlewaretoken: '{{ csrf_token }}',
                 listToDelete:listToDelete,
@@ -101,7 +101,7 @@
                 <img src="{{ MEDIA_URL }}{{ i.commonUserImage }}">
             </td>
             <td>
-                <a href="{% url 'USFD:adminViewUser' i.commonUserID %}">View the user</a>
+                <a href="{% url 'USFP:adminViewUser' i.commonUserID %}">View the user</a>
             </td>
             <td class="ChooseFunction" style="display: none">
                 <input type="checkbox" name="uToDelete" class="ChooseFunction" value={{ i.commonUserID }} onclick="onechoose(this)">
@@ -111,15 +111,15 @@
 </table>
 <br>
 {% if prepageData.has_previous %}
-    <a href="{% url 'USFD:adminViewArea' prepageData.previous_page_number areaID %}">Last Page</a>
+    <a href="{% url 'USFP:adminViewArea' prepageData.previous_page_number areaID %}">Last Page</a>
 {% endif %}&emsp;
 {% for n in  pageList %}
-    <a href="{% url 'USFD:adminViewArea' n areaID %}">{{ n }}</a> &emsp;
+    <a href="{% url 'USFP:adminViewArea' n areaID %}">{{ n }}</a> &emsp;
 {% endfor %}
 {% if prepageData.has_next %}
-    <a href="{% url 'USFD:adminViewArea' prepageData.next_page_number areaID %}">Next Page</a>
+    <a href="{% url 'USFP:adminViewArea' prepageData.next_page_number areaID %}">Next Page</a>
 {% endif %}&emsp;
 <br>
-<a href="{% url 'USFD:adminInfor' %}">Back</a>
+<a href="{% url 'USFP:adminInfor' %}">Back</a>
 </body>
 </html>

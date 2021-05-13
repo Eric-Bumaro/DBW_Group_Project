@@ -44,6 +44,13 @@ class CommonUser(models.Model):
     def __str__(self):
         return u'CommonUser:%s' % self.commonUserID
 
+    def isVerified(self):
+        try:
+            self.VerifiedUser
+            return True
+        except:
+            return False
+
 
 class VerifiedUser(models.Model):
     isAdmin = models.BooleanField(null=False, blank=False, default=False)
@@ -78,6 +85,13 @@ class Suggestion(models.Model):
 
     def __str__(self):
         return u'Suggestion:%s' % self.suggesionID
+
+    def isReplied(self):
+        try:
+            self.ReplySuggestion
+            return True
+        except:
+            return False
 
 
 class ReplySuggestion(models.Model):

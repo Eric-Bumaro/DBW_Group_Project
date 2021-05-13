@@ -12,11 +12,10 @@ from USFP.models import *
 
 def userInfor(request):
     user = CommonUser.objects.get(commonUserID=request.session['commonUserID'])
-    try:
-        user.VerifiedUser
+    if user.isVerified():
         return render(request, "CommonUser/userInfor.html",
                       {"user": user, 'verified': 1})
-    except:
+    else:
         return render(request, "CommonUser/userInfor.html",
                       {"user": user, 'verified': 0})
 
@@ -35,18 +34,16 @@ def userChange(request, changeType):
     if (changeType == "EmailAdd"):
         newEmailAdd = request.POST.get("newEmailAdd", "")
         user.update(commonUseEmail=newEmailAdd)
-        try:
-            if newEmailAdd.endwith('@mail.uic.edu.cn'):
-                verified = user[0].VerifiedUser
-                if request.POST.get('wantToBeAdmin', '') == 'wantToBeAdmin':
-                    verified.isAdmin = True
-                    verified.save()
+        if newEmailAdd.endwith('@mail.uic.edu.cn') and not user.isVerified():
+            verified = user[0].VerifiedUser
+            if request.POST.get('wantToBeAdmin', '') == 'wantToBeAdmin':
+                verified.isAdmin = True
+                verified.save()
             else:
                 verified = user[0].VerifiedUser
                 verified.delete()
-        except:
-            if newEmailAdd.endwith('@mail.uic.edu.cn') and request.POST.get('wantToBeAdmin', '') == 'wantToBeAdmin':
-                VerifiedUser.objects.create(isAdmin=True, commonUser=user[0])
+        elif newEmailAdd.endwith('@mail.uic.edu.cn') and request.POST.get('wantToBeAdmin', '') == 'wantToBeAdmin':
+            VerifiedUser.objects.create(isAdmin=True, commonUser=user[0])
     if (changeType == "Image"):
         photo = request.FILES.get("photo", "")
         photoName = str(request.session['commonUserID']) + "." + photo.name.split(".")[1]
@@ -69,13 +66,12 @@ def userSuChange(request, changeType):
     return render(request, "CommonUser/userSuChange.html", {"changeType": changeType})
 
 
-def userViewSuggestion(request,num):
+def userViewSuggestion(request, num):
     try:
         user = CommonUser.objects.get(commonUserID=request.session['commonUserID'])
-        user.VerifiedUser
     except KeyError:
         return HttpResponseRedirect(reverse("welcome", args=(1,)))
-    suggestions=Suggestion.objects.get(commonUser=user,visible=False)
+    suggestions = user.Suggestion.filter(visible=False)
     if int(num) < 1:
         suggestionNum = 1
     else:

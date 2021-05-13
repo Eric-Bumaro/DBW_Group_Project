@@ -152,7 +152,8 @@ def adminDeleteUser(request):
 def viewOperations(request, areaOpNum, userOpNum):
     try:
         user = CommonUser.objects.get(commonUserID=request.session['commonUserID'])
-        user.VerifiedUser
+        if not user.isVerified():
+            return HttpResponseRedirect(reverse("welcome", args=(1,)))
     except KeyError:
         return HttpResponseRedirect(reverse("welcome", args=(1,)))
     areaOperations = AreaOperation.objects.filter(verifiedUser=user).order_by("-oTakeDate")
