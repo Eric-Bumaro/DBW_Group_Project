@@ -67,7 +67,7 @@ def register(request):
                                          area=Area.object.get(arID=random.randint(1, len(areaIDList) + 1)))
     if (commonUserEmail.endswith('@mail.uic.edu.cn')):
         if request.POST.get('wantToBeAdmin', '') == 'wantToBeAdmin':
-            VerifiedUser.objects.create( commonUser=user, isAdmin=True)
+            VerifiedUser.objects.create(commonUser=user, isAdmin=True)
         else:
             VerifiedUser.objects.create(commonUser=user, isAdmin=False)
     return HttpResponseRedirect(reverse('USFD:suRegister'))

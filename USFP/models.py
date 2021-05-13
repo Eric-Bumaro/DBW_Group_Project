@@ -11,7 +11,7 @@ class ReDefinedManager(models.Manager):
 
 class Area(models.Model):
     areaID = models.AutoField(primary_key=True, )
-    areaName = models.CharField(max_length=10, null=False, blank=False,unique=True)
+    areaName = models.CharField(max_length=10, null=False, blank=False, unique=True)
     areaStart = models.DateTimeField(auto_created=True, null=False, blank=False)
     isDelete = models.BooleanField(null=False, blank=False, default=False)
     deleteDate = models.DateTimeField(blank=True, null=True)
@@ -47,9 +47,10 @@ class CommonUser(models.Model):
 
 class VerifiedUser(models.Model):
     isAdmin = models.BooleanField(null=False, blank=False, default=False)
-    commonUser = models.OneToOneField(CommonUser, on_delete=models.CASCADE, on_update=models.CASCADE, null=False, blank=False,
-                              related_name="VerifiedUser",
-                              primary_key=True)
+    commonUser = models.OneToOneField(CommonUser, on_delete=models.CASCADE, on_update=models.CASCADE, null=False,
+                                      blank=False,
+                                      related_name="VerifiedUser",
+                                      primary_key=True)
     adminArea = models.ManyToManyField(Area, related_name="VerifiedUser")
 
     class Meta:
@@ -67,6 +68,10 @@ class Suggestion(models.Model):
     isDelete = models.BooleanField(null=False, blank=False, default=False)
     deleteDate = models.DateTimeField(blank=True, null=True)
     content = models.TextField(blank=False, null=False)
+    commonUser = models.ForeignKey(CommonUser, null=False, blank=False, related_name="Suggestion",
+                                     on_delete=models.CASCADE, on_update=models.CASCADE, )
+    object = ReDefinedManager()
+    objects = models.Manager()
 
     class Meta:
         db_table = 'Suggestion'
@@ -77,11 +82,9 @@ class Suggestion(models.Model):
 
 class ReplySuggestion(models.Model):
     replySuggestion = models.ForeignKey(Suggestion, primary_key=True, related_name="Self", on_delete=models.CASCADE,
-                           on_update=models.CASCADE, )
-    suggestion = models.ForeignKey(Suggestion, null=False, blank=False, related_name="ReplySuggestion", on_delete=models.CASCADE,
-                          on_update=models.CASCADE, )
-    verifiedUser = models.ForeignKey(VerifiedUser, null=False, blank=False, related_name="ReplySuggestion",
-                           on_delete=models.CASCADE, on_update=models.CASCADE, )
+                                        on_update=models.CASCADE, )
+    suggestion = models.ForeignKey(Suggestion, null=False, blank=False, related_name="ReplySuggestion",
+                                   on_delete=models.CASCADE,on_update=models.CASCADE, )
 
     class Meta:
         db_table = 'ReplySuggestion'
@@ -97,7 +100,8 @@ class UserOperation(models.Model):
     operationType = models.CharField(max_length=10, choices=((1, 'delUser'), (2, 'upUser')))
     operationTakeDate = models.DateTimeField(auto_created=True, null=False, blank=False)
     content = models.TextField(blank=False, null=False)
-    verifiedUser = models.ForeignKey(VerifiedUser, null=False, blank=False, on_delete=models.CASCADE, on_update=models.CASCADE, )
+    verifiedUser = models.ForeignKey(VerifiedUser, null=False, blank=False, on_delete=models.CASCADE,
+                                     on_update=models.CASCADE, )
 
     class Meta:
         db_table = 'UserOperation'
@@ -125,8 +129,8 @@ class AreaOperation(models.Model):
 
 class SuggestionOperation(models.Model):
     suggestionOperaionID = models.AutoField(primary_key=True, )
-    suggestion = models.ForeignKey(Suggestion, null=False, blank=False, related_name="SuggestionOperation", on_delete=models.CASCADE,
-                             on_update=models.CASCADE, )
+    suggestion = models.ForeignKey(Suggestion, null=False, blank=False, related_name="SuggestionOperation",
+                                   on_delete=models.CASCADE,on_update=models.CASCADE, )
     opearionType = models.CharField(max_length=10, choices=((1, 'delSuggestion'), (2, 'upSuggestion')))
     opearionTakeDate = models.DateTimeField(auto_created=True, null=False, blank=False)
     content = models.TextField(blank=False, null=False)
