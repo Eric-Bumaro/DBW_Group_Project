@@ -36,7 +36,7 @@
     <tr>
         <td>Image</td>
         <td><img src="/media/{{ admin.commonUserImage }}"/></td>
-        <td><a href="{% url 'USFG:adminChangeInfor' 'Image' %}">Click here to change!</a></td>
+        <td><a href="{% url 'USFP:adminChangeInfor' 'Image' %}">Click here to change!</a></td>
     </tr>
 </table>
 You can view the area you administrate here:
@@ -76,7 +76,7 @@ You can view the area you administrate here:
     <button onclick="cancelChange()" class="ChangeFunction" style="display: none">Cancel</button>
 </form>
 <br>
-<a href="{% url 'USFP:viewOperations' 1 1%}">Operation History</a>
+<a href="{% url 'USFP:adminViewOperations' 1 1%}">Operation History</a>
 {% ifequal admin.commonUserID 1 %}
     <button onclick="toRefreshDB()">Refresh The Database</button>
 {% endifequal %}
@@ -153,7 +153,7 @@ You can view the area you administrate here:
             + "<label for='deleteArea" + areaIDs[i].areaID + "' style='display: none' class='ChangeFunction'>Click to  delete the area</label>"
             + "<input type='radio' name='updataAreaName" + areaIDs[i].areaID + "' class='ChangeFunction'  onclick='updataAreaName(this)' style='display: none' value='1' id='updataAreaName" + areaIDs[i].areaID + "'/>"
             + "<label for='updataAreaName" + areaIDs[i].areaID + "' style='display: none' class='ChangeFunction'>Click to  change the area's name</label>"
-            + "<input maxlength='20' style='display: none' name='newAreaName" + areaIDs[i].areaID + "' id='newAreaName" + areaIDs[i].areaID + "'/>"
+            + "<input maxlength='20' style='display: none' "+"class='ChangeFunction'"+"name='newAreaName" + areaIDs[i].areaID + "' id='newAreaName" + areaIDs[i].areaID + "'/>"
         i++;
     }
     function toRefreshDB() {

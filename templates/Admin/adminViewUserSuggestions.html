@@ -105,7 +105,6 @@
 <body>
 <h1>You can view your suggestions here:</h1>
 <button onclick="showChoose()" id="tochooseButton">Click to choose</button>
-<button onclick="allChoose()" class="ChooseFunction" style="display: none">Select all</button>
 <button onclick="toDelete()" class="ChooseFunction" style="display: none">Delete</button>
 <button onclick="cancelDelete()" class="ChooseFunction" style="display: none">Cancel</button>
 <table border="1" cellspacing="0">
@@ -138,7 +137,7 @@
                 {{ forloop.counter }}
             </td>
             <td>
-                {{ i.suggesionID }}
+                {{ i.suggestionID }}
             </td>
             <td>
                 {{ i.postTime }}
@@ -150,7 +149,7 @@
                 {{ i.visible }}
             </td>
             <td>
-                <a href="{% url 'USFP:adminViewOneSuggestion' i.suggesionID %}">View the suggestion</a>
+                <a href="{% url 'USFP:adminViewOneSuggestion' i.suggestionID %}">View the suggestion</a>
             </td>
             <td class="ChooseFunction" style="display: none">
                 {% if i.visible %}

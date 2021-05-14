@@ -11,7 +11,7 @@
 {% if user.commonUserID %}
     <p>userID:{{ user.commonUserID }}</p>
     <p>userName:{{ user.commonUserName }}</p>
-    <p>userImage:<img src="{{ MEDIA_URL }}{{ user.commonUserImage }}"/></p>
+    <p>userImage:<img src="/media/{{ user.commonUserImage }}"/></p>
     {% if isAdmin %}
         <p>
             <a href="{% url 'USFP:adminInfor' %}">View profile</a>

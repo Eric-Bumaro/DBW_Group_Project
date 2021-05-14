@@ -98,7 +98,7 @@
                 {{ i.commonUserName }}
             </td>
             <td>
-                <img src="{{ MEDIA_URL }}{{ i.commonUserImage }}">
+                <img src="/media/{{ i.commonUserImage }}">
             </td>
             <td>
                 <a href="{% url 'USFP:adminViewUser' i.commonUserID %}">View the user</a>

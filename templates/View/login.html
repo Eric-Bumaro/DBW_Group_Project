@@ -7,7 +7,7 @@
 </head>
 <script src="/static/jquery-3.4.1.min.js"></script>
 <body>
-<form action="{% url 'loginModel:login' 0 %}" method="post">
+<form action="{% url 'USFP:login' 0 %}" method="post">
     {% csrf_token %}
     <p>
         <label class="tipText" for="userID">ID:</label><br><input type="text"
@@ -29,7 +29,7 @@
     </p>
     <p>
         <label>&emsp;&emsp;&emsp;</label><input type="submit" value="Login"/>
-        &emsp;<a href="{% url 'USFD:forgetPassword' %}">Forget password</a>
+        &emsp;<a href="{% url 'USFP:forgetPassword' %}">Forget password</a>
     </p>
     <br>
     <a href="/welcome/">Back to the Welcome Page</a>

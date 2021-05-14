@@ -25,7 +25,7 @@ def welcome(request, logout=0):
 def getUserKey(request):
     try:
         commonUserID=request.POST.get('commonUserID',"")
-        to_add = CommonUser.object.get(commonUserID=int(commonUserID)).cuEmail
+        to_add = CommonUser.object.get(commonUserID=int(commonUserID)).commonUserEmail
         key = sendEmail(to_add)
         return HttpResponse(key)
     except Exception as e:

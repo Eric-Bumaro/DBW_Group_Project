@@ -33,24 +33,24 @@ def userChange(request, changeType):
     user = CommonUser.object.filter(commonUserID=request.session['commonUserID'])
     if changeType == "EmailAdd":
         newEmailAdd = request.POST.get("newEmailAdd", "")
-        user.update(commonUseEmail=newEmailAdd)
-        if newEmailAdd.endwith('@mail.uic.edu.cn') and not user.isVerified():
+        user.update(commonUserEmail=newEmailAdd)
+        if newEmailAdd.endswith('@mail.uic.edu.cn') and user[0].isVerified():
             verified = user[0].VerifiedUser
             if request.POST.get('wantToBeAdmin', '') == 'wantToBeAdmin':
                 verified.isAdmin = True
                 verified.save()
+        elif newEmailAdd.endswith('@mail.uic.edu.cn'):
+            if request.POST.get('wantToBeAdmin', '') == 'wantToBeAdmin':
+                VerifiedUser.objects.create(isAdmin=True, commonUser=user[0])
             else:
-                verified = user[0].VerifiedUser
-                verified.delete()
-        elif newEmailAdd.endwith('@mail.uic.edu.cn') and request.POST.get('wantToBeAdmin', '') == 'wantToBeAdmin':
-            VerifiedUser.objects.create(isAdmin=True, commonUser=user[0])
+                VerifiedUser.objects.create(commonUser=user[0])
     if changeType == "Image":
         photo = request.FILES.get("photo", "")
         photoName = str(request.session['commonUserID']) + "." + photo.name.split(".")[1]
         photo_resize = Image.open(photo)
         photo_resize.thumbnail((371, 475), Image.ANTIALIAS)
-        if os.path.isfile(os.path.join(".", ".", os.getcwd(), "media", str(user[0].uImage))):
-            os.remove(os.path.join(".", ".", os.getcwd(), "media", str(user[0].uImage)))
+        if os.path.isfile(os.path.join(".", ".", os.getcwd(), "media", str(user[0].commonUserImage))):
+            os.remove(os.path.join(".", ".", os.getcwd(), "media", str(user[0].commonUserImage)))
         photo_resize.save(os.path.join(".", ".", os.getcwd(), "media", "userImage", photoName))
         user.update(commonUserImage="userImage/" + photoName)
     if changeType == "Name":
@@ -59,7 +59,7 @@ def userChange(request, changeType):
     if changeType == "Password":
         newPassword = request.POST.get("password", "")
         user.update(commonUserPassword=newPassword)
-    return HttpResponseRedirect(reverse("loginModel:userSuChange", args=(changeType,)))
+    return HttpResponseRedirect(reverse("USFP:userSuChange", args=(changeType,)))
 
 
 def userSuChange(request, changeType):

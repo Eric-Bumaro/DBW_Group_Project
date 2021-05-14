@@ -4,8 +4,8 @@
 <script>
     var adminkey;
     var commonUserKey;
-    function sendHideCuCheck() {
-        var emailAdd=document.getElementById('cuEmail').value
+    function sendHideCommonUserCheck() {
+        var emailAdd=document.getElementById('commonUserEmail').value
         $.ajax({
             type: "POST",
             url: "{%  url 'sendCheckKey'%}",
@@ -35,7 +35,7 @@
         }
     }
 
-    function sendHideAdCheck() {
+    function sendHideAdminCheck() {
         $.ajax({
             type: "POST",
             url: "{%  url 'getadKey'%}",
@@ -78,7 +78,7 @@
     }
 
     function showWantAdmin(){
-        if(document.getElementById('cuEmail').value.endsWith('@mail.uic.edu.cn')){
+        if(document.getElementById('commonUserEmail').value.endsWith('@mail.uic.edu.cn')){
             document.getElementById('chooseToBeAdmin').style.display='block'
         }else{
             document.getElementById('chooseToBeAdmin').style.display='None'
@@ -107,7 +107,7 @@
     <link rel="stylesheet" type="text/css" href="/static/View/register.css">
 </head>
 <body>
-<form action="/loginModel/register/" method="post" name="registForm" onsubmit="return check()"
+<form action="/USFP/register/" method="post" name="registForm" onsubmit="return check()"
       enctype="multipart/form-data">
     {% csrf_token %}
     <p>
@@ -125,16 +125,18 @@
     <p>
         <label for="commonUserEmail">&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;Email:</label><input type="email" id="commonUserEmail" name="commonUserEmail"
                                                                                     oninput="showWantAdmin()" required>
+                <br>
+        (If it is an uic email address, you will be seen as verified!)
     </p>
     <p>
         <label for="photo">&emsp;&emsp;Profile Photo:</label><input type="file" name="photo" id="photo"
                                                                     accept="image/*">
     </p>
     <p>
-        <label for="commonUserKey">Send a check-id key to the Email of the administrator and check it:</label>
+        <label for="commonUserKey">Send a check-id key to your Email address and check it:</label>
         <input type="text" id="commonUserKey" name="commonUserKey" required>
         <label id="sendCuKeyButton">
-            <button onclick="sendHideCuCheck()">Click here to send!</button>
+            <button onclick="sendHideCommonUserCheck()">Click here to send!</button>
         </label>
     </p>
     <p id="chooseToBeAdmin" style="display: none">
@@ -145,7 +147,7 @@
         <label for="adminKey">Send a check-id key to the Email of the administrator and check it:</label>
         <input type="text" id="adminKey" name="adminKey">
         <label id="sendAdKeyButton">
-            <button onclick="sendHideAdCheck()">Click here to send!</button>
+            <button onclick="sendHideAdminCheck()">Click here to send!</button>
         </label>
     </p>
     <p>

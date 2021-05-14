@@ -55,7 +55,7 @@
     }
 </script>
 <body>
-<form action="{% url 'loginModel:forgetpwd' %}" method="post" name="forPassForm" onsubmit="return check()">
+<form action="{% url 'USFP:forgetPassword' %}" method="post" name="forPassForm" onsubmit="return check()">
     {% csrf_token %}
     <p>
         <label class="tipText" for="commonUserID">&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;ID:</label>

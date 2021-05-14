@@ -18,7 +18,7 @@
             url: "/getUserKey/",
             data: {
                 csrfmiddlewaretoken: '{{ csrf_token }}',
-                cuID: cuID,
+                commonUserID: commonUserID,
             },
             success: function (response) {
                 userKey = response
@@ -159,7 +159,7 @@
       enctype="multipart/form-data" onsubmit="return check()">
     {% csrf_token %}
     {% ifequal changeType_py "EmailAdd" %}
-        <h3>If you input input your uic mail, you will be verified.</h3>
+        <h3>If you input your uic email address, you will be verified.</h3>
         <br>
         <h3>Otherwise,you will not be verified.</h3>
         <br>

@@ -16,24 +16,24 @@ def adminInfor(request):
         admin = CommonUser.objects.get(commonUserID=request.session["commonUserID"])
     except KeyError:
         return HttpResponseRedirect(reverse("welcome", args=(1,)))
-    adminArea = admin.adminArea.filter(isDelete=False)
+    adminArea = admin.VerifiedUser.adminArea.filter(isDelete=False)
     if request.method == "GET":
         return render(request, "Admin/adminInfor.html",
-                      {"admin": admin, "areaSet": adminArea, "areaIDs_js": json.dumps(list(adminArea.values("arID")))})
+                      {"admin": admin, "areaSet": adminArea, "areaIDs_js": json.dumps(list(adminArea.values("areaID")))})
     else:
         for i in adminArea:
             try:
                 if request.POST.get("deleteArea" + str(i.areaID), "0") == "1":
                     i.isDelete = True
                     i.deleteDate = datetime.now()
-                    operation = AreaOperation(verifiedUser=admin, area=i, opearionType="delArea",
+                    operation = AreaOperation(verifiedUser=admin.VerifiedUser, area=i, operationType="delArea",
                                               content="Delete the area")
                     operation.save()
                     i.save()
                 if request.POST.get("updataAreaName" + str(i.areaID), "0") == "1":
                     originalName = i.areaName
                     i.arName = request.POST.get("newAreaName" + str(i.arID))
-                    operation = AreaOperation(verifiedUser=admin, ar=i, opearionType="upArea", area=i,
+                    operation = AreaOperation(verifiedUser=admin.VerifiedUser, ar=i, operationType="upArea", area=i,
                                               content="Origin Name:" + originalName + " " + "New Name:" + request.POST.get(
                                                   "newAreaName" + str(i.arID)))
                     operation.save()
@@ -70,8 +70,8 @@ def adminChangeInfor(request, changeType):
         photoName = str(request.session['commonUserID']) + "." + photo.name.split(".")[1]
         photo_resize = Image.open(photo)
         photo_resize.thumbnail((371, 475), Image.ANTIALIAS)
-        if os.path.isfile(os.path.join(".", ".", os.getcwd(), "media", str(admin.uImage))):
-            os.remove(os.path.join(".", ".", os.getcwd(), "media", str(admin.uImage)))
+        if os.path.isfile(os.path.join(".", ".", os.getcwd(), "media", str(admin.commonUserImage))):
+            os.remove(os.path.join(".", ".", os.getcwd(), "media", str(admin.commonUserImage)))
         photo_resize.save(os.path.join(".", ".", os.getcwd(), "media", "userImage", photoName))
         admin.commonUserImage = "userImage/" + photoName
     admin.save()
@@ -127,45 +127,47 @@ def adminDeleteUsers(request):
         except KeyError:
             return HttpResponseRedirect(reverse("welcome", args=(1,)))
         listToDelete = request.POST.get("listToDelete")
+        print(listToDelete)
         admin = CommonUser.objects.get(commonUserID=commonUserID)
         deleteList = listToDelete.split("-")
         deleteList = [i for i in deleteList if len(i) != 0]
         try:
             for i in deleteList:
                 userToDelete = CommonUser.object.get(commonUserID=int(i))
-                if userToDelete.isManagedBy(admin):
+                if not userToDelete.isManagedBy(admin):
                     return HttpResponse("Fail")
                 userToDelete.isDelete = True
                 userToDelete.deleteDate = datetime.now()
                 userToDelete.save()
-                UserOperation.objects.create(commonUser=userToDelete, operationType='delUser',
-                                             content="Delete the user", verifiedUser=admin)
+                CommonUserOperation.objects.create(commonUser=userToDelete, operationType='delUser',
+                                             content="Delete the user", verifiedUser=admin.VerifiedUser)
         except Exception as e:
             print(e)
             return HttpResponse("Fail")
         return HttpResponse("Success")
-    except:
+    except Exception as e:
+        print(e)
         return HttpResponse("Fail")
 
 
-def adminViewOperations(request, areaOpNum, userOpNum):
+def adminViewOperations(request, areaOperationNum, userOperationNum):
     try:
         user = CommonUser.objects.get(commonUserID=request.session['commonUserID'])
         if not user.isVerified():
             return HttpResponseRedirect(reverse("welcome", args=(1,)))
     except KeyError:
         return HttpResponseRedirect(reverse("welcome", args=(1,)))
-    areaOperations = user.VerifiedUser.AreaOperation.order_by("-oTakeDate")
-    if int(areaOpNum) < 1:
-        areaOpNum = 1
+    areaOperations = user.VerifiedUser.AreaOperation.order_by("-operationTakeDate")
+    if int(areaOperationNum) < 1:
+        areaOperationNum = 1
     else:
-        areaOpNum = int(areaOpNum)
+        areaOperationNum = int(areaOperationNum)
     areaPager = Paginator(areaOperations, 10)
     try:
-        areaPrepageData = areaPager.page(areaOpNum)
+        areaPrepageData = areaPager.page(areaOperationNum)
     except EmptyPage:
         areaPrepageData = areaPager.page(areaPager.num_pages)
-    begin = (areaOpNum - int(math.ceil(10.0 / 2)))
+    begin = (areaOperationNum - int(math.ceil(10.0 / 2)))
     if begin < 1:
         begin = 1
     end = begin + 4
@@ -176,17 +178,17 @@ def adminViewOperations(request, areaOpNum, userOpNum):
     else:
         begin = end - 4
     areaPageList = range(begin, end + 1)
-    userOperations = user.VerifiedUser.UserOperation.order_by("-oTakeDate")
-    if int(userOpNum) < 1:
-        userOpNum = 1
+    userOperations = user.VerifiedUser.UserOperation.order_by("-operationTakeDate")
+    if int(userOperationNum) < 1:
+        userOperationNum = 1
     else:
-        userOpNum = int(userOpNum)
+        userOperationNum = int(userOperationNum)
     userPager = Paginator(userOperations, 10)
     try:
-        userPrepageData = userPager.page(userOpNum)
+        userPrepageData = userPager.page(userOperationNum)
     except EmptyPage:
         userPrepageData = userPager.page(userPager.num_pages)
-    begin = (userOpNum - int(math.ceil(10.0 / 2)))
+    begin = (userOperationNum - int(math.ceil(10.0 / 2)))
     if begin < 1:
         begin = 1
     end = begin + 4
@@ -198,8 +200,8 @@ def adminViewOperations(request, areaOpNum, userOpNum):
         begin = end - 4
     userPageList = range(begin, end + 1)
     return render(request, "Admin/adminViewOperations.html",
-                  {"areaCurPage": areaOpNum, 'areaPrepageData': areaPrepageData, "areaPageList": areaPageList,
-                   "userCurPage": userOpNum, "userPrepageData": userPrepageData, "userPageList": userPageList},
+                  {"areaCurPage": areaOperationNum, 'areaPrepageData': areaPrepageData, "areaPageList": areaPageList,
+                   "userCurPage": userOperationNum, "userPrepageData": userPrepageData, "userPageList": userPageList},
                   )
 
 
@@ -232,12 +234,12 @@ def adminUpdateUser(request, commonUserID):
                 if os.path.exists(os.path.join(".", ".", os.getcwd(), "media", "userImage", str(commonUser.cuImage))):
                     os.remove(os.path.join(".", ".", os.getcwd(), "media", "userImage", str(commonUser.cuImage)))
             commonUser.commonUserImage = None
-            UserOperation.objects.create(verifiedUser=admin, operationType='upUser', commonUser=CommonUser,
+            CommonUserOperation.objects.create(verifiedUser=admin.VerifiedUser, operationType='upUser', commonUser=CommonUser,
                                          content="Delete photo")
         if request.POST.get("changeArea", "0") == "1":
             originalName = commonUser.area.areaName
             commonUser.area = Area.objects.get(arName=request.POST.get("newArName"))
-            UserOperation.objects.create(verifiedUser=admin, operationType='upUser', commonUser=CommonUser,
+            CommonUserOperation.objects.create(verifiedUser=admin.VerifiedUser, operationType='upUser', commonUser=CommonUser,
                                          content="Original area:" + originalName + " New area:" + request.POST.get(
                                              "newArName"))
         commonUser.save()

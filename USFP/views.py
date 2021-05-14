@@ -58,19 +58,18 @@ def register(request):
         photo_resize.thumbnail((371, 475), Image.ANTIALIAS)
         photo_resize.save(photoLocation)
         user = CommonUser.objects.create(commonUserName=commonUserName, commonUserPassword=commonUserPassword,
-                                         commonUserEmail=commonUserEmail, cuImage="userImage/" +
-                                                                                  photoName,
+                                         commonUserEmail=commonUserEmail, commonUserImage="userImage/"+photoName,
                                          area=Area.object.get(arID=random.randint(1, len(areaIDList) + 1)))
     except Exception as e:
         user = CommonUser.objects.create(commonUserName=commonUserName, commonUserPassword=commonUserPassword,
                                          commonUserEmail=commonUserEmail,
-                                         area=Area.object.get(arID=random.randint(1, len(areaIDList) + 1)))
+                                         area=Area.object.get(areaID=random.randint(0, len(areaIDList) + 1)))
     if commonUserEmail.endswith('@mail.uic.edu.cn'):
         if request.POST.get('wantToBeAdmin', '') == 'wantToBeAdmin':
             VerifiedUser.objects.create(commonUser=user, isAdmin=True)
         else:
             VerifiedUser.objects.create(commonUser=user, isAdmin=False)
-    return HttpResponseRedirect(reverse('USFD:suRegister'))
+    return HttpResponseRedirect(reverse('USFP:suRegister'))
 
 
 def suRegister(request):
@@ -84,7 +83,7 @@ def forgetPassword(request):
     commonUserID = request.POST.get("commonUserID", "")
     try:
         CommonUser.object.filter(commonUserID=int(commonUserID)).update(commonUserPassword=commonUserPassword)
-        return redirect('loginModel:suChangePwd')
+        return redirect('USFP:suChangePwd')
     except Exception as e:
         return HttpResponse("Fail")
 

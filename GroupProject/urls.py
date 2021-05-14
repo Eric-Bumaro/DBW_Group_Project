@@ -27,7 +27,7 @@ urlpatterns = [
     url(r'^welcome/#logout=(?P<logout>[1])$', views.welcome, name='welcome'),
     url(r'^USFP/', include(('USFP.urls', 'USFP'))),
     path('getAdKey/', views.getAdKey, name='getadKey'),
-    url(r'^getUserKey/', views.getUserKey, name='getUserKey'),
+    path('getUserKey/', views.getUserKey, name='getUserKey'),
     url(r'^sendCheckKey/', views.sendCheckKey, name='sendCheckKey'),
     path('refreshDB/', views.refreshDB, name='refreshDB'),
     url(r'^media/(?P<path>.*)', serve, {'document_root': MEDIA_ROOT}),
