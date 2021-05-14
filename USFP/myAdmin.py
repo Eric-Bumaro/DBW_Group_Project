@@ -244,3 +244,33 @@ def adminUpdateUser(request, commonUserID):
     except Exception as e:
         print(e)
     return HttpResponseRedirect(reverse("USFP:adminViewUser", args=(commonUserID,)))
+
+
+def adminViewUserSuggestions(request,commonUserID,num):
+    admin=CommonUser.objects.get(commonUserID=request.session['commonUserID'])
+    user=CommonUser.objects.get(commonUserID=commonUserID)
+    if not user.isManagedBy(admin):
+        return HttpResponseRedirect(reverse("welcome", args=(1,)))
+    suggestions = [i for i in user.Suggestion.filter(isDelete=False)]
+    if int(num) < 1:
+        num = 1
+    else:
+        num = int(num)
+    pager = Paginator(suggestions, 10)
+    try:
+        prepageData = pager.page(num)
+    except EmptyPage:
+        prepageData = pager.page(pager.num_pages)
+    begin = (num - int(math.ceil(10.0 / 2)))
+    if begin < 1:
+        begin = 1
+    end = begin + 4
+    if end > pager.num_pages:
+        end = pager.num_pages
+    if end <= 5:
+        begin = 1
+    else:
+        begin = end - 4
+    pagelist = range(begin, end + 1)
+    return render(request, "Admin/adminViewUserSuggestions.html",
+                  {"pager": pager, 'prepageData': prepageData, "pageList": pagelist,"commonUserID":commonUserID})

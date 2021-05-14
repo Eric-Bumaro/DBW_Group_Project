@@ -28,5 +28,7 @@ urlpatterns = [
     url(r'^Admin/adminInfor/adminViewUser/#commonUserID=(?P<commonUserID>\d*)$', myAdmin.adminViewUser,
         name="adminViewUser"),
     url(r'^Admin/adminInfor/adminUpdateUser/#commonUserID=(?P<commonUserID>\d*)$', myAdmin.adminUpdateUser,
-        name="adminUpdateUser")
+        name="adminUpdateUser"),
+    url(r'^Admin/adminInfor/adminViewUserSuggestions/#commonUserID=(?P<commonUserID>\d*)&num=(?P<num>\d*)$',
+        myAdmin.adminViewUserSuggestions,name="adminViewUserSuggestions")
 ]
