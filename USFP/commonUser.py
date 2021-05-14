@@ -31,7 +31,7 @@ def userChange(request, changeType):
                           {"changeType_js": json.dumps(changeType), "changeType_py": changeType})
 
     user = CommonUser.object.filter(commonUserID=request.session['commonUserID'])
-    if (changeType == "EmailAdd"):
+    if changeType == "EmailAdd":
         newEmailAdd = request.POST.get("newEmailAdd", "")
         user.update(commonUseEmail=newEmailAdd)
         if newEmailAdd.endwith('@mail.uic.edu.cn') and not user.isVerified():
@@ -44,7 +44,7 @@ def userChange(request, changeType):
                 verified.delete()
         elif newEmailAdd.endwith('@mail.uic.edu.cn') and request.POST.get('wantToBeAdmin', '') == 'wantToBeAdmin':
             VerifiedUser.objects.create(isAdmin=True, commonUser=user[0])
-    if (changeType == "Image"):
+    if changeType == "Image":
         photo = request.FILES.get("photo", "")
         photoName = str(request.session['commonUserID']) + "." + photo.name.split(".")[1]
         photo_resize = Image.open(photo)
@@ -53,10 +53,10 @@ def userChange(request, changeType):
             os.remove(os.path.join(".", ".", os.getcwd(), "media", str(user[0].uImage)))
         photo_resize.save(os.path.join(".", ".", os.getcwd(), "media", "userImage", photoName))
         user.update(commonUserImage="userImage/" + photoName)
-    if (changeType == "Name"):
+    if changeType == "Name":
         newName = request.POST.get("newName", "")
         user.update(commonUserName=newName)
-    if (changeType == "Password"):
+    if changeType == "Password":
         newPassword = request.POST.get("password", "")
         user.update(commonUserPassword=newPassword)
     return HttpResponseRedirect(reverse("loginModel:userSuChange", args=(changeType,)))
@@ -66,12 +66,12 @@ def userSuChange(request, changeType):
     return render(request, "CommonUser/userSuChange.html", {"changeType": changeType})
 
 
-def userViewSuggestion(request, num):
+def userViewSuggestions(request, num):
     try:
         user = CommonUser.objects.get(commonUserID=request.session['commonUserID'])
     except KeyError:
         return HttpResponseRedirect(reverse("welcome", args=(1,)))
-    suggestions = user.Suggestion.filter(visible=False)
+    suggestions = user.Suggestion.filter(visible=False,isDelete=False)
     if int(num) < 1:
         suggestionNum = 1
     else:
@@ -92,5 +92,28 @@ def userViewSuggestion(request, num):
     else:
         begin = end - 4
     suggestionPageList = range(begin, end + 1)
-    return render(request, "CommonUser/userViewSuggestion.html",
-                  {"pager": suggestionPager, 'prepageData': suggestionPrepageData, "pageList": suggestionPageList})
+
+    return render(request, "CommonUser/userViewSuggestions.html",
+                  {"suggestionPager": suggestionPager, 'suggestionPrepageData': suggestionPrepageData,
+                   "suggestionPageList": suggestionPageList})
+
+
+def userDeleteSuggestions(request):
+    if request.method=='GET':
+        return HttpResponse('Fail')
+    listToDelete = request.POST.get("listToDelete")
+    deleteList = listToDelete.split("-")
+    deleteList = [i for i in deleteList if len(i) != 0]
+    try:
+        for i in deleteList:
+            suggestionToDelete = Suggestion.object.get(suggestionID=int(i))
+            suggestionToDelete.visible=False
+            suggestionToDelete.save()
+    except Exception as e:
+        print(e)
+        return HttpResponse("Fail")
+    return HttpResponse("Success")
+
+
+def userViewOneSuggestion(request,suggestionID):
+    return None

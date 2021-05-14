@@ -20,7 +20,7 @@
     function toDelete() {
         $.ajax({
             type: "POST",
-            url: "{% url 'USFP:adminDeleteUser' %}",
+            url: "{% url 'USFP:adminDeleteUsers' %}",
             data: {
                 csrfmiddlewaretoken: '{{ csrf_token }}',
                 listToDelete:listToDelete,

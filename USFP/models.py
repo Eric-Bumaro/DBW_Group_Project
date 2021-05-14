@@ -51,6 +51,11 @@ class CommonUser(models.Model):
         except:
             return False
 
+    def isManagedBy(self,admin):
+        if self.area in admin.VerifiedUser.adminArea.all():
+            return True
+        return False
+
 
 class VerifiedUser(models.Model):
     isAdmin = models.BooleanField(null=False, blank=False, default=False)
@@ -109,13 +114,13 @@ class ReplySuggestion(models.Model):
 
 class UserOperation(models.Model):
     userOperationID = models.AutoField(primary_key=True, )
-    commonUser = models.ForeignKey(CommonUser, null=False, blank=False, related_name="UserOperation",
+    commonUser = models.ForeignKey(CommonUser, null=False, blank=False,
                                    on_delete=models.CASCADE, on_update=models.CASCADE, )
     operationType = models.CharField(max_length=10, choices=((1, 'delUser'), (2, 'upUser')))
     operationTakeDate = models.DateTimeField(auto_created=True, null=False, blank=False)
     content = models.TextField(blank=False, null=False)
     verifiedUser = models.ForeignKey(VerifiedUser, null=False, blank=False, on_delete=models.CASCADE,
-                                     on_update=models.CASCADE, )
+                                     related_name="UserOperation",on_update=models.CASCADE, )
 
     class Meta:
         db_table = 'UserOperation'
@@ -126,13 +131,13 @@ class UserOperation(models.Model):
 
 class AreaOperation(models.Model):
     areaOperaionID = models.AutoField(primary_key=True, )
-    area = models.ForeignKey(Area, null=False, blank=False, related_name="AreaOperation", on_delete=models.CASCADE,
+    area = models.ForeignKey(Area, null=False, blank=False,on_delete=models.CASCADE,
                              on_update=models.CASCADE, )
     opearionType = models.CharField(max_length=10, choices=((1, 'delArea'), (2, 'upArea')))
     opearionTakeDate = models.DateTimeField(auto_created=True, null=False, blank=False)
     content = models.TextField(blank=False, null=False)
     verifiedUser = models.ForeignKey(VerifiedUser, null=False, blank=False, on_delete=models.CASCADE,
-                                     on_update=models.CASCADE, )
+                                     related_name="AreaOperation",on_update=models.CASCADE, )
 
     class Meta:
         db_table = 'AreaOperation'
@@ -143,13 +148,13 @@ class AreaOperation(models.Model):
 
 class SuggestionOperation(models.Model):
     suggestionOperaionID = models.AutoField(primary_key=True, )
-    suggestion = models.ForeignKey(Suggestion, null=False, blank=False, related_name="SuggestionOperation",
+    suggestion = models.ForeignKey(Suggestion, null=False, blank=False,
                                    on_delete=models.CASCADE,on_update=models.CASCADE, )
     opearionType = models.CharField(max_length=10, choices=((1, 'delSuggestion'), (2, 'upSuggestion')))
     opearionTakeDate = models.DateTimeField(auto_created=True, null=False, blank=False)
     content = models.TextField(blank=False, null=False)
     verifiedUser = models.ForeignKey(VerifiedUser, null=False, blank=False, on_delete=models.CASCADE,
-                                     on_update=models.CASCADE, )
+                                     related_name="SuggestionOperation",on_update=models.CASCADE, )
 
     class Meta:
         db_table = 'SuggestionOperation'

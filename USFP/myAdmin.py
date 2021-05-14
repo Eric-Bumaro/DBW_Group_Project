@@ -88,16 +88,13 @@ def adminSuChange(request, changeType):
 
 def adminViewArea(request, num, areaID):
     try:
-        CommonUser.object.get(commonUserID=request.session["commonUserID"]).VerifiedUser
+        admin = CommonUser.object.get(commonUserID=request.session["commonUserID"]).VerifiedUser
     except KeyError:
         return HttpResponseRedirect(reverse("welcome", args=(1,)))
     area = Area.object.get(areaID=areaID)
-    users = []
-    for i in area.CommonUser.filter(isDelete=False):
-        try:
-            VerifiedUser.objects.get(commonUser=i)
-        except:
-            users.append(i)
+    if area not in admin.adminArea.all():
+        return HttpResponseRedirect(reverse("welcome", args=(1,)))
+    users = [i for i in area.CommonUser.filter(isDelete=False) if not i.isVerified()]
     if int(num) < 1:
         num = 1
     else:
@@ -123,24 +120,26 @@ def adminViewArea(request, num, areaID):
                    "areaName": area.areaName})
 
 
-def adminDeleteUser(request):
+def adminDeleteUsers(request):
     try:
         try:
             commonUserID = request.session['commonUserID']
         except KeyError:
             return HttpResponseRedirect(reverse("welcome", args=(1,)))
         listToDelete = request.POST.get("listToDelete")
+        admin = CommonUser.objects.get(commonUserID=commonUserID)
         deleteList = listToDelete.split("-")
         deleteList = [i for i in deleteList if len(i) != 0]
         try:
             for i in deleteList:
                 userToDelete = CommonUser.object.get(commonUserID=int(i))
+                if userToDelete.isManagedBy(admin):
+                    return HttpResponse("Fail")
                 userToDelete.isDelete = True
                 userToDelete.deleteDate = datetime.now()
                 userToDelete.save()
                 UserOperation.objects.create(commonUser=userToDelete, operationType='delUser',
-                                             content="Delete the user",
-                                             verifiedUser=CommonUser.objects.get(commonUserID=commonUserID))
+                                             content="Delete the user", verifiedUser=admin)
         except Exception as e:
             print(e)
             return HttpResponse("Fail")
@@ -156,7 +155,7 @@ def viewOperations(request, areaOpNum, userOpNum):
             return HttpResponseRedirect(reverse("welcome", args=(1,)))
     except KeyError:
         return HttpResponseRedirect(reverse("welcome", args=(1,)))
-    areaOperations = AreaOperation.objects.filter(verifiedUser=user).order_by("-oTakeDate")
+    areaOperations = user.VerifiedUser.AreaOperation.order_by("-oTakeDate")
     if int(areaOpNum) < 1:
         areaOpNum = 1
     else:
@@ -177,7 +176,7 @@ def viewOperations(request, areaOpNum, userOpNum):
     else:
         begin = end - 4
     areaPageList = range(begin, end + 1)
-    userOperations = UserOperation.objects.filter(verifiedUser=user).order_by("-oTakeDate")
+    userOperations = user.VerifiedUser.UserOperation.order_by("-oTakeDate")
     if int(userOpNum) < 1:
         userOpNum = 1
     else:
@@ -206,22 +205,15 @@ def viewOperations(request, areaOpNum, userOpNum):
 
 def adminViewUser(request, commonUserID):
     try:
-        adminID = request.session["commonUserID"]
+        admin = CommonUser.object.get(commonUserID=request.session["commonUserID"])
     except KeyError:
         return HttpResponseRedirect(reverse("welcome", args=(1,)))
     user = CommonUser.objects.get(commonUserID=commonUserID)
-    areaNames = CommonUser.object.get(commonUserID=adminID).VerifiedUser.adminArea.filter(isDelete=False).values_list(
-        'arName')
-    areaNameList = []
-    for i in areaNames:
-        areaNameList.append(i[0])
-    try:
-        user.VerifiedUser
+    if user.isManagedBy(admin):
+        areaNames = admin.VerifiedUser.adminArea.filter(isDelete=False).values_list('arName')
         return render(request, "Admin/adminViewUser.html",
-                      {"user": user, "areaNameList": list(areaNameList), "isVerified": True})
-    except:
-        return render(request, "Admin/adminViewUser.html", {"user": user, "areaNameList": list(areaNameList),
-                                                            "isVerified": False})
+                      {"user": user, "areaNameList": list(areaNames), "isVerified": user.isVerified()})
+    return HttpResponseRedirect(reverse("welcome", args=(1,)))
 
 
 def adminUpdateUser(request, commonUserID):
@@ -230,8 +222,10 @@ def adminUpdateUser(request, commonUserID):
     except KeyError:
         return HttpResponseRedirect(reverse("welcome", args=(1,)))
     if (request.method == "GET"):
-        return HttpResponseRedirect(reverse("USFP:adminInfor"))
+        return HttpResponseRedirect(reverse("welcome", args=(1,)))
     commonUser = CommonUser.objects.get(commonUserID=commonUserID)
+    if not commonUser.isManagedBy(admin):
+        return HttpResponseRedirect(reverse("welcome", args=(1,)))
     try:
         if request.POST.get("deletePhoto", "0") == "1":
             if len(str(commonUser.commonUserImage)) != 0:

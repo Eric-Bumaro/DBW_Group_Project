@@ -26,7 +26,7 @@ def login(request, error):
     remind = request.POST.get("cookie", "")
     commonUserID = int(request.POST.get("commonUserID", "1"))
     result = CommonUser.object.filter(commonUserID=commonUserID, commonUserPassword=commonUserPassword)
-    if (len(result) == 0):
+    if len(result) == 0:
         response = HttpResponseRedirect(reverse('USFP:login', args=(1,)))
         response.delete_cookie("login")
         return response
@@ -65,7 +65,7 @@ def register(request):
         user = CommonUser.objects.create(commonUserName=commonUserName, commonUserPassword=commonUserPassword,
                                          commonUserEmail=commonUserEmail,
                                          area=Area.object.get(arID=random.randint(1, len(areaIDList) + 1)))
-    if (commonUserEmail.endswith('@mail.uic.edu.cn')):
+    if commonUserEmail.endswith('@mail.uic.edu.cn'):
         if request.POST.get('wantToBeAdmin', '') == 'wantToBeAdmin':
             VerifiedUser.objects.create(commonUser=user, isAdmin=True)
         else:

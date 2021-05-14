@@ -61,7 +61,7 @@
 <button onclick="showChange()" id="toChangeButton">Click here if you want to make changes</button>
 <h1>For this user:</h1>
 <br>
-<form action={% url 'USFP:adminUpdateUser' user.cuID %} method="post" onsubmit="return checked()">
+<form action={% url 'USFP:adminUpdateUser' user.commonUserID %} method="post" onsubmit="return checked()">
     {% csrf_token %}
     <table border="1" cellspacing="0">
         <tr>
@@ -118,6 +118,7 @@
     <input type="submit" class="ChangeFun" style="display: none" value="Click here to submit"/>
     <button onclick="cancelChange()" class="ChangeFun" style="display: none">Cancel</button>
 </form>
+<a href="{% url 'USFP:adminViewUserSuggestions' user.commonUserID%}">To view the suggestions of the user</a>
 <a href="{% url 'USFP:adminViewArea' 1 user.area.areaID %}">To view the area</a>
 <a href="{% url 'USFP:adminInfor' %}">Back to your information.</a>
 </body>

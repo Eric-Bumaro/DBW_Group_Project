@@ -91,10 +91,10 @@ You can view the area you administrate here:
     function showChange() {
         var unitList = document.getElementsByClassName("ChooseUnit");
         var nodeList = document.getElementsByClassName("ChangeFunction");
-        for (var j = 0; j < unitList.length; j++) {
+        for (let j = 0; j < unitList.length; j++) {
             unitList[j].style.display = "block";
         }
-        for (var j = 0; j < nodeList.length; j++) {
+        for (let j = 0; j < nodeList.length; j++) {
             nodeList[j].style.display = "block";
         }
         document.getElementById("toChangeButton").style.display = "none"
@@ -104,10 +104,10 @@ You can view the area you administrate here:
     function cancelChange() {
         var unitList = document.getElementsByClassName("ChooseUnit");
         var nodeList = document.getElementsByClassName("ChangeFunction");
-        for (var j = 0; j < nodeList.length; j++) {
+        for (let j = 0; j < nodeList.length; j++) {
             nodeList[j].style.display = "none";
         }
-        for (var j = 0; i < unitList.length; j++) {
+        for (let j = 0; i < unitList.length; j++) {
             unitList[j].style.display = "none";
         }
         document.getElementById("toChangeButton").style.display = "block"
@@ -148,7 +148,7 @@ You can view the area you administrate here:
 
     var areaIDs ={{areaIDs_js|safe}};
     var unitList = document.getElementsByClassName("ChooseUnit");
-    for (var j = 0; j < unitList.length; j++) {
+    for (let j = 0; j < unitList.length; j++) {
         unitList[j].innerHTML = "<input type='radio' name='deleteArea" + areaIDs[i].areaID + "'class='ChangeFunction'  onclick='deleteArea(this)' style='display: none' value='1' id='deleteArea" + areaIDs[i].areaID + "'/>"
             + "<label for='deleteArea" + areaIDs[i].areaID + "' style='display: none' class='ChangeFunction'>Click to  delete the area</label>"
             + "<input type='radio' name='updataAreaName" + areaIDs[i].areaID + "' class='ChangeFunction'  onclick='updataAreaName(this)' style='display: none' value='1' id='updataAreaName" + areaIDs[i].areaID + "'/>"
