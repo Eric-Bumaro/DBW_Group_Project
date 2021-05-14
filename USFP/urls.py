@@ -18,8 +18,8 @@ urlpatterns = [
     url(r'^CommonUser/userViewOneSuggestion/#suggesionID=(?P<suggesionID>.*)$', commonUser.userViewOneSuggestion,
         name="userViewOneSuggestion"),
     url(r'^Admin/adminInfor/$', myAdmin.adminInfor, name="adminInfor"),
-    url(r'^Admin/adminInfor/viewOperations/#areaOperationNum=(?P<areaOperationNum>\d*)&userOperationNum=('
-        r'?P<userOperationNum>\d*)$', myAdmin.viewOperations, name="viewOperations"),
+    url(r'^Admin/adminInfor/adminViewOperations/#areaOperationNum=(?P<areaOperationNum>\d*)&userOperationNum=('
+        r'?P<userOperationNum>\d*)$', myAdmin.adminViewOperations, name="viewOperations"),
     url(r'^Admin/adminChangeInfor/#changeType=(?P<changeType>.*)$', myAdmin.adminChangeInfor, name="adminChangeInfor"),
     url(r'^Admin/adminSuChange/#changeType=(?P<changeType>.*)$', myAdmin.adminSuChange, name="adminSuChange"),
     url(r'^Admin/adminInfor/adminViewArea/#num=(?P<num>\d*)&areaID=(?P<areaID>\d*)$', myAdmin.adminViewArea,

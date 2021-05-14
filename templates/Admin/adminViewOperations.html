@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>View your operations</title>
-    <link rel="stylesheet" type="text/css" href="/static/Admin/viewOperations.css">
+    <link rel="stylesheet" type="text/css" href="/static/Admin/adminViewOperations.css">
 </head>
 <body>
 <h1>Your Area Operation history:</h1>
@@ -47,13 +47,13 @@
 </table>
 <br>
 {% if areaPrepageData.has_previous %}
-    <a href="{% url 'USFP:viewOperations' areaPrepageData.previous_page_number userOpNum%}">Last Page</a>
+    <a href="{% url 'USFP:adminViewOperations' areaPrepageData.previous_page_number userOpNum%}">Last Page</a>
 {% endif %}&emsp;
 {% for n in  areaPageList %}
-    <a href="{% url 'USFP:viewOperations' n userOpNum%}">{{ n }}</a> &emsp;
+    <a href="{% url 'USFP:adminViewOperations' n userOpNum%}">{{ n }}</a> &emsp;
 {% endfor %}
 {% if areaPrepageData.has_next %}
-    <a href="{% url 'USFP:viewOperations' areaPrepageData.next_page_number userOpNum%}">Next Page</a>
+    <a href="{% url 'USFP:adminViewOperations' areaPrepageData.next_page_number userOpNum%}">Next Page</a>
 {% endif %}&emsp;
 <br>
 <h1>Your User Operation history:</h1>
@@ -97,13 +97,13 @@
 </table>
 <br>
 {% if userPrepageData.has_previous %}
-    <a href="{% url 'USFP:viewOperations' areaOpNum userPrepageData.previous_page_number %}">Last Page</a>
+    <a href="{% url 'USFP:adminViewOperations' areaOpNum userPrepageData.previous_page_number %}">Last Page</a>
 {% endif %}&emsp;
 {% for n in  userPageList %}
-    <a href="{% url 'USFP:viewOperations' areaOpNum n %}">{{ n }}</a> &emsp;
+    <a href="{% url 'USFP:adminViewOperations' areaOpNum n %}">{{ n }}</a> &emsp;
 {% endfor %}
 {% if userPrepageData.has_next %}
-    <a href="{% url 'USFP:viewOperations' areaOpNum userPrepageData.next_page_number %}">Next Page</a>
+    <a href="{% url 'USFP:adminViewOperations' areaOpNum userPrepageData.next_page_number %}">Next Page</a>
 {% endif %}&emsp;
 <br>
 <a href="{% url 'USFP:adminInfor' %}">Back to your personal inforamtion</a>

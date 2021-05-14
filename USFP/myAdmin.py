@@ -148,7 +148,7 @@ def adminDeleteUsers(request):
         return HttpResponse("Fail")
 
 
-def viewOperations(request, areaOpNum, userOpNum):
+def adminViewOperations(request, areaOpNum, userOpNum):
     try:
         user = CommonUser.objects.get(commonUserID=request.session['commonUserID'])
         if not user.isVerified():
@@ -197,7 +197,7 @@ def viewOperations(request, areaOpNum, userOpNum):
     else:
         begin = end - 4
     userPageList = range(begin, end + 1)
-    return render(request, "Admin/viewOperations.html",
+    return render(request, "Admin/adminViewOperations.html",
                   {"areaCurPage": areaOpNum, 'areaPrepageData': areaPrepageData, "areaPageList": areaPageList,
                    "userCurPage": userOpNum, "userPrepageData": userPrepageData, "userPageList": userPageList},
                   )
