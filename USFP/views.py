@@ -24,7 +24,7 @@ def login(request, error):
             return render(request, "View/login.html", {"error": json.dumps(error)})
     commonUserPassword = request.POST.get("commonUserPassword", "")
     remind = request.POST.get("cookie", "")
-    commonUserID = int(request.POST.get("commonUserID", "1"))
+    commonUserID = int(request.POST.get("commonUserID", ""))
     result = CommonUser.object.filter(commonUserID=commonUserID, commonUserPassword=commonUserPassword)
     if len(result) == 0:
         response = HttpResponseRedirect(reverse('USFP:login', args=(1,)))

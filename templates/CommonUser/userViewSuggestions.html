@@ -82,13 +82,13 @@
             To choose
         </th>
     </tr>
-    {% for i in prepageData %}
+    {% for i in suggestionPrepageData %}
         <tr>
             <td>
                 {{ forloop.counter }}
             </td>
             <td>
-                {{ i.suggesionID }}
+                {{ i.suggestionID }}
             </td>
             <td>
                 {{ i.postTime }}
@@ -97,20 +97,20 @@
                 <a href="{% url 'USFP:userViewOneSuggestion' i.suggesionID %}">View the suggestion</a>
             </td>
             <td class="ChooseFunction" style="display: none">
-                <input type="checkbox" name="uToDelete" class="ChooseFunction" value={{ i.commonUserID }} onclick="onechoose(this)">
+                <input type="checkbox" name="uToDelete" class="ChooseFunction" value={{ i.suggestionID }} onclick="onechoose(this)">
             </td>
         </tr>
     {% endfor %}
 </table>
 <br>
-{% if prepageData.has_previous %}
-    <a href="{% url 'USFP:userViewSuggestions' prepageData.previous_page_number  %}">Last Page</a>
+{% if suggestionPrepageData.has_previous %}
+    <a href="{% url 'USFP:userViewSuggestions' suggestionPrepageData.previous_page_number  %}">Last Page</a>
 {% endif %}&emsp;
-{% for n in  pageList %}
+{% for n in  suggestionPageList %}
     <a href="{% url 'USFP:userViewSuggestions' n  %}">{{ n }}</a> &emsp;
 {% endfor %}
-{% if prepageData.has_next %}
-    <a href="{% url 'USFP:userViewSuggestions' prepageData.next_page_number  %}">Next Page</a>
+{% if suggestionPrepageData.has_next %}
+    <a href="{% url 'USFP:userViewSuggestions' suggestionPrepageData.next_page_number  %}">Next Page</a>
 {% endif %}&emsp;
 <br>
 <a href="{% url 'USFP:userInfor' %}">Back</a>

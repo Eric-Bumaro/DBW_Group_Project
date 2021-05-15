@@ -71,7 +71,7 @@ def userViewSuggestions(request, num):
         user = CommonUser.objects.get(commonUserID=request.session['commonUserID'])
     except KeyError:
         return HttpResponseRedirect(reverse("welcome", args=(1,)))
-    suggestions = user.Suggestion.filter(visible=False, isDelete=False)
+    suggestions = user.Suggestion.filter(visible=True)
     if int(num) < 1:
         suggestionNum = 1
     else:
