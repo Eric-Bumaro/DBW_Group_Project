@@ -32,10 +32,10 @@ def adminInfor(request):
                     i.save()
                 if request.POST.get("updataAreaName" + str(i.areaID), "0") == "1":
                     originalName = i.areaName
-                    i.arName = request.POST.get("newAreaName" + str(i.arID))
-                    operation = AreaOperation(verifiedUser=admin.VerifiedUser, ar=i, operationType="upArea", area=i,
+                    i.areaName = request.POST.get("newAreaName" + str(i.areaID))
+                    operation = AreaOperation(verifiedUser=admin.VerifiedUser, operationType="upArea", area=i,
                                               content="Origin Name:" + originalName + " " + "New Name:" + request.POST.get(
-                                                  "newAreaName" + str(i.arID)))
+                                                  "newAreaName" + str(i.areaID)))
                     operation.save()
                     i.save()
             except Exception as e:
@@ -127,7 +127,6 @@ def adminDeleteUsers(request):
         except KeyError:
             return HttpResponseRedirect(reverse("welcome", args=(1,)))
         listToDelete = request.POST.get("listToDelete")
-        print(listToDelete)
         admin = CommonUser.objects.get(commonUserID=commonUserID)
         deleteList = listToDelete.split("-")
         deleteList = [i for i in deleteList if len(i) != 0]
@@ -223,7 +222,7 @@ def adminUpdateUser(request, commonUserID):
         admin = CommonUser.objects.get(commonUserID=request.session['commonUserID'])
     except KeyError:
         return HttpResponseRedirect(reverse("welcome", args=(1,)))
-    if (request.method == "GET"):
+    if request.method == "GET":
         return HttpResponseRedirect(reverse("welcome", args=(1,)))
     commonUser = CommonUser.objects.get(commonUserID=commonUserID)
     if not commonUser.isManagedBy(admin):
