@@ -26,14 +26,14 @@ def adminInfor(request):
                 if request.POST.get("deleteArea" + str(i.areaID), "0") == "1":
                     i.isDelete = True
                     i.deleteDate = datetime.now()
-                    operation = AreaOperation(verifiedUser=admin.VerifiedUser, area=i, operationType="delArea",
+                    operation = AreaOperation(verifiedUser=admin.VerifiedUser, area=i, operationType="deleteArea",
                                               content="Delete the area")
                     operation.save()
                     i.save()
                 if request.POST.get("updataAreaName" + str(i.areaID), "0") == "1":
                     originalName = i.areaName
                     i.areaName = request.POST.get("newAreaName" + str(i.areaID))
-                    operation = AreaOperation(verifiedUser=admin.VerifiedUser, operationType="upArea", area=i,
+                    operation = AreaOperation(verifiedUser=admin.VerifiedUser, operationType="updateArea", area=i,
                                               content="Origin Name:" + originalName + " " + "New Name:" + request.POST.get(
                                                   "newAreaName" + str(i.areaID)))
                     operation.save()
@@ -138,7 +138,7 @@ def adminDeleteUsers(request):
                 userToDelete.isDelete = True
                 userToDelete.deleteDate = datetime.now()
                 userToDelete.save()
-                CommonUserOperation.objects.create(commonUser=userToDelete, operationType='delUser',
+                CommonUserOperation.objects.create(commonUser=userToDelete, operationType='deleteUser',
                                              content="Delete the user", verifiedUser=admin.VerifiedUser)
         except Exception as e:
             print(e)
@@ -233,14 +233,14 @@ def adminUpdateUser(request, commonUserID):
                 if os.path.exists(os.path.join(".", ".", os.getcwd(), "media", "userImage", str(commonUser.cuImage))):
                     os.remove(os.path.join(".", ".", os.getcwd(), "media", "userImage", str(commonUser.cuImage)))
             commonUser.commonUserImage = None
-            CommonUserOperation.objects.create(verifiedUser=admin.VerifiedUser, operationType='upUser', commonUser=CommonUser,
+            CommonUserOperation.objects.create(verifiedUser=admin.VerifiedUser, operationType='updateUser', commonUser=CommonUser,
                                          content="Delete photo")
         if request.POST.get("changeArea", "0") == "1":
             originalName = commonUser.area.areaName
             commonUser.area = Area.objects.get(arName=request.POST.get("newArName"))
-            CommonUserOperation.objects.create(verifiedUser=admin.VerifiedUser, operationType='upUser', commonUser=CommonUser,
-                                         content="Original area:" + originalName + " New area:" + request.POST.get(
-                                             "newArName"))
+            CommonUserOperation.objects.create(verifiedUser=admin.VerifiedUser, operationType='updateUser',
+                                               commonUser=CommonUser,
+                                               content="Original area:" + originalName + " New area:" + request.POST.get("newArName"))
         commonUser.save()
     except Exception as e:
         print(e)
@@ -275,3 +275,41 @@ def adminViewUserSuggestions(request,commonUserID,num):
     pagelist = range(begin, end + 1)
     return render(request, "Admin/adminViewUserSuggestions.html",
                   {"pager": pager, 'prepageData': prepageData, "pageList": pagelist,"commonUserID":commonUserID})
+
+
+def adminOperateSuggestions(request):
+    try:
+        operateType=request.POST.get("operateType")
+        admin=CommonUser.object.get(commonUserID=request.session['commonUserID'])
+        if not admin.isVerified():
+            return HttpResponse("Fail")
+        if operateType=="delete":
+            listToDelete=request.POST.get("listToDelete").split("-")
+            listToDelete=[i for i in listToDelete if len(i)!=0]
+            for i in listToDelete:
+                suggestion=Suggestion.objects.get(suggestionID=int(i))
+                suggestion.isDelete=True
+                suggestion.deleteDate=datetime.now()
+                suggestion.save()
+                SuggestionOperation.objects.create(suggestion=suggestion,operationType='deleteSuggestion')
+        elif operateType=="hide":
+            listToHide=request.POST.get("listToHide")
+            listToHide=[i for i in listToHide if len(i)!=0]
+            for i in listToHide:
+                suggestion=Suggestion.objects.get(suggestionID=int(i))
+                suggestion.visible=False
+                suggestion.save()
+                SuggestionOperation.objects.create(suggestion=suggestion,operationType='hideSuggestion')
+        elif operateType=="show":
+            listToShow=request.POST.get("listToShow")
+            listToShow=[i for i in listToShow if len(i)!=0]
+            for i in listToShow:
+                suggestion=Suggestion.objects.get(suggestionID=int(i))
+                suggestion.visible=True
+                suggestion.save()
+                SuggestionOperation.objects.create(suggestion=suggestion,operationType='showSuggestion')
+        else:
+            return HttpResponse("Fail")
+    except Exception as e:
+        print(e)
+        return HttpResponse("Fail")

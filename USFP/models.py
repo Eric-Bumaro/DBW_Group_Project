@@ -126,7 +126,7 @@ class CommonUserOperation(models.Model):
     commonUserOperationID = models.AutoField(primary_key=True, )
     commonUser = models.ForeignKey(CommonUser, null=False, blank=False,
                                    on_delete=models.CASCADE, )
-    operationType = models.CharField(max_length=10, choices=((1, 'delUser'), (2, 'upUser')))
+    operationType = models.CharField(max_length=10, choices=((1, 'deleteUser'), (2, 'updateUser')))
     operationTakeDate = models.DateTimeField(auto_now_add=True, null=False, blank=False)
     content = models.TextField(blank=False, null=False)
     verifiedUser = models.ForeignKey(VerifiedUser, null=False, blank=False, on_delete=models.CASCADE,
@@ -142,7 +142,7 @@ class CommonUserOperation(models.Model):
 class AreaOperation(models.Model):
     areaOperationID = models.AutoField(primary_key=True, )
     area = models.ForeignKey(Area, null=False, blank=False, on_delete=models.CASCADE, )
-    operationType = models.CharField(max_length=10, choices=((1, 'delArea'), (2, 'upArea')))
+    operationType = models.CharField(max_length=10, choices=((1, 'deleteArea'), (2, 'updateArea')))
     operationTakeDate = models.DateTimeField(auto_now_add=True, null=False, blank=False)
     content = models.TextField(blank=False, null=False)
     verifiedUser = models.ForeignKey(VerifiedUser, null=False, blank=False, on_delete=models.CASCADE,
@@ -158,7 +158,8 @@ class AreaOperation(models.Model):
 class SuggestionOperation(models.Model):
     suggestionOperationID = models.AutoField(primary_key=True, )
     suggestion = models.ForeignKey(Suggestion, null=False, blank=False, on_delete=models.CASCADE, )
-    operationType = models.CharField(max_length=10, choices=((1, 'delSuggestion'), (2, 'upSuggestion')))
+    operationType = models.CharField(max_length=10,
+                                     choices=((1, 'deleteSuggestion'), (2, 'hideSuggestion'), (3, 'showSuggestion')))
     operationTakeDate = models.DateTimeField(auto_now_add=True, null=False, blank=False)
     content = models.TextField(blank=False, null=False)
     verifiedUser = models.ForeignKey(VerifiedUser, null=False, blank=False, on_delete=models.CASCADE,

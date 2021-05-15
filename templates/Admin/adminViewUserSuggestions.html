@@ -9,36 +9,49 @@
 <script src="/static/jquery-3.4.1.min.js"></script>
 <script>
     var nodeList = document.getElementsByClassName("ChooseFunction");
+    var nodeToDeleteList=document.getElementsByClassName("ChooseToDeleteFunction");
+    var nodeToShowList=document.getElementsByClassName("ChooseToShowFunction");
+    var nodeToHideList=document.getElementsByClassName("ChooseToHideFunction");
     var listToDelete = "";
     var listToHide="";
     var listToShow="";
     function showChoose() {
-        for (var i = 0; i < nodeList.length; i++) {
+        for (let i = 0; i < nodeList.length; i++) {
             nodeList[i].style.display = "block";
         }
         document.getElementById("toChooseButton").style.display = "none";
     }
 
-    function toDelete() {
+    function toOperate() {
         $.ajax({
             type: "POST",
-            url: "{% url 'USFP:adminDeleteSuggestions' %}",
+            url: "{% url 'USFP:adminOperateSuggestions' %}",
             data: {
                 csrfmiddlewaretoken: '{{ csrf_token }}',
                 listToDelete:listToDelete,
+                operateType:"delete",
             },
             success: function (response) {
-                window.location.reload();
             }
         });
-    }
-    function toHide() {
         $.ajax({
             type: "POST",
-            url: "{% url 'USFP:adminHideSuggestions' %}",
+            url: "{% url 'USFP:adminOperateSuggestions' %}",
             data: {
                 csrfmiddlewaretoken: '{{ csrf_token }}',
                 listToHide:listToHide,
+                operateType:"hide",
+            },
+            success: function (response) {
+            }
+        });
+        $.ajax({
+            type: "POST",
+            url: "{% url 'USFP:adminOperateSuggestions' %}",
+            data: {
+                csrfmiddlewaretoken: '{{ csrf_token }}',
+                listToShow:listToShow,
+                operateType:"show",
             },
             success: function (response) {
                 window.location.reload();
@@ -46,31 +59,51 @@
         });
     }
 
-    function cancelDelete() {
-        for (var i = 0; i < nodeList.length; i++) {
+    function cancel() {
+        listToDelete = "";
+        listToHide="";
+        listToShow="";
+        for (let i = 0; i < nodeList.length; i++) {
             nodeList[i].style.display = "none";
-            nodeList[i].checked = false;
-            listToDelete = "";
+        }
+        for (let i = 0; i < nodeToHideList.length; i++) {
+            nodeToHideList[i].style.display = "none";
+        }
+        for (let i = 0; i < nodeToShowList.length; i++) {
+            nodeToShowList[i].style.display = "none";
+        }
+        for (let i = 0; i < nodeToDeleteList.length; i++) {
+            nodeToDeleteList[i].style.display = "none";
         }
         document.getElementById("toChooseButton").style.display = "block";
     }
 
     function allChooseToDelete() {
         listToDelete = "";
-        for (var i = 0; i < nodeList.length; i++) {
-            nodeList[i].checked = true;
-            if (nodeList[i].value !== undefined && !isNaN(nodeList[i].value)) {
-                listToDelete += nodeList[i].value+"-";
+        for (let i = 0; i < nodeToDeleteList.length; i++) {
+            nodeToDeleteList[i].checked = true;
+            if (nodeToDeleteList[i].value !== undefined && !isNaN(nodeToDeleteList[i].value)) {
+                listToDelete += nodeToDeleteList[i].value+"-";
             }
         }
     }
 
     function allChooseToHide() {
-        listToDelete = "";
-        for (var i = 0; i < nodeList.length; i++) {
-            nodeList[i].checked = true;
-            if (nodeList[i].value !== undefined && !isNaN(nodeList[i].value)) {
-                listToHide += nodeList[i].value+"-";
+        listToHide = "";
+        for (let i = 0; i < nodeToHideList.length; i++) {
+            nodeToHideList[i].checked = true;
+            if (nodeToHideList[i].value !== undefined && !isNaN(nodeToHideList[i].value)) {
+                listToHide += nodeToHideList[i].value+"-";
+            }
+        }
+    }
+
+    function allChooseToShow(){
+        listToShow="";
+        for (let i = 0; i < nodeToShowList.length; i++) {
+            nodeToShowList[i].checked = true;
+            if (nodeToShowList[i].value !== undefined && !isNaN(nodeToShowList[i].value)) {
+                listToShow += nodeToShowList[i].value+"-";
             }
         }
     }
@@ -105,8 +138,11 @@
 <body>
 <h1>You can view your suggestions here:</h1>
 <button onclick="showChoose()" id="tochooseButton">Click to choose</button>
-<button onclick="toDelete()" class="ChooseFunction" style="display: none">Delete</button>
-<button onclick="cancelDelete()" class="ChooseFunction" style="display: none">Cancel</button>
+<button onclick="toOperate()" class="ChooseFunction" style="display: none">Operate</button>
+<button onclick="allChooseToDelete()" class="ChooseFunction" style="display: none">Select all to delete</button>
+<button onclick="allChooseToHide()" class="ChooseFunction" style="display: none">Select all to hide</button>
+<button onclick="allChooseToShow()" class="ChooseFunction" style="display: none">Select all to show</button>
+<button onclick="cancel()" class="ChooseFunction" style="display: none">Cancel</button>
 <table border="1" cellspacing="0">
     <tr>
         <th>
@@ -128,7 +164,13 @@
             View
         </th>
         <th class="ChooseFunction" style="display: none">
-            Choose the state of visible
+            Choose To Hide
+        </th>
+        <th class="ChooseFunction" style="display: none">
+            Choose To Show
+        </th>
+        <th class="ChooseFunction" style="display: none">
+            Choose To Delete
         </th>
     </tr>
     {% for i in prepageData %}
@@ -153,13 +195,16 @@
             </td>
             <td class="ChooseFunction" style="display: none">
                 {% if i.visible %}
-                    Hide the suggestion<input type="checkbox" class="ChooseFunction" value={{ i.commonUserID }} onclick="oneChooseToHide(this)">
-                {% else %}
-                    Show it to the public<input type="checkbox" class="ChooseFunction" value={{ i.commonUserID }} onclick="oneChooseToShow(this)">
+                    Hide the suggestion<input type="checkbox" class="ChooseToHideFunction" value={{ i.commonUserID }} onclick="oneChooseToHide(this)">
                 {% endif %}
             </td>
             <td class="ChooseFunction" style="display: none">
-                Delete it <input type="checkbox" class="ChooseFunction" value={{ i.commonUserID }} onclick="oneChooseToDelete(this)">
+                {% if not i.visible %}
+                    Show it to the public<input type="checkbox" class="ChooseToShowFunction" value={{ i.commonUserID }} onclick="oneChooseToShow(this)">
+                {% endif %}
+            </td>
+            <td class="ChooseFunction" style="display: none">
+                Delete it<input type="checkbox" class="ChooseToDeleteFunction" value={{ i.commonUserID }} onclick="oneChooseToDelete(this)">
             </td>
         </tr>
     {% endfor %}
