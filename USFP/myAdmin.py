@@ -209,11 +209,12 @@ def adminViewUser(request, commonUserID):
         admin = CommonUser.object.get(commonUserID=request.session["commonUserID"])
     except KeyError:
         return HttpResponseRedirect(reverse("welcome", args=(1,)))
-    user = CommonUser.objects.get(commonUserID=commonUserID)
+    user = CommonUser.object.get(commonUserID=commonUserID)
     if user.isManagedBy(admin):
-        areaNames = admin.VerifiedUser.adminArea.filter(isDelete=False).values_list('arName')
+        areaNames = admin.VerifiedUser.adminArea.filter(isDelete=False).values_list('areaName')
+        areaNameList=[i[0] for i in list(areaNames)]
         return render(request, "Admin/adminViewUser.html",
-                      {"user": user, "areaNameList": list(areaNames), "isVerified": user.isVerified()})
+                      {"user": user, "areaNameList": areaNameList, "isVerified": user.isVerified()})
     return HttpResponseRedirect(reverse("welcome", args=(1,)))
 
 
@@ -224,17 +225,17 @@ def adminUpdateUser(request, commonUserID):
         return HttpResponseRedirect(reverse("welcome", args=(1,)))
     if request.method == "GET":
         return HttpResponseRedirect(reverse("welcome", args=(1,)))
-    commonUser = CommonUser.objects.get(commonUserID=commonUserID)
+    commonUser = CommonUser.object.get(commonUserID=commonUserID)
     if not commonUser.isManagedBy(admin):
         return HttpResponseRedirect(reverse("welcome", args=(1,)))
     try:
         if request.POST.get("deletePhoto", "0") == "1":
             if len(str(commonUser.commonUserImage)) != 0:
-                if os.path.exists(os.path.join(".", ".", os.getcwd(), "media", "userImage", str(commonUser.cuImage))):
-                    os.remove(os.path.join(".", ".", os.getcwd(), "media", "userImage", str(commonUser.cuImage)))
+                if os.path.exists(os.path.join(".", ".", os.getcwd(), "media", "userImage", str(commonUser.commonUserImage))):
+                    os.remove(os.path.join(".", ".", os.getcwd(), "media", "userImage", str(commonUser.commonUserImage)))
             commonUser.commonUserImage = None
-            CommonUserOperation.objects.create(verifiedUser=admin.VerifiedUser, operationType='updateUser', commonUser=CommonUser,
-                                         content="Delete photo")
+            CommonUserOperation.objects.create(verifiedUser=admin.VerifiedUser, operationType='updateUser',
+                                               commonUser=commonUser,content="Delete photo")
         if request.POST.get("changeArea", "0") == "1":
             originalName = commonUser.area.areaName
             commonUser.area = Area.objects.get(arName=request.POST.get("newArName"))
@@ -291,26 +292,34 @@ def adminOperateSuggestions(request):
                 suggestion.isDelete=True
                 suggestion.visible=False
                 suggestion.deleteDate=datetime.now()
+                SuggestionOperation.objects.create(verifiedUser=admin.VerifiedUser,suggestion=suggestion,
+                                                   content="Delete the suggestion",operationType='deleteSuggestion')
                 suggestion.save()
-                SuggestionOperation.objects.create(suggestion=suggestion,operationType='deleteSuggestion')
         elif operateType=="hide":
             listToHide=request.POST.get("listToHide")
             listToHide=[i for i in listToHide if len(i)!=0]
             for i in listToHide:
                 suggestion=Suggestion.objects.get(suggestionID=int(i))
                 suggestion.visible=False
+                SuggestionOperation.objects.create(verifiedUser=admin.VerifiedUser,suggestion=suggestion,
+                                                   content="Hide the suggestion",operationType='hideSuggestion')
                 suggestion.save()
-                SuggestionOperation.objects.create(suggestion=suggestion,operationType='hideSuggestion')
         elif operateType=="show":
             listToShow=request.POST.get("listToShow")
             listToShow=[i for i in listToShow if len(i)!=0]
             for i in listToShow:
                 suggestion=Suggestion.objects.get(suggestionID=int(i))
                 suggestion.visible=True
+                SuggestionOperation.objects.create(verifiedUser=admin.VerifiedUser,suggestion=suggestion,
+                                                   content="Show the suggestion",operationType='showSuggestion')
                 suggestion.save()
-                SuggestionOperation.objects.create(suggestion=suggestion,operationType='showSuggestion')
         else:
             return HttpResponse("Fail")
+        return HttpResponse("Succeed")
     except Exception as e:
         print(e)
         return HttpResponse("Fail")
+
+
+def adminViewOneSuggestion(request,suggestionID):
+    return None

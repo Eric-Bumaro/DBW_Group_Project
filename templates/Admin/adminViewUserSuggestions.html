@@ -145,6 +145,9 @@
 <button onclick="cancel()" class="ChooseFunction" style="display: none">Cancel</button>
 <table border="1" cellspacing="0">
     <tr>
+        <th class="ChooseFunction" style="display: none">
+            Choose To Delete
+        </th>
         <th>
             Count
         </th>
@@ -158,10 +161,10 @@
             Last Modify Time
         </th>
         <th>
-            Visible
+            View
         </th>
         <th>
-            View
+            Visible
         </th>
         <th class="ChooseFunction" style="display: none">
             Choose To Hide
@@ -169,12 +172,12 @@
         <th class="ChooseFunction" style="display: none">
             Choose To Show
         </th>
-        <th class="ChooseFunction" style="display: none">
-            Choose To Delete
-        </th>
     </tr>
     {% for i in prepageData %}
         <tr>
+            <td class="ChooseFunction" style="display: none">
+                Delete it<input type="checkbox" class="ChooseToDeleteFunction" value={{ i.suggestionID }} onclick="oneChooseToDelete(this)">
+            </td>
             <td>
                 {{ forloop.counter }}
             </td>
@@ -188,23 +191,20 @@
                 {{ i.modifyTime }}
             </td>
             <td>
-                {{ i.visible }}
+                <a href="{% url 'USFP:adminViewOneSuggestion' i.suggestionID %}">View the suggestion</a>
             </td>
             <td>
-                <a href="{% url 'USFP:adminViewOneSuggestion' i.suggestionID %}">View the suggestion</a>
+                {{ i.visible }}
             </td>
             <td class="ChooseFunction" style="display: none">
                 {% if i.visible %}
-                    Hide the suggestion<input type="checkbox" class="ChooseToHideFunction" value={{ i.commonUserID }} onclick="oneChooseToHide(this)">
+                    Hide the suggestion<input type="checkbox" class="ChooseToHideFunction" value={{ i.suggestionID }} onclick="oneChooseToHide(this)">
                 {% endif %}
             </td>
             <td class="ChooseFunction" style="display: none">
                 {% if not i.visible %}
-                    Show it to the public<input type="checkbox" class="ChooseToShowFunction" value={{ i.commonUserID }} onclick="oneChooseToShow(this)">
+                    Show it to the public<input type="checkbox" class="ChooseToShowFunction" value={{ i.suggestionID }} onclick="oneChooseToShow(this)">
                 {% endif %}
-            </td>
-            <td class="ChooseFunction" style="display: none">
-                Delete it<input type="checkbox" class="ChooseToDeleteFunction" value={{ i.commonUserID }} onclick="oneChooseToDelete(this)">
             </td>
         </tr>
     {% endfor %}

@@ -81,7 +81,7 @@
         </tr>
         <tr>
             <td>Image</td>
-            <td><img src=" {{ MEDIA_URL }}{{ user.commonUserImage }}"/></td>
+            <td><img src=" /media/{{ user.commonUserImage }}"/></td>
             <td class="ChangeFun">
                 <input type="radio" name="deletePhoto" id="deletePhoto" class="ChangeFun"
                                           onclick="changeDeletePhoto()" style="display: none" value="1">
@@ -118,7 +118,7 @@
     <input type="submit" class="ChangeFun" style="display: none" value="Click here to submit"/>
     <button onclick="cancelChange()" class="ChangeFun" style="display: none">Cancel</button>
 </form>
-<a href="{% url 'USFP:adminViewUserSuggestions' user.commonUserID%}">To view the suggestions of the user</a>
+<a href="{% url 'USFP:adminViewUserSuggestions' user.commonUserID 1 %}">To view the suggestions of the user</a>
 <a href="{% url 'USFP:adminViewArea' 1 user.area.areaID %}">To view the area</a>
 <a href="{% url 'USFP:adminInfor' %}">Back to your information.</a>
 </body>
