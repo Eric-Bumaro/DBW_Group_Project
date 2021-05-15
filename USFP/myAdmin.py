@@ -289,6 +289,7 @@ def adminOperateSuggestions(request):
             for i in listToDelete:
                 suggestion=Suggestion.objects.get(suggestionID=int(i))
                 suggestion.isDelete=True
+                suggestion.visible=False
                 suggestion.deleteDate=datetime.now()
                 suggestion.save()
                 SuggestionOperation.objects.create(suggestion=suggestion,operationType='deleteSuggestion')

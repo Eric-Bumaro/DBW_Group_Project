@@ -152,7 +152,7 @@ class AreaOperation(models.Model):
         db_table = 'AreaOperation'
 
     def __str__(self):
-        return u'AreaOperation:%s' % self.areaOperaionID
+        return u'AreaOperation:%s' % self.areaOperationID
 
 
 class SuggestionOperation(models.Model):

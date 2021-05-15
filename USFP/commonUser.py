@@ -71,7 +71,7 @@ def userViewSuggestions(request, num):
         user = CommonUser.objects.get(commonUserID=request.session['commonUserID'])
     except KeyError:
         return HttpResponseRedirect(reverse("welcome", args=(1,)))
-    suggestions = user.Suggestion.filter(visible=False,isDelete=False)
+    suggestions = user.Suggestion.filter(visible=False, isDelete=False)
     if int(num) < 1:
         suggestionNum = 1
     else:
@@ -99,7 +99,7 @@ def userViewSuggestions(request, num):
 
 
 def userDeleteSuggestions(request):
-    if request.method=='GET':
+    if request.method == 'GET':
         return HttpResponse('Fail')
     listToDelete = request.POST.get("listToDelete")
     deleteList = listToDelete.split("-")
@@ -107,7 +107,7 @@ def userDeleteSuggestions(request):
     try:
         for i in deleteList:
             suggestionToDelete = Suggestion.object.get(suggestionID=int(i))
-            suggestionToDelete.visible=False
+            suggestionToDelete.visible = False
             suggestionToDelete.save()
     except Exception as e:
         print(e)
@@ -115,5 +115,13 @@ def userDeleteSuggestions(request):
     return HttpResponse("Success")
 
 
-def userViewOneSuggestion(request,suggestionID):
-    return None
+def userViewOneSuggestion(request, suggestionID):
+    try:
+        user = CommonUser.object.get(commonUserID=request.session['commonUserID'])
+        suggestion = Suggestion.object.get(suggestionID=suggestionID)
+        if suggestion.commonUser != user:
+            return HttpResponseRedirect(reverse("welcome", args=(1,)))
+        return HttpResponse(suggestion.content)
+    except Exception as e:
+        print(e)
+        return HttpResponseRedirect(reverse("welcome", args=(1,)))
