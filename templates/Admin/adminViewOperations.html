@@ -47,13 +47,13 @@
 </table>
 <br>
 {% if areaPrepageData.has_previous %}
-    <a href="{% url 'USFP:adminViewOperations' areaPrepageData.previous_page_number userOpNum%}">Last Page</a>
+    <a href="{% url 'USFP:adminViewOperations' areaPrepageData.previous_page_number userOpNum suggestionOpNum%}">Last Page</a>
 {% endif %}&emsp;
 {% for n in  areaPageList %}
-    <a href="{% url 'USFP:adminViewOperations' n userOpNum%}">{{ n }}</a> &emsp;
+    <a href="{% url 'USFP:adminViewOperations' n userOpNum suggestionOpNum%}">{{ n }}</a> &emsp;
 {% endfor %}
 {% if areaPrepageData.has_next %}
-    <a href="{% url 'USFP:adminViewOperations' areaPrepageData.next_page_number userOpNum%}">Next Page</a>
+    <a href="{% url 'USFP:adminViewOperations' areaPrepageData.next_page_number userOpNum suggestionOpNum%}">Next Page</a>
 {% endif %}&emsp;
 <br>
 <h1>Your User Operation history:</h1>
@@ -84,7 +84,7 @@
                 {{ i.operationType }}
             </td>
             <td>
-                {{ i.user.commonUserID }}
+                {{ i.commonUser.commonUserID }}
             </td>
             <td>
                 {{ i.operationTakeDate }}
@@ -97,13 +97,63 @@
 </table>
 <br>
 {% if userPrepageData.has_previous %}
-    <a href="{% url 'USFP:adminViewOperations' areaOpNum userPrepageData.previous_page_number %}">Last Page</a>
+    <a href="{% url 'USFP:adminViewOperations' areaOpNum userPrepageData.previous_page_number suggestionOpNum%}">Last Page</a>
 {% endif %}&emsp;
 {% for n in  userPageList %}
-    <a href="{% url 'USFP:adminViewOperations' areaOpNum n %}">{{ n }}</a> &emsp;
+    <a href="{% url 'USFP:adminViewOperations' areaOpNum n suggestionOpNum%}">{{ n }}</a> &emsp;
 {% endfor %}
 {% if userPrepageData.has_next %}
-    <a href="{% url 'USFP:adminViewOperations' areaOpNum userPrepageData.next_page_number %}">Next Page</a>
+    <a href="{% url 'USFP:adminViewOperations' areaOpNum userPrepageData.next_page_number suggestionOpNum%}">Next Page</a>
+{% endif %}&emsp;
+<br>
+<h1>Your Suggestion Operation history:</h1>
+<table border="1" cellspacing="0">
+    <tr>
+        <th>
+            Count
+        </th>
+        <th>
+            Operation Type
+        </th>
+        <th>
+            The ID of the Suggestion
+        </th>
+        <th>
+            Datetime
+        </th>
+        <th>
+            Content
+        </th>
+    </tr>
+    {% for i in suggestionPrepageData %}
+        <tr>
+            <td>
+                {{ forloop.counter }}
+            </td>
+            <td>
+                {{ i.operationType }}
+            </td>
+            <td>
+                {{ i.suggestion.suggestionID }}
+            </td>
+            <td>
+                {{ i.operationTakeDate }}
+            </td>
+            <td >
+                {{ i.content }}
+            </td>
+        </tr>
+    {% endfor %}
+</table>
+<br>
+{% if suggestionPrepageData.has_previous %}
+    <a href="{% url 'USFP:adminViewOperations' areaOpNum userOpNum suggestionPrepageData.previous_page_number %}">Last Page</a>
+{% endif %}&emsp;
+{% for n in  suggestionPageList %}
+    <a href="{% url 'USFP:adminViewOperations' areaOpNum  userOpNum n %}">{{ n }}</a> &emsp;
+{% endfor %}
+{% if suggestionPrepageData.has_next %}
+    <a href="{% url 'USFP:adminViewOperations' areaOpNum userOpNum suggestionPrepageData.next_page_number %}">Next Page</a>
 {% endif %}&emsp;
 <br>
 <a href="{% url 'USFP:adminInfor' %}">Back to your personal inforamtion</a>

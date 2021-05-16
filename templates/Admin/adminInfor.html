@@ -76,7 +76,7 @@ You can view the area you administrate here:
     <button onclick="cancelChange()" class="ChangeFunction" style="display: none">Cancel</button>
 </form>
 <br>
-<a href="{% url 'USFP:adminViewOperations' 1 1%}">Operation History</a>
+<a href="{% url 'USFP:adminViewOperations' 1 1 1%}">Operation History</a>
 {% ifequal admin.commonUserID 1 %}
     <button onclick="toRefreshDB()">Refresh The Database</button>
 {% endifequal %}

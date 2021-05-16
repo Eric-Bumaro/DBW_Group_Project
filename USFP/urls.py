@@ -19,7 +19,12 @@ urlpatterns = [
         name="userViewOneSuggestion"),
     url(r'^Admin/adminInfor/$', myAdmin.adminInfor, name="adminInfor"),
     url(r'^Admin/adminInfor/adminViewOperations/#areaOperationNum=(?P<areaOperationNum>\d*)&userOperationNum=('
-        r'?P<userOperationNum>\d*)$', myAdmin.adminViewOperations, name="adminViewOperations"),
+        r'?P<userOperationNum>\d*)&suggestionOperationNum=(?P<suggestionOperationNum>\d*)$',
+        myAdmin.adminViewOperations, name="adminViewOperations"),
+    url(r'^Admin/adminInfor/adminViewDeleteOperations/#areaOperationNum=(?P<areaOperationNum>\d*)&userOperationNum=('
+        r'?P<userOperationNum>\d*)&suggestionOperationNum=(?P<suggestionOperationNum>\d*)$',
+        myAdmin.adminViewDeleteOperations, name="adminViewDeleteOperations"),
+    url(r'^Admin/adminAnnulDeletion/$',myAdmin.adminAnnulDeletion, name="adminAnnulDeletion"),
     url(r'^Admin/adminChangeInfor/#changeType=(?P<changeType>.*)$', myAdmin.adminChangeInfor, name="adminChangeInfor"),
     url(r'^Admin/adminSuChange/#changeType=(?P<changeType>.*)$', myAdmin.adminSuChange, name="adminSuChange"),
     url(r'^Admin/adminInfor/adminViewArea/#num=(?P<num>\d*)&areaID=(?P<areaID>\d*)$', myAdmin.adminViewArea,

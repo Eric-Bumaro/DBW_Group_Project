@@ -19,7 +19,8 @@ def adminInfor(request):
     adminArea = admin.VerifiedUser.adminArea.filter(isDelete=False)
     if request.method == "GET":
         return render(request, "Admin/adminInfor.html",
-                      {"admin": admin, "areaSet": adminArea, "areaIDs_js": json.dumps(list(adminArea.values("areaID")))})
+                      {"admin": admin, "areaSet": adminArea,
+                       "areaIDs_js": json.dumps(list(adminArea.values("areaID")))})
     else:
         for i in adminArea:
             try:
@@ -139,7 +140,7 @@ def adminDeleteUsers(request):
                 userToDelete.deleteDate = datetime.now()
                 userToDelete.save()
                 CommonUserOperation.objects.create(commonUser=userToDelete, operationType='deleteUser',
-                                             content="Delete the user", verifiedUser=admin.VerifiedUser)
+                                                   content="Delete the user", verifiedUser=admin.VerifiedUser)
         except Exception as e:
             print(e)
             return HttpResponse("Fail")
@@ -149,7 +150,7 @@ def adminDeleteUsers(request):
         return HttpResponse("Fail")
 
 
-def adminViewOperations(request, areaOperationNum, userOperationNum):
+def adminViewOperations(request, areaOperationNum, userOperationNum, suggestionOperationNum):
     try:
         user = CommonUser.objects.get(commonUserID=request.session['commonUserID'])
         if not user.isVerified():
@@ -198,9 +199,32 @@ def adminViewOperations(request, areaOperationNum, userOperationNum):
     else:
         begin = end - 4
     userPageList = range(begin, end + 1)
+    suggestionOperations = user.VerifiedUser.SuggestionOperation.order_by("-operationTakeDate")
+    if int(suggestionOperationNum) < 1:
+        suggestionOperationNum = 1
+    else:
+        suggestionOperationNum = int(suggestionOperationNum)
+    suggestionPager = Paginator(suggestionOperations, 10)
+    try:
+        suggestionPrepageData = suggestionPager.page(suggestionOperationNum)
+    except EmptyPage:
+        suggestionPrepageData = suggestionPager.page(suggestionPager.num_pages)
+    begin = (suggestionOperationNum - int(math.ceil(10.0 / 2)))
+    if begin < 1:
+        begin = 1
+    end = begin + 4
+    if end > suggestionPager.num_pages:
+        end = suggestionPager.num_pages
+    if end <= 5:
+        begin = 1
+    else:
+        begin = end - 4
+    suggestionPageList = range(begin, end + 1)
     return render(request, "Admin/adminViewOperations.html",
-                  {"areaCurPage": areaOperationNum, 'areaPrepageData': areaPrepageData, "areaPageList": areaPageList,
-                   "userCurPage": userOperationNum, "userPrepageData": userPrepageData, "userPageList": userPageList},
+                  {"areaOpNum": areaOperationNum, 'areaPrepageData': areaPrepageData, "areaPageList": areaPageList,
+                   "userOpNum": userOperationNum, "userPrepageData": userPrepageData, "userPageList": userPageList,
+                   "suggestionOpNum": suggestionOperationNum, "suggestionPrepageData": suggestionPrepageData,
+                   "suggestionPageList": suggestionPageList}
                   )
 
 
@@ -212,7 +236,7 @@ def adminViewUser(request, commonUserID):
     user = CommonUser.object.get(commonUserID=commonUserID)
     if user.isManagedBy(admin):
         areaNames = admin.VerifiedUser.adminArea.filter(isDelete=False).values_list('areaName')
-        areaNameList=[i[0] for i in list(areaNames)]
+        areaNameList = [i[0] for i in list(areaNames)]
         return render(request, "Admin/adminViewUser.html",
                       {"user": user, "areaNameList": areaNameList, "isVerified": user.isVerified()})
     return HttpResponseRedirect(reverse("welcome", args=(1,)))
@@ -231,26 +255,29 @@ def adminUpdateUser(request, commonUserID):
     try:
         if request.POST.get("deletePhoto", "0") == "1":
             if len(str(commonUser.commonUserImage)) != 0:
-                if os.path.exists(os.path.join(".", ".", os.getcwd(), "media", "userImage", str(commonUser.commonUserImage))):
-                    os.remove(os.path.join(".", ".", os.getcwd(), "media", "userImage", str(commonUser.commonUserImage)))
+                if os.path.exists(
+                        os.path.join(".", ".", os.getcwd(), "media", "userImage", str(commonUser.commonUserImage))):
+                    os.remove(
+                        os.path.join(".", ".", os.getcwd(), "media", "userImage", str(commonUser.commonUserImage)))
             commonUser.commonUserImage = None
             CommonUserOperation.objects.create(verifiedUser=admin.VerifiedUser, operationType='updateUser',
-                                               commonUser=commonUser,content="Delete photo")
+                                               commonUser=commonUser, content="Delete photo")
         if request.POST.get("changeArea", "0") == "1":
             originalName = commonUser.area.areaName
             commonUser.area = Area.objects.get(arName=request.POST.get("newArName"))
             CommonUserOperation.objects.create(verifiedUser=admin.VerifiedUser, operationType='updateUser',
                                                commonUser=CommonUser,
-                                               content="Original area:" + originalName + " New area:" + request.POST.get("newArName"))
+                                               content="Original area:" + originalName + " New area:" + request.POST.get(
+                                                   "newArName"))
         commonUser.save()
     except Exception as e:
         print(e)
     return HttpResponseRedirect(reverse("USFP:adminViewUser", args=(commonUserID,)))
 
 
-def adminViewUserSuggestions(request,commonUserID,num):
-    admin=CommonUser.objects.get(commonUserID=request.session['commonUserID'])
-    user=CommonUser.objects.get(commonUserID=commonUserID)
+def adminViewUserSuggestions(request, commonUserID, num):
+    admin = CommonUser.objects.get(commonUserID=request.session['commonUserID'])
+    user = CommonUser.objects.get(commonUserID=commonUserID)
     if not user.isManagedBy(admin):
         return HttpResponseRedirect(reverse("welcome", args=(1,)))
     suggestions = [i for i in user.Suggestion.filter(isDelete=False)]
@@ -275,43 +302,43 @@ def adminViewUserSuggestions(request,commonUserID,num):
         begin = end - 4
     pagelist = range(begin, end + 1)
     return render(request, "Admin/adminViewUserSuggestions.html",
-                  {"pager": pager, 'prepageData': prepageData, "pageList": pagelist,"commonUserID":commonUserID})
+                  {"pager": pager, 'prepageData': prepageData, "pageList": pagelist, "commonUserID": commonUserID})
 
 
 def adminOperateSuggestions(request):
     try:
-        operateType=request.POST.get("operateType")
-        admin=CommonUser.object.get(commonUserID=request.session['commonUserID'])
+        operateType = request.POST.get("operateType")
+        admin = CommonUser.object.get(commonUserID=request.session['commonUserID'])
         if not admin.isVerified():
             return HttpResponse("Fail")
-        if operateType=="delete":
-            listToDelete=request.POST.get("listToDelete").split("-")
-            listToDelete=[i for i in listToDelete if len(i)!=0]
+        if operateType == "delete":
+            listToDelete = request.POST.get("listToDelete").split("-")
+            listToDelete = [i for i in listToDelete if len(i) != 0]
             for i in listToDelete:
-                suggestion=Suggestion.objects.get(suggestionID=int(i))
-                suggestion.isDelete=True
-                suggestion.visible=False
-                suggestion.deleteDate=datetime.now()
-                SuggestionOperation.objects.create(verifiedUser=admin.VerifiedUser,suggestion=suggestion,
-                                                   content="Delete the suggestion",operationType='deleteSuggestion')
+                suggestion = Suggestion.objects.get(suggestionID=int(i))
+                suggestion.isDelete = True
+                suggestion.visible = False
+                suggestion.deleteDate = datetime.now()
+                SuggestionOperation.objects.create(verifiedUser=admin.VerifiedUser, suggestion=suggestion,
+                                                   content="Delete the suggestion", operationType='deleteSuggestion')
                 suggestion.save()
-        elif operateType=="hide":
-            listToHide=request.POST.get("listToHide")
-            listToHide=[i for i in listToHide if len(i)!=0]
+        elif operateType == "hide":
+            listToHide = request.POST.get("listToHide")
+            listToHide = [i for i in listToHide if len(i) != 0]
             for i in listToHide:
-                suggestion=Suggestion.objects.get(suggestionID=int(i))
-                suggestion.visible=False
-                SuggestionOperation.objects.create(verifiedUser=admin.VerifiedUser,suggestion=suggestion,
-                                                   content="Hide the suggestion",operationType='hideSuggestion')
+                suggestion = Suggestion.objects.get(suggestionID=int(i))
+                suggestion.visible = False
+                SuggestionOperation.objects.create(verifiedUser=admin.VerifiedUser, suggestion=suggestion,
+                                                   content="Hide the suggestion", operationType='hideSuggestion')
                 suggestion.save()
-        elif operateType=="show":
-            listToShow=request.POST.get("listToShow")
-            listToShow=[i for i in listToShow if len(i)!=0]
+        elif operateType == "show":
+            listToShow = request.POST.get("listToShow")
+            listToShow = [i for i in listToShow if len(i) != 0]
             for i in listToShow:
-                suggestion=Suggestion.objects.get(suggestionID=int(i))
-                suggestion.visible=True
-                SuggestionOperation.objects.create(verifiedUser=admin.VerifiedUser,suggestion=suggestion,
-                                                   content="Show the suggestion",operationType='showSuggestion')
+                suggestion = Suggestion.objects.get(suggestionID=int(i))
+                suggestion.visible = True
+                SuggestionOperation.objects.create(verifiedUser=admin.VerifiedUser, suggestion=suggestion,
+                                                   content="Show the suggestion", operationType='showSuggestion')
                 suggestion.save()
         else:
             return HttpResponse("Fail")
@@ -321,5 +348,12 @@ def adminOperateSuggestions(request):
         return HttpResponse("Fail")
 
 
-def adminViewOneSuggestion(request,suggestionID):
+def adminViewOneSuggestion(request, suggestionID):
     return None
+
+def adminViewDeleteOperations(request, areaOperationNum, userOperationNum, suggestionOperationNum):
+    return None
+
+def adminAnnulDeletion(request):
+    return None
+

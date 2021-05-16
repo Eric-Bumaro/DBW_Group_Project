@@ -169,4 +169,4 @@ class SuggestionOperation(models.Model):
         db_table = 'SuggestionOperation'
 
     def __str__(self):
-        return u'SuggestionOperation:%s' % self.suggestionOperaionID
+        return u'SuggestionOperation:%s' % self.suggestionOperationID

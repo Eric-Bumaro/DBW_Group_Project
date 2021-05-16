@@ -59,8 +59,9 @@ def register(request):
         photo_resize.save(photoLocation)
         user = CommonUser.objects.create(commonUserName=commonUserName, commonUserPassword=commonUserPassword,
                                          commonUserEmail=commonUserEmail, commonUserImage="userImage/"+photoName,
-                                         area=Area.object.get(arID=random.randint(1, len(areaIDList) + 1)))
+                                         area=Area.object.get(areaID=random.randint(1, len(areaIDList) + 1)))
     except Exception as e:
+        print(e)
         user = CommonUser.objects.create(commonUserName=commonUserName, commonUserPassword=commonUserPassword,
                                          commonUserEmail=commonUserEmail,
                                          area=Area.object.get(areaID=random.randint(0, len(areaIDList) + 1)))
