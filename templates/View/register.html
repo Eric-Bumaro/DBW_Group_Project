@@ -4,107 +4,112 @@
     <meta charset="UTF-8">
     <title>Register</title>
     <base href="/">
-    <link rel="stylesheet" type="text/css" href="/static/View/register.css">
+    <link rel="stylesheet" type="text/css" href="/static/CSS/View/register.css">
 </head>
-<script src="/static/jquery-3.4.1.min.js"></script>
+<script src="/static/JavaScript/jquery-3.4.1.min.js"></script>
 <script>
     var adminkey;
-    var commonUserKey;
-    function sendHideCommonUserCheck() {
-        var emailAdd=document.getElementById('commonUserEmail').value
-        $.ajax({
-            type: "POST",
-            url: "{%  url 'sendCheckKey'%}",
-            data: {
-                csrfmiddlewaretoken: '{{ csrf_token }}',
-                emailAdd:emailAdd
-            },
-            success: function (response) {
-                if(response!="1") {
-                    adkey = response
-                }else{
-                    document.getElementById("checkRes").innerHTML = "Wrong email!";
-                }
-            }
-        });
-        var sendCuKeybutton = document.getElementById("sendCuKeybutton")
-        for (let i = 0; i <= 60; i++) {
-            (function (j) {
-                    setTimeout(function () {
-                        sendCuKeybutton.innerHTML = "<label>You can try again after " + (60 - j) + " seconds!</label>"
-                        if (j == 60) {
-                            sendCuKeybutton.innerHTML = "<button onclick='sendHideAdCheck()'>Click here to send!</button>"
-                        }
-                    }, 1000 * i)
-                }
-            )(i);
-        }
-    }
+var commonUserKey;
 
-    function sendHideAdminCheck() {
-        $.ajax({
-            type: "POST",
-            url: "{%  url 'getadKey'%}",
-            data: {csrfmiddlewaretoken: '{{ csrf_token }}'},
-            success: function (response) {
-                adminkey = response
+function sendHideCommonUserCheck() {
+    var emailAdd = document.getElementById('commonUserEmail').value
+    $.ajax({
+        type: "POST",
+        url: "{%  url 'sendCheckKey'%}",
+        data: {
+            csrfmiddlewaretoken: '{{ csrf_token }}',
+            emailAdd: emailAdd
+        },
+        success: function (response) {
+            if (response != "1") {
+                commonUserKey = response
+            } else {
+                document.getElementById("checkRes").innerHTML = "Wrong email!";
             }
-        });
-        var sendAdKeyButton = document.getElementById("sendAdKeyButton")
-        for (let i = 0; i <= 60; i++) {
-            (function (j) {
-                    setTimeout(function () {
-                        sendAdKeyButton.innerHTML = "<label>You can try again after " + (60 - j) + " seconds!</label>"
-                        if (j == 60) {
-                            sendAdKeyButton.innerHTML = "<button onclick='sendHideAdCheck()'>Click here to send!</button>"
-                        }
-                    }, 1000 * i)
-                }
-            )(i);
         }
+    });
+    var sendCuKeybutton = document.getElementById("sendCuKeybutton")
+    for (let i = 0; i <= 60; i++) {
+        (function (j) {
+                setTimeout(function () {
+                    sendCuKeybutton.innerHTML = "<label>You can try again after " + (60 - j) + " seconds!</label>"
+                    if (j == 60) {
+                        sendCuKeybutton.innerHTML = "<button onclick='sendHideAdCheck()'>Click here to send!</button>"
+                    }
+                }, 1000 * i)
+            }
+        )(i);
     }
+}
 
-    function check() {
-        var pwOne = document.getElementById("cuPassword").value;
-        var pwTwo = document.getElementById("checkPassword").value;
-        if (pwOne !== pwTwo) {
-            document.getElementById("checkRes").innerHTML = "Not the same password";
+function sendHideAdminCheck() {
+    $.ajax({
+        type: "POST",
+        url: "{%  url 'getadKey'%}",
+        data: {csrfmiddlewaretoken: '{{ csrf_token }}'},
+        success: function (response) {
+            adminkey = response
+        }
+    });
+    var sendAdKeyButton = document.getElementById("sendAdKeyButton")
+    for (let i = 0; i <= 60; i++) {
+        (function (j) {
+                setTimeout(function () {
+                    sendAdKeyButton.innerHTML = "<label>You can try again after " + (60 - j) + " seconds!</label>"
+                    if (j == 60) {
+                        sendAdKeyButton.innerHTML = "<button onclick='sendHideAdCheck()'>Click here to send!</button>"
+                    }
+                }, 1000 * i)
+            }
+        )(i);
+    }
+}
+
+function check() {
+    var pwOne = document.getElementById("cuPassword").value;
+    var pwTwo = document.getElementById("checkPassword").value;
+    if (pwOne !== pwTwo) {
+        document.getElementById("checkRes").innerHTML = "Not the same password";
+        return false;
+    } else if (pwOne.length < 3) {
+        document.getElementById("checkRes").innerHTML = "The length of the password must be larger than three!";
+        return false;
+    }
+    if (document.getElementById("wantToBeAdmin").checked) {
+        if (document.getElementById("adminKey").value !== adminkey) {
+            document.getElementById("checkRes").innerHTML = "Wrong check-key!";
             return false;
-        } else if (pwOne.length < 3) {
-            document.getElementById("checkRes").innerHTML = "The length of the password must be larger than three!";
+        }
+        if (document.getElementById("commonUserKey").value !== commonUserKey) {
+            document.getElementById("checkRes").innerHTML = "Wrong check-key!";
             return false;
         }
-        if (document.getElementById("wantToBeAdmin").checked) {
-            if (document.getElementById("adminKey").value !== adkey) {
-                document.getElementById("checkRes").innerHTML = "Wrong check-key!";
-                return false;
-            }
-        }
-        return true;
     }
+    return true;
+}
 
-    function showWantAdmin(){
-        if(document.getElementById('commonUserEmail').value.endsWith('@mail.uic.edu.cn')){
-            document.getElementById('chooseToBeAdmin').style.display='block'
-        }else{
-            document.getElementById('chooseToBeAdmin').style.display='None'
-        }
+function showWantAdmin() {
+    if (document.getElementById('commonUserEmail').value.endsWith('@mail.uic.edu.cn')) {
+        document.getElementById('chooseToBeAdmin').style.display = 'block'
+    } else {
+        document.getElementById('chooseToBeAdmin').style.display = 'None'
     }
+}
 
-    function showHideCheckAdmin(element){
-        var radio = $(element);
-        if (radio.data('waschecked')) {
-            radio.prop('checked', false);
-            radio.data('waschecked', false)
-            document.getElementById('adminCheck').style.display='None'
-            $('#adminKey').attr("required", false)
-        } else {
-            radio.prop('checked', true);
-            radio.data('waschecked', true)
-            document.getElementById('adminCheck').style.display='block'
-            $('#adminKey').attr("required", true)
-        }
+function showHideCheckAdmin(element) {
+    var radio = $(element);
+    if (radio.data('waschecked')) {
+        radio.prop('checked', false);
+        radio.data('waschecked', false)
+        document.getElementById('adminCheck').style.display = 'None'
+        $('#adminKey').attr("required", false)
+    } else {
+        radio.prop('checked', true);
+        radio.data('waschecked', true)
+        document.getElementById('adminCheck').style.display = 'block'
+        $('#adminKey').attr("required", true)
     }
+}
 </script>
 <body>
 <form action="/USFP/register/" method="post" name="registForm" onsubmit="return check()"

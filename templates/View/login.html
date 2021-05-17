@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <title>Login In</title>
-    <link rel="stylesheet" type="text/css" href="/static/View/login.css">
+    <link rel="stylesheet" type="text/css" href="/static/CSS/View/login.css">
 </head>
-<script src="/static/jquery-3.4.1.min.js"></script>
+<script src="/static/JavaScript/jquery-3.4.1.min.js"></script>
 <body>
 <form action="{% url 'USFP:login' 0 %}" method="post">
     {% csrf_token %}
@@ -36,11 +36,9 @@
 </form>
 </body>
 <script>
-
     if({{ error|safe }}== "1")
-    {
+{
         document.getElementById("errormsg").innerText = "ID or passsword is wrong!!!";
-    }
-
+}
 </script>
 </html>
