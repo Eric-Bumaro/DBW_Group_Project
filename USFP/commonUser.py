@@ -101,9 +101,7 @@ def userViewSuggestions(request, num):
 def userDeleteSuggestions(request):
     if request.method == 'GET':
         return HttpResponse('Fail')
-    listToDelete = request.POST.get("listToDelete")
-    deleteList = listToDelete.split("-")
-    deleteList = [i for i in deleteList if len(i) != 0]
+    deleteList = [i for i in request.POST.get("listToDelete").split("-") if len(i) != 0]
     try:
         for i in deleteList:
             suggestionToDelete = Suggestion.object.get(suggestionID=int(i))

@@ -4,9 +4,10 @@ from email.mime.text import MIMEText
 from email.utils import parseaddr, formataddr
 import smtplib
 
-def showsql():
+def showSQL():
     from django.db import connection
     print(connection.queries[-1]['sql'])
+
 
 def _format_addr(s):
     name, addr = parseaddr(s)
@@ -36,7 +37,7 @@ def sendEmail(to_addr):
 
 def randomKey(length):
     key = ""
-    characters = "abcdefghijklmnopqrstuvwxyz" + "1234567890" + "!@#$%^&*,."
+    characters = "abcdefghijklmnopqrstuvwxyz" + "1234567890"
     for i in range(length):
         key = key + random.choice(characters)
     return key

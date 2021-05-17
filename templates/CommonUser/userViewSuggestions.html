@@ -1,6 +1,6 @@
 <html>
 <head>
-    <title>View Suggesion!</title>
+    <title>View Suggestion</title>
     <base href="/">
     <link rel="stylesheet" type="text/css" href="/static/CommonUser/userViewSuggestion.css">
 </head>
@@ -97,7 +97,7 @@
                 <a href="{% url 'USFP:userViewOneSuggestion' i.suggesionID %}">View the suggestion</a>
             </td>
             <td class="ChooseFunction" style="display: none">
-                <input type="checkbox" name="uToDelete" class="ChooseFunction" value={{ i.suggestionID }} onclick="onechoose(this)">
+                <input type="checkbox" class="ChooseFunction" value={{ i.suggestionID }} onclick="onechoose(this)">
             </td>
         </tr>
     {% endfor %}

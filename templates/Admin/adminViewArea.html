@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>View the users of the area</title>
+    <title>View The Users Of The Area</title>
     <link rel="stylesheet" type="text/css" href="/static/Admin/adminViewArea.css">
 </head>
 <script src="/static/jquery-3.4.1.min.js"></script>
@@ -11,7 +11,7 @@
     var listToDelete = "";
 
     function showChoose() {
-        for (var i = 0; i < nodeList.length; i++) {
+        for (let i = 0; i < nodeList.length; i++) {
             nodeList[i].style.display = "block";
         }
         document.getElementById("toChooseButton").style.display = "none";
@@ -35,14 +35,14 @@
         for (var i = 0; i < nodeList.length; i++) {
             nodeList[i].style.display = "none";
             nodeList[i].checked = false;
-            listToDelete = "";
         }
+        listToDelete = "";
         document.getElementById("toChooseButton").style.display = "block";
     }
 
     function allChoose() {
         listToDelete = "";
-        for (var i = 0; i < nodeList.length; i++) {
+        for (let i = 0; i < nodeList.length; i++) {
             nodeList[i].checked = true;
             if (nodeList[i].value !== undefined && !isNaN(nodeList[i].value)) {
                 listToDelete += nodeList[i].value+"-";
@@ -104,7 +104,7 @@
                 <a href="{% url 'USFP:adminViewUser' i.commonUserID %}">View the user</a>
             </td>
             <td class="ChooseFunction" style="display: none">
-                <input type="checkbox" name="uToDelete" class="ChooseFunction" value={{ i.commonUserID }} onclick="onechoose(this)">
+                <input type="checkbox" class="ChooseFunction" value={{ i.commonUserID }} onclick="onechoose(this)">
             </td>
         </tr>
     {% endfor %}

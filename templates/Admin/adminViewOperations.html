@@ -2,11 +2,11 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>View your operations</title>
+    <title>View Your Operations</title>
     <link rel="stylesheet" type="text/css" href="/static/Admin/adminViewOperations.css">
 </head>
 <body>
-<h1>Your Area Operation history:</h1>
+<h3>Your Area Operation history:</h3>
 <table border="1" cellspacing="0">
     <tr>
         <th>
@@ -16,7 +16,7 @@
             Operation Type
         </th>
         <th>
-            The ID of the area
+            The Name Of The Area
         </th>
         <th>
             Datetime
@@ -34,7 +34,7 @@
                 {{ i.operationType }}
             </td>
             <td>
-                {{ i.area.areaID }}
+                {{ i.area.areaName }}
             </td>
             <td>
                 {{ i.operationTakeDate }}
@@ -56,7 +56,7 @@
     <a href="{% url 'USFP:adminViewOperations' areaPrepageData.next_page_number userOpNum suggestionOpNum%}">Next Page</a>
 {% endif %}&emsp;
 <br>
-<h1>Your User Operation history:</h1>
+<h3>Your User Operation history:</h3>
 <table border="1" cellspacing="0">
     <tr>
         <th>
@@ -106,7 +106,7 @@
     <a href="{% url 'USFP:adminViewOperations' areaOpNum userPrepageData.next_page_number suggestionOpNum%}">Next Page</a>
 {% endif %}&emsp;
 <br>
-<h1>Your Suggestion Operation history:</h1>
+<h3>Your Suggestion Operation history:</h3>
 <table border="1" cellspacing="0">
     <tr>
         <th>
