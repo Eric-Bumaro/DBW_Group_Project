@@ -8,7 +8,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
 from .models import *
-from datetime import datetime
+from datetime import *
 
 
 def adminInfor(request):
@@ -314,7 +314,6 @@ def adminOperateSuggestions(request):
             for i in listToDelete:
                 suggestion = Suggestion.objects.get(suggestionID=int(i))
                 suggestion.isDelete = True
-                suggestion.visible = False
                 suggestion.deleteDate = datetime.now()
                 SuggestionOperation.objects.create(verifiedUser=admin.VerifiedUser, suggestion=suggestion,
                                                    content="Delete the suggestion", operationType='deleteSuggestion')
@@ -343,10 +342,6 @@ def adminOperateSuggestions(request):
         return HttpResponse("Fail")
 
 
-def adminViewOneSuggestions(request, suggestionID):
-    return None
-
-
 def adminViewDeletions(request, areaDeletionNum, userDeletionNum, suggestionDeletionNum):
     try:
         user = CommonUser.objects.get(commonUserID=request.session['commonUserID'])
@@ -354,7 +349,15 @@ def adminViewDeletions(request, areaDeletionNum, userDeletionNum, suggestionDele
             return HttpResponseRedirect(reverse("welcome", args=(1,)))
     except KeyError:
         return HttpResponseRedirect(reverse("welcome", args=(1,)))
-    areaOperations = user.VerifiedUser.AreaOperation.filter(operationType="deleteArea").order_by("-operationTakeDate")
+    areaOperations = user.VerifiedUser.AreaOperation.filter(operationType="deleteArea",
+                                                            operationTakeDate__gt=datetime.now() - timedelta(
+                                                                weeks=2)).order_by("-operationTakeDate")
+    for i in areaOperations:
+        try:
+            i.area
+            areaOperations.append(i)
+        except:
+            pass
     if int(areaDeletionNum) < 1:
         areaDeletionNum = 1
     else:
@@ -375,7 +378,9 @@ def adminViewDeletions(request, areaDeletionNum, userDeletionNum, suggestionDele
     else:
         begin = end - 4
     areaPageList = range(begin, end + 1)
-    userOperations = user.VerifiedUser.UserOperation.filter(operationType="deleteUser").order_by("-operationTakeDate")
+    userOperations = user.VerifiedUser.UserOperation.filter(operationType="deleteUser",
+                                                            operationTakeDate__gt=datetime.now() - timedelta(
+                                                                weeks=2)).order_by("-operationTakeDate")
     if int(userDeletionNum) < 1:
         userDeletionNum = 1
     else:
@@ -396,7 +401,9 @@ def adminViewDeletions(request, areaDeletionNum, userDeletionNum, suggestionDele
     else:
         begin = end - 4
     userPageList = range(begin, end + 1)
-    suggestionOperations = user.VerifiedUser.SuggestionOperation.filter(operationType="deleteSuggestion").order_by("-operationTakeDate")
+    suggestionOperations = user.VerifiedUser.SuggestionOperation.filter(operationType="deleteSuggestion",
+                                                                        operationTakeDate__gt=datetime.now() - timedelta(
+                                                                            weeks=2)).order_by("-operationTakeDate")
     if int(suggestionDeletionNum) < 1:
         suggestionDeletionNum = 1
     else:
@@ -427,31 +434,31 @@ def adminViewDeletions(request, areaDeletionNum, userDeletionNum, suggestionDele
 
 def adminAnnulDeletions(request):
     try:
-        user=CommonUser.object.get(commonUserID=request.session['commonUserID'])
+        user = CommonUser.object.get(commonUserID=request.session['commonUserID'])
         if not user.VerifiedUser.isAdmin:
             return HttpResponse('Fail')
-        areaOperationList=[i for i in request.session['areaList'].split('-') if len(i)!=0]
-        userOperationList=[i for i in request.session['userList'].split('-') if len(i)!=0]
-        suggestionOperationList=[i for i in request.session['suggestionList'].split('-') if len(i)!=0]
+        areaOperationList = [i for i in request.POST.get('areaOperationList').split('-') if len(i) != 0]
+        userOperationList = [i for i in request.POST.get('userOperationList').split('-') if len(i) != 0]
+        suggestionOperationList = [i for i in request.POST.get('suggestionOperationList').split('-') if len(i) != 0]
         for i in areaOperationList:
-            areaOperation=AreaOperation.objects.get(areaOperationID=int(i))
-            area=areaOperation.area
-            area.isDelete=False
-            area.deleteDate=None
+            areaOperation = AreaOperation.objects.get(areaOperationID=int(i))
+            area = areaOperation.area
+            area.isDelete = False
+            area.deleteDate = None
             area.save()
             areaOperation.delete()
         for i in userOperationList:
-            userOperation=CommonUserOperation.objects.get(areaOperationID=int(i))
-            user=userOperation.user
-            user.isDelete=False
-            user.deleteDate=None
+            userOperation = CommonUserOperation.objects.get(commonUserOperationID=int(i))
+            user = userOperation.commonUser
+            user.isDelete = False
+            user.deleteDate = None
             user.save()
             userOperation.delete()
         for i in suggestionOperationList:
-            suggestionOperation=SuggestionOperation.objects.get(areaOperationID=int(i))
-            suggestion=suggestionOperation.suggestion
-            suggestion.isDelete=False
-            suggestion.deleteDate=None
+            suggestionOperation = SuggestionOperation.objects.get(suggestionOperationID=int(i))
+            suggestion = suggestionOperation.suggestion
+            suggestion.isDelete = False
+            suggestion.deleteDate = None
             suggestion.save()
             suggestionOperation.delete()
         return HttpResponse('Success')
@@ -459,3 +466,6 @@ def adminAnnulDeletions(request):
         print(e)
         return HttpResponse('Success')
 
+
+def adminViewOneSuggestion(request,suggestionID):
+    return None

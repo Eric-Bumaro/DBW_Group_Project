@@ -23,8 +23,8 @@ urlpatterns = [
         myAdmin.adminViewOperations, name="adminViewOperations"),
     url(r'^Admin/adminInfor/adminViewDeletions/#areaDeletionNum=(?P<areaDeletionNum>\d*)&userDeletionNum=('
         r'?P<userDeletionNum>\d*)&suggestionDeletionNum=(?P<suggestionDeletionNum>\d*)$',
-        myAdmin.adminViewDeletions, name="adminViewDeletion"),
-    url(r'^Admin/adminInfor/adminAnnulDeletions/$',myAdmin.adminAnnulDeletions, name="adminAnnulDeletion"),
+        myAdmin.adminViewDeletions, name="adminViewDeletions"),
+    url(r'^Admin/adminInfor/adminAnnulDeletions/$',myAdmin.adminAnnulDeletions, name="adminAnnulDeletions"),
     url(r'^Admin/adminChangeInfor/#changeType=(?P<changeType>.*)$', myAdmin.adminChangeInfor, name="adminChangeInfor"),
     url(r'^Admin/adminSuChange/#changeType=(?P<changeType>.*)$', myAdmin.adminSuChange, name="adminSuChange"),
     url(r'^Admin/adminInfor/adminViewArea/#num=(?P<num>\d*)&areaID=(?P<areaID>\d*)$', myAdmin.adminViewArea,
