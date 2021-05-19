@@ -90,8 +90,7 @@ def adminSuChange(request, changeType):
 def adminViewArea(request, num, areaID):
     try:
         admin = CommonUser.object.get(commonUserID=request.session["commonUserID"])
-        if not admin.isAdmin:
-            return HttpResponse("Fail")
+        assert admin.VerifiedUser.isAdmin
     except KeyError:
         return HttpResponseRedirect(reverse("welcome", args=(1,)))
     area = Area.object.get(areaID=areaID)
@@ -126,8 +125,7 @@ def adminViewArea(request, num, areaID):
 def adminDeleteUsers(request):
     try:
         admin = CommonUser.objects.get(commonUserID=request.session['commonUserID'])
-        if not admin.VerifiedUser.isAdmin:
-            return HttpResponse("Fail")
+        assert admin.VerifiedUser.isAdmin
         deleteList = [i for i in request.POST.get("listToDelete").split("-") if len(i) != 0]
         try:
             for i in deleteList:
@@ -151,8 +149,7 @@ def adminDeleteUsers(request):
 def adminViewOperations(request, areaOperationNum, userOperationNum, suggestionOperationNum):
     try:
         user = CommonUser.objects.get(commonUserID=request.session['commonUserID'])
-        if not user.VerifiedUser.isAdmin:
-            return HttpResponseRedirect(reverse("welcome", args=(1,)))
+        assert user.VerifiedUser.isAdmin
     except KeyError:
         return HttpResponseRedirect(reverse("welcome", args=(1,)))
     areaOperations = user.VerifiedUser.AreaOperation.order_by("-operationTakeDate")
@@ -307,8 +304,7 @@ def adminOperateSuggestions(request):
     try:
         operateType = request.POST.get("operateType")
         admin = CommonUser.object.get(commonUserID=request.session['commonUserID'])
-        if not admin.VerifiedUser.isAdmin:
-            return HttpResponse("Fail")
+        assert admin.VerifiedUser.isAdmin
         if operateType == "delete":
             listToDelete = [i for i in request.POST.get("listToDelete").split("-") if len(i) != 0]
             for i in listToDelete:
@@ -345,9 +341,8 @@ def adminOperateSuggestions(request):
 def adminViewDeletions(request, areaDeletionNum, userDeletionNum, suggestionDeletionNum):
     try:
         user = CommonUser.objects.get(commonUserID=request.session['commonUserID'])
-        if not user.VerifiedUser.isAdmin:
-            return HttpResponseRedirect(reverse("welcome", args=(1,)))
-    except KeyError:
+        assert user.VerifiedUser.isAdmin
+    except:
         return HttpResponseRedirect(reverse("welcome", args=(1,)))
     areaOperations = user.VerifiedUser.AreaOperation.filter(operationType="deleteArea",
                                                             operationTakeDate__gt=datetime.now() - timedelta(
@@ -435,8 +430,7 @@ def adminViewDeletions(request, areaDeletionNum, userDeletionNum, suggestionDele
 def adminAnnulDeletions(request):
     try:
         user = CommonUser.object.get(commonUserID=request.session['commonUserID'])
-        if not user.VerifiedUser.isAdmin:
-            return HttpResponse('Fail')
+        assert user.VerifiedUser.isAdmin
         areaOperationList = [i for i in request.POST.get('areaOperationList').split('-') if len(i) != 0]
         userOperationList = [i for i in request.POST.get('userOperationList').split('-') if len(i) != 0]
         suggestionOperationList = [i for i in request.POST.get('suggestionOperationList').split('-') if len(i) != 0]

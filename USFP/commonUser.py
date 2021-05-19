@@ -117,8 +117,7 @@ def userViewOneSuggestion(request, suggestionID):
     try:
         user = CommonUser.object.get(commonUserID=request.session['commonUserID'])
         suggestion = Suggestion.object.get(suggestionID=suggestionID)
-        if suggestion.commonUser != user:
-            return HttpResponseRedirect(reverse("welcome", args=(1,)))
+        assert suggestion.commonUser == user
         return HttpResponse(suggestion.content)
     except Exception as e:
         print(e)
