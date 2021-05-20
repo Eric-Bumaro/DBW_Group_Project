@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>View Unhandled Suggestions</title>
+    <base href="/">
+    <link rel="stylesheet" type="text/css" href="/static/CSS/Admin/adminViewUnhandledSuggestion.css">
+</head>
+<body>
+<h3>Here are the suggestions that are unhandled(invisible)</h3>
+<table border="1" cellspacing="0">
+    <tr>
+        <th>
+            Count
+        </th>
+        <th>
+            Suggestion ID
+        </th>
+        <th>
+            PostTime
+        </th>
+        <th>
+            Last Modify
+        </th>
+        <th>
+            View
+        </th>
+    </tr>
+    {% for i in suggestionPrepageData %}
+        <tr>
+            <td>
+                {{ forloop.counter }}
+            </td>
+            <td>
+                {{ i.suggestionID }}
+            </td>
+            <td>
+                {{ i.postTime }}
+            </td>
+            <td>
+                {{ i.modifyTime }}
+            </td>
+            <td>
+                <a href="{% url 'USFP:adminViewOneSuggestion' i.suggestionID 1%}">View the suggestion</a>
+            </td>
+        </tr>
+    {% endfor %}
+</table>
+<a href="{% url 'USFP:adminInfor' %}">Back</a>
+</body>
+</html>

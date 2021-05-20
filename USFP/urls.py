@@ -13,14 +13,15 @@ urlpatterns = [
     url(r'^CommonUser/userSuChange#changeType=(?P<changeType>.*)$', commonUser.userSuChange, name="userSuChange"),
     url(r'^CommonUser/userInfor/userViewSuggestions/#num=(?P<num>\d*)$', commonUser.userViewSuggestions,
         name="userViewSuggestions"),
-    url(r'^CommonUser/userInfor/userDeleteSuggestions/$', commonUser.userDeleteSuggestions,
-        name="userDeleteSuggestions"),
-    url(r'^CommonUser/userViewOneSuggestion/#suggesionID=(?P<suggesionID>.*)$', commonUser.userViewOneSuggestion,
-        name="userViewOneSuggestion"),
-    url(r'^CommonUser/userViewOneSuggestion/#suggesionID=(?P<suggesionID>.*)$', commonUser.userViewOneSuggestion,
-        name="userViewOneSuggestion"),
-    url(r'^CommonUser/userChangeSuggestion/#suggesionID=(?P<suggesionID>.*)$', commonUser.userChangeSuggestion,
+    url(r'^CommonUser/userViewOneSuggestion/#suggestionID=(?P<suggestionID>.*)&num=(?P<num>\d*)$',
+        commonUser.userViewOneSuggestion,name="userViewOneSuggestion"),
+    url(r'^CommonUser/userViewOneSuggestion/#suggestionID=(?P<suggestionID>.*)&num=(?P<num>\d*)$',
+        commonUser.userViewOneSuggestion,name="userViewOneSuggestion"),
+    url(r'^CommonUser/userChangeSuggestion/#suggestionID=(?P<suggestionID>.*)$', commonUser.userChangeSuggestion,
         name="userChangeSuggestion"),
+    url(r'^CommonUser/userSubmitComment/#suggestionID=(?P<suggestionID>.*)$', commonUser.userSubmitComment,
+        name="userSubmitComment"),
+
     url(r'^Admin/adminInfor/$', myAdmin.adminInfor, name="adminInfor"),
     url(r'^Admin/adminInfor/adminViewOperations/#areaOperationNum=(?P<areaOperationNum>\d*)&userOperationNum=('
         r'?P<userOperationNum>\d*)&suggestionOperationNum=(?P<suggestionOperationNum>\d*)$',
@@ -42,8 +43,13 @@ urlpatterns = [
         myAdmin.adminViewUserSuggestions, name="adminViewUserSuggestions"),
     url(r'^Admin/adminInfor/adminViewUserSuggestions/adminOperateSuggestions$',
         myAdmin.adminOperateSuggestions,name="adminOperateSuggestions"),
-    url(r'^Admin/adminViewOneSuggestion/#suggestionID=(?P<suggestionID>\d*)$',myAdmin.adminViewOneSuggestion,
-        name="adminViewOneSuggestion"),
+    url(r'^Admin/adminViewOneSuggestion/#suggestionID=(?P<suggestionID>\d*)&num=(?P<num>\d*)$',
+        myAdmin.adminViewOneSuggestion,name="adminViewOneSuggestion"),
+    url(r'^Admin/adminViewUnhandledSuggestion/#num=(?P<num>\d*)$', myAdmin.adminViewUnhandledSuggestion,
+        name="adminViewUnhandledSuggestion"),
+    url(r'^Admin/adminSubmitComment/#suggestionID=(?P<suggestionID>\d*)$', myAdmin.adminSubmitComment,
+        name="adminSubmitComment"),
+
     url(r'^submitSuggestion$',views.submitSuggestion,name="submitSuggestion"),
     url(r'^searchSuggestion$',views.searchSuggestion,name="searchSuggestion")
 ]

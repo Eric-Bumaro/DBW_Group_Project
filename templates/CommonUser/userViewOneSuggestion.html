@@ -2,12 +2,12 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Welcome</title>
+    <title>View One Suggestion</title>
     <base href="/">
     <link rel="stylesheet" type="text/css" href="/static/CSS/CommonUser/userViewOneSuggestion.css">
 </head>
 <body>
-{% if user.commonUserID %}
+{% ifnotequal user.commonUserID 5%}
     <p>userID:{{ user.commonUserID }}</p>
     <p>userName:{{ user.commonUserName }}</p>
     <p>userImage:<img src="/media/{{ user.commonUserImage }}"/></p>
@@ -24,24 +24,45 @@
 {% else %}
     <br><a href="{% url 'USFP:login' 0 %}">Login</a>
     <a href="/USFP/register/">Register</a>
-{% endif %}
+{% endifnotequal %}
 <h1>The suggestion:</h1>
 {% if suggestion.visible %}
-    AuthorName:{{ suggestion.commonUser.commonUserName }}
+    {{ suggestion.commonUser.commonUserName }}:
     <br>
-    Post time:{{ suggestion.postTime }}
+    {{ suggestion.content }}
     <br>
-    {% for i in  replySuggestionList %}
-            {{ i.commonUser.commonUserName }}:
+    Post time:{{ suggestion.postTime }}&emsp;
+    {% if isAuthor %}
+        <a href="{% url 'userChangeSuggestion' suggestion.suggestionID%}">Click to change</a>
+    {% endif %}
+    <br>
+    {% for i in  replySuggestionPrepageData %}
+            {{ i.selfSuggestion.commonUser.commonUserName }}:
             <br>
-            {{ i.content }}
+            {{ i.selfSuggestion.content }}
+            <br>
+            Post time:{{ i.selfSuggestion.postTime }}
+            <br>
+            <a href="{% url 'USFP:userViewOneSuggestion' i.selfSuggestion.suggestionID 1 %}">Click to view</a>
     {% endfor %}
+    {% if replySuggestionPrepageData.has_previous %}
+        <a href="{% url 'USFP:userViewOneSuggestion' suggestion.suggestionID IsuggestionPrepageData.previous_page_number  %}">Last Page</a>
+    {% endif %}&emsp;
+    {% for n in  replySuggestionPageList %}
+    <a href="{% url 'USFP:userViewOneSuggestion' suggestion.suggestionID n  %}">{{ n }}</a> &emsp;
+    {% endfor %}
+    {% if replySuggestionPrepageData.has_next %}
+        <a href="{% url 'USFP:userViewOneSuggestion' suggestion.suggestionID suggestionPrepageData.next_page_number  %}">Next Page</a>
+    {% endif %}&emsp;
+
     <br>
     {% if isVerified %}
-        You comment the suggestion here:
+        You can comment the suggestion here:
         <br>
-        <textarea rows="10" cols="30" name="replySuggestionContent" required></textarea>
-
+        <form action="{% url 'USFP:userSubmitComment' suggestion.suggestionID %}" method="post">
+            {% csrf_token %}
+            <textarea rows="10" cols="30" name="replySuggestionContent"></textarea>
+        </form>
     {% else %}
         <h4>You can login to comment!</h4>
     {% endif %}
@@ -54,4 +75,7 @@
         <h3>The suggestion is not available!</h3>
     {% endif %}
 {% endif %}
+
+<a href="/welcome/">Back to the Welcome Page</a>
 </body>
+</html>

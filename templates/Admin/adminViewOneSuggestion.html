@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>View One Suggestion</title>
+    <base href="/">
+    <link rel="stylesheet" type="text/css" href="/static/CSS/Admin/adminViewOneSuggestion.css">
+</head>
+<script src="/static/JavaScript/jquery-3.4.1.min.js"></script>
+<script>
+    function toChoose(element){
+        var radio = $(element);
+        if (radio.data('waschecked')) {
+            radio.prop('checked', false);
+            radio.data('waschecked', false)
+        } else {
+            radio.prop('checked', true);
+            radio.data('waschecked', true)
+        }
+    }
+</script>
+<body>
+<h2>The Suggestion :</h2>
+Post time:{{ suggestion.postTime }}<br>
+Last modify time:{{ suggestion.modifyTime }}
+Visible:{{ suggestion.visible }}
+<br>
+The content:<br>
+{{ suggestion.content }}
+
+<br>
+{% if isReplied %}
+    {% for i in  replySuggestionPrepageData %}
+            {{ i.selfSuggestion.commonUser.commonUserName }}:
+            <br>
+            {{ i.content }}
+            <br>
+            Post time:{{ suggestion.selfSuggestion.postTime }}
+            <br>
+            <a href="{% url 'USFP:adminViewOneSuggestion' i.selfSuggestion.suggestionID 1 %}">Click to view</a>
+    {% endfor %}
+    {% if replySuggestionPrepageData.has_previous %}
+        <a href="{% url 'USFP:adminViewOneSuggestion' suggestion.suggestion IsuggestionPrepageData.previous_page_number  %}">Last Page</a>
+    {% endif %}&emsp;
+    {% for n in  replySuggestionPageList %}
+    <a href="{% url 'USFP:adminViewOneSuggestion' suggestion.suggestionID n  %}">{{ n }}</a> &emsp;
+    {% endfor %}
+    {% if replySuggestionPrepageData.has_next %}
+        <a href="{% url 'USFP:adminViewOneSuggestion' suggestion.suggestionID suggestionPrepageData.next_page_number  %}">Next Page</a>
+    {% endif %}&emsp;
+{% else %}
+    <h5>It has not been replied!</h5>
+{% endif %}
+
+{% if isManagedBy %}
+<form action="{% url 'USFP:adminSubmitComment' suggestion.suggestionID %}" method="post">
+    {% csrf_token %}
+    Comment here:
+    <textarea name="comment" rows="10" cols="30" required></textarea>
+    <br>
+    <input type="radio" name="choice" value=1 onclick="toChoose(this)"><label for="deleteRadio">Delete the suggestion</label>
+    <input type="radio" name="choice" value=2 onclick="toChoose(this)"><label for="visibleRadio">Make it visible</label>
+</form>
+{% endif %}
+</body>
+</html>

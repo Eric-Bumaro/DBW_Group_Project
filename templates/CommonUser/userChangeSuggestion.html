@@ -2,9 +2,9 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Successfully Submit</title>
+    <title>Change Your Suggestion</title>
     <base href="/">
-    <link rel="stylesheet" type="text/css" href="/static/CSS/View/submitSuggestionResult.css">
+    <link rel="stylesheet" type="text/css" href="/static/CSS/CommonUser/userChangeSuggestion.css">
 </head>
 <body>
 {% ifnotequal user.commonUserID 5%}
@@ -25,15 +25,15 @@
     <br><a href="{% url 'USFP:login' 0 %}">Login</a>
     <a href="/USFP/register/">Register</a>
 {% endifnotequal %}
-{% if state %}
-<h2>You have Successfully submit the suggestion!!</h2>
-<br>
-<h5>You can remember your suggestion ID to search it later:{{ suggestionID }}</h5>
-{% else %}
-<h2>Fail to submit the suggestion!!</h2>
-<br>
-<h5>Please contact the admin to see why!</h5>
-{% endif %}
+<form action="{% url 'USFP:userChangeSuggestion' suggestionID%}" method="post">
+    {% csrf_token %}
+    Type your new suggestion here:
+    <br>
+    <textarea rows="10" cols="30" name="enwSuggestionContent" required></textarea>
+    <br>
+    <input type="submit" value="Click to submit">
+</form>
+<a href="{%  url 'USFP:userViewOneSuggestion' suggestionID 1%}">View the Suggestion</a>
 <a href="/welcome/">Back to the Welcome Page</a>
 </body>
 </html>

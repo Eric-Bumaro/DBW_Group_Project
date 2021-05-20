@@ -2,12 +2,12 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Welcome</title>
+    <title>Search Result</title>
     <base href="/">
     <link rel="stylesheet" type="text/css" href="/static/CSS/View/searchSuggestion.css">
 </head>
 <body>
-{% if user.commonUserID %}
+{% ifnotequal user.commonUserID 5%}
     <p>userID:{{ user.commonUserID }}</p>
     <p>userName:{{ user.commonUserName }}</p>
     <p>userImage:<img src="/media/{{ user.commonUserImage }}"/></p>
@@ -24,20 +24,20 @@
 {% else %}
     <br><a href="{% url 'USFP:login' 0 %}">Login</a>
     <a href="/USFP/register/">Register</a>
-{% endif %}
+{% endifnotequal %}
 {% if suggestion.visible %}
     AuthorName:{{ suggestion.commonUser.commonUserName }}
     <br>
     Post time:{{ suggestion.postTime }}
     <br>
-    <a href="{% url 'USFP:userViewOneSuggestion' suggestion.suggestionID%}">Click here to view</a>
+    <a href="{% url 'USFP:userViewOneSuggestion' suggestion.suggestionID 1%}">Click here to view</a>
 {% else %}
     {% if isAuthor %}
         <h3>It is being checked by the admin! Please wait patiently!</h3>
-        <a herf="{% url 'USFP:userChangeSuggestion' suggestion.suggestionID%}">Click here to change your content</a>
     {% else %}
         <h3>The suggestion is not available!</h3>
     {% endif %}
 {% endif %}
 <a href="/welcome/">Back to the Welcome Page</a>
 </body>
+</html>

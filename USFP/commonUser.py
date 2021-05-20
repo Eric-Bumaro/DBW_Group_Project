@@ -71,7 +71,7 @@ def userViewSuggestions(request, num):
         user = CommonUser.objects.get(commonUserID=request.session['commonUserID'])
     except KeyError:
         return HttpResponseRedirect(reverse("welcome", args=(1,)))
-    suggestions = user.Suggestion.filter(visible=True)
+    suggestions = user.Suggestion.filter(visible=True).order_by("postTime")
     if int(num) < 1:
         suggestionNum = 1
     else:
@@ -95,7 +95,7 @@ def userViewSuggestions(request, num):
 
     return render(request, "CommonUser/userViewSuggestions.html",
                   {"suggestionPager": suggestionPager, 'suggestionPrepageData': suggestionPrepageData,
-                   "suggestionPageList": suggestionPageList,"user":user})
+                   "suggestionPageList": suggestionPageList, "user": user})
 
 
 def userDeleteSuggestions(request):
@@ -113,22 +113,72 @@ def userDeleteSuggestions(request):
     return HttpResponse("Success")
 
 
-def userViewOneSuggestion(request, suggestionID):
+def userViewOneSuggestion(request, suggestionID, num):
     try:
-        user = CommonUser.object.get(commonUserID=request.session.get('commonUserID',5))
+        user = CommonUser.object.get(commonUserID=request.session.get('commonUserID', 5))
         suggestion = Suggestion.object.get(suggestionID=suggestionID)
+        if user.isVerified():
+            if user.VerifiedUser.isAdmin:
+                return HttpResponseRedirect(reverse("USFP:adminViewOneSuggestion",args=(suggestionID,1)))
         if suggestion.isReplied():
             replySuggestionList = suggestion.ReplySuggestion.filter(selfSuggestion__isDelete=False,
-                                                                    selfSuggestion__visible=False)
+                                                                    selfSuggestion__visible=True).order_by("postTime")
         else:
             replySuggestionList = []
-        return render(request,"CommonUser/userViewOneSuggestion.html",{"suggestion": suggestion, "isAuthor": True,
-                                                              'user':user,'isVerified':user.isVerified(),
-                                                              'replySuggestionList':replySuggestionList})
+        if int(num) < 1:
+            replyNum = 1
+        else:
+            replyNum = int(num)
+        replySuggestionPager = Paginator(replySuggestionList, 10)
+        try:
+            replySuggestionPrepageData = replySuggestionPager.page(replyNum)
+        except EmptyPage:
+            replySuggestionPrepageData = replySuggestionPager.page(replySuggestionPager.num_pages)
+        begin = (replyNum - int(math.ceil(10.0 / 2)))
+        if begin < 1:
+            begin = 1
+        end = begin + 4
+        if end > replySuggestionPager.num_pages:
+            end = replySuggestionPager.num_pages
+        if end <= 5:
+            begin = 1
+        else:
+            begin = end - 4
+        replySuggestionPageList = range(begin, end + 1)
+        return render(request, "CommonUser/userViewOneSuggestion.html", {"suggestion": suggestion,
+                                                                         "isAuthor": suggestion.commonUser == user,
+                                                                         'user': user, 'isVerified': user.isVerified(),
+                                                                         'replySuggestionPrepageData': replySuggestionPrepageData,
+                                                                         'replySuggestionPageList': replySuggestionPageList})
     except Exception as e:
         print(e)
         return redirect("welcome")
 
 
-def userChangeSuggestion(request):
-    return None
+def userChangeSuggestion(request, suggestionID):
+    user = CommonUser.object.get(commonUserID=request.session.get("commonUserID", 5))
+    if request.method=="GET":
+        return render(request,"CommonUser/userChangeSuggestion.html",{'suggestionID':suggestionID,'user':user})
+    suggestion = Suggestion.object.get(suggestionID=suggestionID)
+    try:
+        newContent=request.POST.get("enwSuggestionContent")
+        suggestion.content=newContent
+        if user.isVerified():
+            suggestion.visible=False
+        suggestion.save()
+    except Exception as e:
+        print(e)
+        return redirect("welcome")
+
+
+def userSubmitComment(request, suggestionID):
+    try:
+        content = request.POST.get("replySuggestionContent")
+        user = CommonUser.object.get(commonUserID=request.session.get("commonUserID", 5))
+        newComment = Suggestion.objects.create(content=content, commonUser=user, visible=True)
+        ReplySuggestion.objects.create(selfSuggestion=newComment,
+                                       suggestionToReply=Suggestion.objects.get(suggestionID=suggestionID))
+        return HttpResponseRedirect(reverse("USFP:userViewOneSuggestion", args=(suggestionID, 1)))
+    except Exception as e:
+        print(e)
+        return redirect("welcome")

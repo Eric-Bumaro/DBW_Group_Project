@@ -5,7 +5,7 @@ from PIL import Image
 from django.core.paginator import *
 from django.db import transaction
 from django.http import HttpResponse, HttpResponseRedirect
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.urls import reverse
 from .models import *
 from datetime import *
@@ -230,7 +230,7 @@ def adminViewUser(request, commonUserID):
         return HttpResponseRedirect(reverse("welcome", args=(1,)))
     user = CommonUser.object.get(commonUserID=commonUserID)
     if user.isManagedBy(admin):
-        areaNameList = admin.VerifiedUser.adminArea.filter(isDelete=False).values_list('areaName',flat=True)
+        areaNameList = admin.VerifiedUser.adminArea.filter(isDelete=False).values_list('areaName', flat=True)
         return render(request, "Admin/adminViewUser.html",
                       {"user": user, "areaNameList": areaNameList, "isVerified": user.isVerified()})
     return HttpResponseRedirect(reverse("welcome", args=(1,)))
@@ -346,12 +346,6 @@ def adminViewDeletions(request, areaDeletionNum, userDeletionNum, suggestionDele
     areaOperations = user.VerifiedUser.AreaOperation.filter(operationType="deleteArea",
                                                             operationTakeDate__gt=datetime.now() - timedelta(
                                                                 weeks=2)).order_by("-operationTakeDate")
-    for i in areaOperations:
-        try:
-            i.area
-            areaOperations.append(i)
-        except:
-            pass
     if int(areaDeletionNum) < 1:
         areaDeletionNum = 1
     else:
@@ -460,5 +454,93 @@ def adminAnnulDeletions(request):
         return HttpResponse('Success')
 
 
-def adminViewOneSuggestion(request,suggestionID):
-    return None
+def adminViewUnhandledSuggestion(request, num):
+    try:
+        unhandledSuggestionList = []
+        admin = CommonUser.object.get(commonUserID=request.session['commonUserID'])
+        for area in admin.VerifiedUser.adminArea:
+            for user in area.CommonUser.all():
+                unhandledSuggestionList.extend(user.Suggestion.filter(visible=False, isDelete=False).tolist())
+        if int(num) < 1:
+            num = 1
+        else:
+            num = int(num)
+        suggestionPager = Paginator(unhandledSuggestionList, 10)
+        try:
+            suggestionPrepageData = suggestionPager.page(num)
+        except EmptyPage:
+            suggestionPrepageData = suggestionPager.page(suggestionPager.num_pages)
+        begin = (num - int(math.ceil(10.0 / 2)))
+        if begin < 1:
+            begin = 1
+        end = begin + 4
+        if end > suggestionPager.num_pages:
+            end = suggestionPager.num_pages
+        if end <= 5:
+            begin = 1
+        else:
+            begin = end - 4
+        suggestionPageList = range(begin, end + 1)
+        return render(request, "Admin/adminViewUnhandledSuggestion.html",
+                      {"suggestionNum": num, 'suggestionPrepageData': suggestionPrepageData,
+                       "suggestionPageList": suggestionPageList})
+    except Exception as e:
+        print(e)
+        return redirect("welcome")
+
+
+def adminViewOneSuggestion(request, suggestionID, num):
+    try:
+        user = CommonUser.object.get(commonUserID=request.session.get('commonUserID'))
+        suggestion = Suggestion.object.get(suggestionID=suggestionID)
+        assert user.isVerified()
+        assert user.VerifiedUser.isAdmin
+        if suggestion.isReplied():
+            replySuggestionList = suggestion.ReplySuggestion.filter(selfSuggestion__isDelete=False,
+                                                                    selfSuggestion__visible=False).order_by("postTime")
+        else:
+            replySuggestionList = []
+        if int(num) < 1:
+            replyNum = 1
+        else:
+            replyNum = int(num)
+        replySuggestionPager = Paginator(replySuggestionList, 10)
+        try:
+            replySuggestionPrepageData = replySuggestionPager.page(replyNum)
+        except EmptyPage:
+            replySuggestionPrepageData = replySuggestionPager.page(replySuggestionPager.num_pages)
+        begin = (replyNum - int(math.ceil(10.0 / 2)))
+        if begin < 1:
+            begin = 1
+        end = begin + 4
+        if end > replySuggestionPager.num_pages:
+            end = replySuggestionPager.num_pages
+        if end <= 5:
+            begin = 1
+        else:
+            begin = end - 4
+        replySuggestionPageList = range(begin, end + 1)
+        isManagedBy = suggestion.commonUser.area in user.VerifiedUser.adminArea.all()
+        return render(request, "Admin/adminViewOneSuggestion.html", {"suggestion": suggestion,
+                                                                     "isManagedBy": isManagedBy,
+                                                                     "isReplied": suggestion.isReplied(),
+                                                                     'user': user,
+                                                                     'replySuggestionPrepageData': replySuggestionPrepageData,
+                                                                     'replySuggestionPageList': replySuggestionPageList})
+    except Exception as e:
+        print(e)
+        return redirect("USFP:adminInfor")
+
+
+def adminSubmitComment(request,suggestionID):
+    try:
+        replyContent = request.POST.get("comment","")
+        choice = request.POST.get("choice",0)
+        user=CommonUser.object.get(commonUserID=request.session['commonUserID'])
+        suggestion=Suggestion.objects.get(suggestionID=suggestionID)
+        assert suggestion.commonUser.area in user.VerifiedUser.adminArea.all()
+
+
+    except Exception as e:
+        print(e)
+        return redirect("USFP:adminInfor")

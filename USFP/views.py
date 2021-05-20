@@ -126,19 +126,8 @@ def searchSuggestion(request):
         commonUser = CommonUser.object.get(commonUserID=request.session.get("commonUserID", 5))
         suggestion = Suggestion.object.get(suggestionID=suggestionID)
         assert not suggestion.isDelete
+        return render(request, "View/searchSuggestion.html", {"suggestion": suggestion, "isAuthor": True,
+                                                              'user':commonUser})
     except Exception as e:
         print(e)
         return redirect("welcome")
-    if suggestion.isReplied():
-        replySuggestionList=suggestion.ReplySuggestion.filter(selfSuggestion__isDelete=False,
-                                                              selfSuggestion__visible=False)
-    else:
-        replySuggestionList=[]
-    if suggestion.commonUser == commonUser:
-        return render(request, "View/searchSuggestion.html", {"suggestion": suggestion, "isAuthor": True,
-                                                              'user':commonUser,'isVerified':commonUser.isVerified(),
-                                                              'replySuggestionList':replySuggestionList})
-    else:
-        return render(request, "View/searchSuggestion.html", {"suggestion": suggestion, "isAuthor": False,
-                                                              'user':commonUser,'isVerified':commonUser.isVerified(),
-                                                              'replySuggestionList':replySuggestionList})
