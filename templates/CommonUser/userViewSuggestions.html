@@ -59,6 +59,24 @@
     }
 </script>
 <body>
+{% if user.commonUserID %}
+    <p>userID:{{ user.commonUserID }}</p>
+    <p>userName:{{ user.commonUserName }}</p>
+    <p>userImage:<img src="/media/{{ user.commonUserImage }}"/></p>
+    {% if isAdmin %}
+        <p>
+            <a href="{% url 'USFP:adminInfor' %}">View profile</a>
+        </p>
+    {% else %}
+        <p>
+            <a href="{% url 'USFP:userInfor' %}">View profile</a>
+        </p>
+    {% endif %}
+        <p><a href="{% url 'welcome' 1 %}">Logout</a></p>
+{% else %}
+    <br><a href="{% url 'USFP:login' 0 %}">Login</a>
+    <a href="/USFP/register/">Register</a>
+{% endif %}
 <h1>You can view your suggestions here:</h1>
 <button onclick="showChoose()" id="tochooseButton">Click to choose</button>
 <button onclick="allChoose()" class="ChooseFunction" style="display: none">Select all</button>

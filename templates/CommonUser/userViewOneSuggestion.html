@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Welcome</title>
+    <base href="/">
+    <link rel="stylesheet" type="text/css" href="/static/CSS/CommonUser/userViewOneSuggestion.css">
+</head>
+<body>
+{% if user.commonUserID %}
+    <p>userID:{{ user.commonUserID }}</p>
+    <p>userName:{{ user.commonUserName }}</p>
+    <p>userImage:<img src="/media/{{ user.commonUserImage }}"/></p>
+    {% if isAdmin %}
+        <p>
+            <a href="{% url 'USFP:adminInfor' %}">View profile</a>
+        </p>
+    {% else %}
+        <p>
+            <a href="{% url 'USFP:userInfor' %}">View profile</a>
+        </p>
+    {% endif %}
+        <p><a href="{% url 'welcome' 1 %}">Logout</a></p>
+{% else %}
+    <br><a href="{% url 'USFP:login' 0 %}">Login</a>
+    <a href="/USFP/register/">Register</a>
+{% endif %}
+<h1>The suggestion:</h1>
+{% if suggestion.visible %}
+    AuthorName:{{ suggestion.commonUser.commonUserName }}
+    <br>
+    Post time:{{ suggestion.postTime }}
+    <br>
+    {% for i in  replySuggestionList %}
+            {{ i.commonUser.commonUserName }}:
+            <br>
+            {{ i.content }}
+    {% endfor %}
+    <br>
+    {% if isVerified %}
+        You comment the suggestion here:
+        <br>
+        <textarea rows="10" cols="30" name="replySuggestionContent" required></textarea>
+
+    {% else %}
+        <h4>You can login to comment!</h4>
+    {% endif %}
+
+{% else %}
+    {% if isAuthor %}
+        <h3>It is being checked by the admin! Please wait patiently!</h3>
+        <a herf="{% url 'USFP:userChangeSuggestion' suggestion.suggestionID%}">Click here to change your content</a>
+    {% else %}
+        <h3>The suggestion is not available!</h3>
+    {% endif %}
+{% endif %}
+</body>

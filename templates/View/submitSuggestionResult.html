@@ -4,11 +4,10 @@
     <meta charset="UTF-8">
     <title>Welcome</title>
     <base href="/">
-    <link rel="stylesheet" type="text/css" href="/static/CSS/View/welcome.css">
+    <link rel="stylesheet" type="text/css" href="/static/CSS/View/submitSuggestionResult.css">
 </head>
 <body>
-<h5>Welcome!</h5>
-{% if user.commonUserID %}
+{% ifnotequal user.commonUserID 5%}
     <p>userID:{{ user.commonUserID }}</p>
     <p>userName:{{ user.commonUserName }}</p>
     <p>userImage:<img src="/media/{{ user.commonUserImage }}"/></p>
@@ -25,12 +24,16 @@
 {% else %}
     <br><a href="{% url 'USFP:login' 0 %}">Login</a>
     <a href="/USFP/register/">Register</a>
+{% endifnotequal %}
+{% if state %}
+<h2>You have Successfully submit the suggestion!!</h2>
+<br>
+<h5>You can remember your suggestion ID to search it later:{{ suggestionID }}</h5>
+{% else %}
+<h2>Fail to submit the suggestion!!</h2>
+<br>
+<h5>Please contact the admin to see why!</h5>
 {% endif %}
-<form action="{% url 'USFP:searchSuggestion' %}" method="post">
-        {% csrf_token %}
-    <label for="searchSuggestionID">Input the suggestion id you want to search:</label>
-    <input type="text" οninput=“value=value.replace(/[^\d]/g,’’)” name="searchSuggestionID" required>
-</form>
-<a href="{% url 'USFP:submitSuggestion' %}">To submit your suggestion</a>
+<a href="/welcome/">Back to the Welcome Page</a>
 </body>
 </html>

@@ -230,8 +230,7 @@ def adminViewUser(request, commonUserID):
         return HttpResponseRedirect(reverse("welcome", args=(1,)))
     user = CommonUser.object.get(commonUserID=commonUserID)
     if user.isManagedBy(admin):
-        areaNames = admin.VerifiedUser.adminArea.filter(isDelete=False).values_list('areaName')
-        areaNameList = [i[0] for i in list(areaNames)]
+        areaNameList = admin.VerifiedUser.adminArea.filter(isDelete=False).values_list('areaName',flat=True)
         return render(request, "Admin/adminViewUser.html",
                       {"user": user, "areaNameList": areaNameList, "isVerified": user.isVerified()})
     return HttpResponseRedirect(reverse("welcome", args=(1,)))

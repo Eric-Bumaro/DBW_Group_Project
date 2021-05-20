@@ -7,6 +7,8 @@ from django.http import *
 from django.shortcuts import render, redirect
 from django.urls import reverse
 from USFP.models import *
+import jieba
+import jieba.posseg as psg
 
 
 # Create your views here.
@@ -58,7 +60,7 @@ def register(request):
         photo_resize.thumbnail((371, 475), Image.ANTIALIAS)
         photo_resize.save(photoLocation)
         user = CommonUser.objects.create(commonUserName=commonUserName, commonUserPassword=commonUserPassword,
-                                         commonUserEmail=commonUserEmail, commonUserImage="userImage/"+photoName,
+                                         commonUserEmail=commonUserEmail, commonUserImage="userImage/" + photoName,
                                          area=Area.object.get(areaID=random.randint(1, len(areaIDList) + 1)))
     except Exception as e:
         print(e)
@@ -91,3 +93,52 @@ def forgetPassword(request):
 
 def suChangePwd(request):
     return render(request, "View/suChangePwd.html")
+
+
+def submitSuggestion(request):
+    if request.method == 'GET':
+        return render(request, "View/submitSuggestion.html")
+    try:
+        commonUserID = request.session.get("commonUserID", 5)
+        commonUser = CommonUser.object.get(commonUserID=commonUserID)
+        suggestion = request.POST.get("suggestionContent")
+        suggestionObject = Suggestion.objects.create(content=suggestion, commonUser=commonUser)
+        suggestionCuttedList = jieba.cut_for_search(suggestion)
+        suggestionCuttedList = " ".join(suggestionCuttedList)
+        allTagsList = Tag.objects.values_list("tagName", flat=True)
+        for i in psg.cut(suggestionCuttedList):
+            if i.flag.startswith('n'):
+                if i.word in allTagsList:
+                    suggestionObject.tags.add(Tag.objects.get(tagName=i.word))
+                else:
+                    newTag = Tag.objects.create(tagName=i.word)
+                    suggestionObject.tags.add(newTag)
+        return render(request, "View/submitSuggestionResult.html",
+                      {"state": 1, "suggestionID": suggestionObject.suggestionID,'user':commonUser})
+    except Exception as e:
+        print(e)
+        return render(request, "View/submitSuggestionResult.html", {"state": 0,'user':commonUser})
+
+
+def searchSuggestion(request):
+    try:
+        suggestionID = int(request.POST.get("searchSuggestionID", ""))
+        commonUser = CommonUser.object.get(commonUserID=request.session.get("commonUserID", 5))
+        suggestion = Suggestion.object.get(suggestionID=suggestionID)
+        assert not suggestion.isDelete
+    except Exception as e:
+        print(e)
+        return redirect("welcome")
+    if suggestion.isReplied():
+        replySuggestionList=suggestion.ReplySuggestion.filter(selfSuggestion__isDelete=False,
+                                                              selfSuggestion__visible=False)
+    else:
+        replySuggestionList=[]
+    if suggestion.commonUser == commonUser:
+        return render(request, "View/searchSuggestion.html", {"suggestion": suggestion, "isAuthor": True,
+                                                              'user':commonUser,'isVerified':commonUser.isVerified(),
+                                                              'replySuggestionList':replySuggestionList})
+    else:
+        return render(request, "View/searchSuggestion.html", {"suggestion": suggestion, "isAuthor": False,
+                                                              'user':commonUser,'isVerified':commonUser.isVerified(),
+                                                              'replySuggestionList':replySuggestionList})

@@ -17,6 +17,10 @@ urlpatterns = [
         name="userDeleteSuggestions"),
     url(r'^CommonUser/userViewOneSuggestion/#suggesionID=(?P<suggesionID>.*)$', commonUser.userViewOneSuggestion,
         name="userViewOneSuggestion"),
+    url(r'^CommonUser/userViewOneSuggestion/#suggesionID=(?P<suggesionID>.*)$', commonUser.userViewOneSuggestion,
+        name="userViewOneSuggestion"),
+    url(r'^CommonUser/userChangeSuggestion/#suggesionID=(?P<suggesionID>.*)$', commonUser.userChangeSuggestion,
+        name="userChangeSuggestion"),
     url(r'^Admin/adminInfor/$', myAdmin.adminInfor, name="adminInfor"),
     url(r'^Admin/adminInfor/adminViewOperations/#areaOperationNum=(?P<areaOperationNum>\d*)&userOperationNum=('
         r'?P<userOperationNum>\d*)&suggestionOperationNum=(?P<suggestionOperationNum>\d*)$',
@@ -40,4 +44,6 @@ urlpatterns = [
         myAdmin.adminOperateSuggestions,name="adminOperateSuggestions"),
     url(r'^Admin/adminViewOneSuggestion/#suggestionID=(?P<suggestionID>\d*)$',myAdmin.adminViewOneSuggestion,
         name="adminViewOneSuggestion"),
+    url(r'^submitSuggestion$',views.submitSuggestion,name="submitSuggestion"),
+    url(r'^searchSuggestion$',views.searchSuggestion,name="searchSuggestion")
 ]

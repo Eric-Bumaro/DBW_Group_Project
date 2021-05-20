@@ -5,7 +5,7 @@ import os
 from PIL import Image
 from django.core.paginator import Paginator, EmptyPage
 from django.http import *
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.urls import reverse
 from USFP.models import *
 
@@ -95,7 +95,7 @@ def userViewSuggestions(request, num):
 
     return render(request, "CommonUser/userViewSuggestions.html",
                   {"suggestionPager": suggestionPager, 'suggestionPrepageData': suggestionPrepageData,
-                   "suggestionPageList": suggestionPageList})
+                   "suggestionPageList": suggestionPageList,"user":user})
 
 
 def userDeleteSuggestions(request):
@@ -115,10 +115,20 @@ def userDeleteSuggestions(request):
 
 def userViewOneSuggestion(request, suggestionID):
     try:
-        user = CommonUser.object.get(commonUserID=request.session['commonUserID'])
+        user = CommonUser.object.get(commonUserID=request.session.get('commonUserID',5))
         suggestion = Suggestion.object.get(suggestionID=suggestionID)
-        assert suggestion.commonUser == user
-        return HttpResponse(suggestion.content)
+        if suggestion.isReplied():
+            replySuggestionList = suggestion.ReplySuggestion.filter(selfSuggestion__isDelete=False,
+                                                                    selfSuggestion__visible=False)
+        else:
+            replySuggestionList = []
+        return render(request,"CommonUser/userViewOneSuggestion.html",{"suggestion": suggestion, "isAuthor": True,
+                                                              'user':user,'isVerified':user.isVerified(),
+                                                              'replySuggestionList':replySuggestionList})
     except Exception as e:
         print(e)
-        return HttpResponseRedirect(reverse("welcome", args=(1,)))
+        return redirect("welcome")
+
+
+def userChangeSuggestion(request):
+    return None

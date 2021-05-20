@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Welcome</title>
+    <base href="/">
+    <link rel="stylesheet" type="text/css" href="/static/CSS/View/submitSuggestion.css">
+</head>
+<body>
+<h5>Write your suggestion here!</h5>
+<form action="{% url 'USFP:submitSuggestion' %}" method="post">
+    {% csrf_token %}
+    <textarea rows="10" cols="30" name="suggestionContent" required>
+    </textarea>
+    <input type="submit" value="Submit your Suggestion"/>
+    <a href="/welcome/">Back to the Welcome Page</a>
+</form>
+</body>
+</html>
