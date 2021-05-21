@@ -10,24 +10,39 @@
     var listToDelete = "";
 
     function showChoose() {
-        for (var i = 0; i < nodeList.length; i++) {
+        for (let i = 0; i < nodeList.length; i++) {
             nodeList[i].style.display = "block";
         }
         document.getElementById("toChooseButton").style.display = "none";
     }
 
     function toDelete() {
-        $.ajax({
-            type: "POST",
-            url: "{% url 'USFP:userDeleteSuggestions' %}",
-            data: {
-                csrfmiddlewaretoken: '{{ csrf_token }}',
-                listToDelete:listToDelete,
-            },
-            success: function (response) {
-                window.location.reload();
-            }
-        });
+            if({{ isAdmin|safe }}){
+                $.ajax({
+                    type: "POST",
+                    url: "{% url 'USFP:adminOperateSuggestions' %}",
+                    data: {
+                        csrfmiddlewaretoken: '{{ csrf_token }}',
+                        listToDelete:listToDelete,
+                        operateType:"delete",
+                    },
+                    success: function (response) {
+                        window.location.reload();
+                    }
+                });
+            } else {
+                $.ajax({
+                    type: "POST",
+                    url: "{% url 'USFP:userDeleteSuggestions' %}",
+                    data: {
+                        csrfmiddlewaretoken: '{{ csrf_token }}',
+                        listToDelete:listToDelete,
+                    },
+                    success: function (response) {
+                        window.location.reload();
+                    }
+                });
+        }
     }
 
     function cancelDelete() {
@@ -57,6 +72,7 @@
             listToDelete = listToDelete.replace(toString(element.value), "");
         }
     }
+
 </script>
 <body>
 {% if user.commonUserID %}
@@ -131,6 +147,10 @@
     <a href="{% url 'USFP:userViewSuggestions' suggestionPrepageData.next_page_number  %}">Next Page</a>
 {% endif %}&emsp;
 <br>
+{% if isAdmin %}
+<a href="{% url 'USFP:adminInfor' %}">Back</a>
+{% else %}
 <a href="{% url 'USFP:userInfor' %}">Back</a>
+{% endif %}
 </body>
 </html>

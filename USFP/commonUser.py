@@ -2,7 +2,7 @@ import datetime
 import json
 import math
 import os
-
+from nltk.corpus import stopwords
 import jieba
 import nltk
 from PIL import Image
@@ -97,16 +97,20 @@ def userViewSuggestions(request, num):
     else:
         begin = end - 4
     suggestionPageList = range(begin, end + 1)
-
+    try:
+        isAdmin=user.VerifiedUser.isAdmin
+    except:
+        isAdmin=False
     return render(request, "CommonUser/userViewSuggestions.html",
                   {"suggestionPager": suggestionPager, 'suggestionPrepageData': suggestionPrepageData,
-                   "suggestionPageList": suggestionPageList, "user": user})
+                   "suggestionPageList": suggestionPageList, "user": user,"isAdmin":isAdmin})
 
 
 def userDeleteSuggestions(request):
     if request.method == 'GET':
         return HttpResponse('Fail')
     deleteList = [i for i in request.POST.get("listToDelete").split("-") if len(i) != 0]
+    user=CommonUser.object.get(commonUserID=request.session['commonUserID'])
     try:
         for i in deleteList:
             suggestionToDelete = Suggestion.object.get(suggestionID=int(i))
@@ -152,7 +156,7 @@ def userViewOneSuggestion(request, suggestionID, num):
             begin = end - 4
         replySuggestionPageList = range(begin, end + 1)
         return render(request, "CommonUser/userViewOneSuggestion.html", {"suggestion": suggestion,
-                                                                         "isAuthor": suggestion.commonUser == user,
+                                                                         "isAuthor":(suggestion.commonUser.commonUserID==user.commonUserID),
                                                                          'user': user, 'isVerified': user.isVerified(),
                                                                          'replySuggestionPrepageData': replySuggestionPrepageData,
                                                                          'replySuggestionPageList': replySuggestionPageList,
@@ -180,7 +184,7 @@ def userChangeSuggestion(request, suggestionID):
         suggestion.content = newContent
         for i in nltk.pos_tag(nltk.word_tokenize(suggestionCuttedList)):
             if i[1].startswith('N'):
-                if i[0].lower() in allTagsList:
+                if i[0].lower() in allTagsList and i[0] not in stopwords.words('english'):
                     tag = Tag.objects.get(tagName=i[0].lower())
                     suggestion.tags.add(tag)
                     tag.tagShowNum = tag.tagShowNum + 1

@@ -310,6 +310,12 @@ def adminOperateSuggestions(request):
                 suggestion = Suggestion.objects.get(suggestionID=int(i))
                 suggestion.isDelete = True
                 suggestion.deleteDate = datetime.now()
+                try:
+                    for j in suggestion.tags.all():
+                        j.tagShowNum = j.tagShowNum - 1
+                        j.save()
+                except Exception as e:
+                    print(e)
                 SuggestionOperation.objects.create(verifiedUser=admin.VerifiedUser, suggestion=suggestion,
                                                    content="Delete the suggestion", operationType='deleteSuggestion')
                 suggestion.save()
@@ -446,6 +452,12 @@ def adminAnnulDeletions(request):
             suggestion = suggestionOperation.suggestion
             suggestion.isDelete = False
             suggestion.deleteDate = None
+            try:
+                for j in suggestion.tags.all():
+                    j.tagShowNum = j.tagShowNum + 1
+                    j.save()
+            except Exception as e:
+                print(e)
             suggestion.save()
             suggestionOperation.delete()
         return HttpResponse('Success')
@@ -525,7 +537,7 @@ def adminViewOneSuggestion(request, suggestionID, num):
                                                                      "isManagedBy": isManagedBy,
                                                                      "isReplied": suggestion.isReplied(),
                                                                      'user': user,
-                                                                     'isAuthor':suggestion.commonUser==user,
+                                                                     'isAuthor':(suggestion.commonUser.commonUserID==user.commonUserID),
                                                                      'replySuggestionPrepageData': replySuggestionPrepageData,
                                                                      'replySuggestionPageList': replySuggestionPageList,
                                                                      "suggestion_tags":suggestion.tags.all()})
@@ -546,6 +558,12 @@ def adminSubmitComment(request,suggestionID):
             ReplySuggestion.objects.create(selfSuggestion=replySuggestion,suggestionToReply=suggestion)
         if choice == 1:
             suggestion.isDelete=True
+            try:
+                for j in suggestion.tags.all():
+                    j.tagShowNum=j.tagShowNum-1
+                    j.save()
+            except Exception as e:
+                print(e)
             suggestion.save()
             SuggestionOperation.objects.create(verifiedUser=user.VerifiedUser, suggestion=suggestion,
                                                content="Delete the suggestion", operationType='deleteSuggestion')

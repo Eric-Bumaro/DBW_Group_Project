@@ -10,6 +10,8 @@ from PIL import Image
 from django.http import *
 from django.shortcuts import render, redirect
 from django.urls import reverse
+from nltk.corpus import stopwords
+
 from USFP.models import *
 import jieba
 
@@ -113,12 +115,14 @@ def submitSuggestion(request):
         suggestionCuttedList = jieba.cut_for_search(suggestion)
         suggestionCuttedList = " ".join(suggestionCuttedList)
         allTagsList = list(Tag.objects.values_list("tagName", flat=True))
+        suggestionObject.save()
         for i in nltk.pos_tag(nltk.word_tokenize(suggestionCuttedList)):
-            if i[1].startswith('N'):
+            if i[1].startswith('N') and i[0] not in stopwords.words('english'):
                 if i[0].lower() in allTagsList:
                     tag = Tag.objects.get(tagName=i[0].lower())
                     suggestionObject.tags.add(tag)
-                    tag.tagShowNum = tag.Suggestion.all().aggregate(Count("suggestionID"))+1
+                    tag.tagShowNum = tag.tagShowNum+1
+                    tag.save()
                 else:
                     newTag = Tag.objects.create(tagName=i[0].lower(),tagShowNum=1)
                     suggestionObject.tags.add(newTag)
@@ -140,7 +144,7 @@ def searchSuggestion(request):
         if commonUser.isVerified():
             if suggestion.commonUser.area in commonUser.VerifiedUser.adminArea.all():
                 return HttpResponseRedirect(reverse("USFP:adminViewOneSuggestion",args=(suggestionID,1)))
-        return render(request, "View/searchSuggestion.html", {"suggestion": suggestion, "isAuthor": True,
+        return render(request, "View/searchSuggestion.html", {"suggestion": suggestion, "isAuthor": (suggestion.commonUser.commonUserID==commonUser.commonUserID),
                                                               'user': commonUser})
     except Exception as e:
         print(e)

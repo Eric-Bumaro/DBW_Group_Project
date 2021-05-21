@@ -10,7 +10,7 @@ from USFP.models import *
 def welcome(request, logout=0):
     if (logout):
         request.session.clear()
-        return render(request, 'View/welcome.html')
+        return render(request, 'View/welcome.html',{"allTags":Tag.objects.all()})
     try:
         user = CommonUser.object.get(commonUserID=request.session['commonUserID'])
         try:
@@ -19,7 +19,7 @@ def welcome(request, logout=0):
         except:
             return render(request, 'View/welcome.html', {'user': user, 'isAdmin': False})
     except KeyError as e:
-        return render(request, 'View/welcome.html',{'user.commonUserID':0})
+        return render(request, 'View/welcome.html',{'user.commonUserID':5,"allTags":Tag.objects.all()})
 
 
 def getUserKey(request):

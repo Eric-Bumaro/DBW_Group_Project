@@ -66,16 +66,17 @@
     {% endif %}&emsp;
 
     <br>
-    {% if isVerified %}
+    {% ifnotequal user.commonUserID 5 %}
         You can comment the suggestion here:
         <br>
         <form action="{% url 'USFP:userSubmitComment' suggestion.suggestionID %}" method="post">
             {% csrf_token %}
             <textarea rows="10" cols="30" name="replySuggestionContent"></textarea>
+            <input type="submit" value="Submit">
         </form>
     {% else %}
         <h4>You can login to comment!</h4>
-    {% endif %}
+    {% endifnotequal %}
 
 {% else %}
     {% ifnotequal user.commonUserID 5%}

@@ -35,8 +35,9 @@
 {% else %}
     {% if isAuthor %}
         <h3>It is being checked by the admin! Please wait patiently!</h3>
-
+        {% ifnotequal user.commonUserID 5%}
         <a href="{% url 'USFP:userChangeSuggestion' suggestion.suggestionID %}">Click here to change your content</a>
+        {% endifnotequal %}
     {% else %}
         <h3>The suggestion is not available!</h3>
     {% endif %}
