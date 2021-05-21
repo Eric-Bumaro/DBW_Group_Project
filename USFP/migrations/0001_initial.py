@@ -53,6 +53,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('tagID', models.AutoField(primary_key=True, serialize=False)),
                 ('tagName', models.CharField(max_length=10, unique=True)),
+                ('tagShowNum',models.IntegerField(default=0)),
             ],
             options={
                 'db_table': 'Tag',

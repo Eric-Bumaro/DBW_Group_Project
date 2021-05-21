@@ -73,6 +73,7 @@ class VerifiedUser(models.Model):
 class Tag(models.Model):
     tagID = models.AutoField(primary_key=True, )
     tagName = models.CharField(max_length=10, null=False, blank=False, unique=True)
+    tagShowNum = models.IntegerField(null=False, blank=False,default=0)
 
     class Meta:
         db_table = 'Tag'

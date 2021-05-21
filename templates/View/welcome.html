@@ -35,7 +35,7 @@
 <a href="{% url 'USFP:submitSuggestion' %}">To submit your suggestion</a>
 <br>
     {% for i in  allTags%}
-        <a href="{% url 'USFP:viewTag' i.tagID 1 %}">{{ i.tagName }}</a>
+        <a href="{% url 'USFP:viewTag' i.tagID 1 %}">{{ i.tagName }}{{ i.tagShowNum }}</a>
         <br>
     {% endfor %}
 </body>

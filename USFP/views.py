@@ -1,5 +1,7 @@
 import nltk
-#nltk.download()
+# nltk.download()
+from django.db import transaction
+from django.db.models import *
 from django.shortcuts import render
 import json
 import os
@@ -96,13 +98,15 @@ def suChangePwd(request):
     return render(request, "View/suChangePwd.html")
 
 
+@transaction.atomic
 def submitSuggestion(request):
     if request.method == 'GET':
-        commonUserID = request.session.get("commonUserID",5)
+        commonUserID = request.session.get("commonUserID", 5)
         commonUser = CommonUser.object.get(commonUserID=commonUserID)
-        return render(request, "View/submitSuggestion.html",{'user':commonUser})
+        return render(request, "View/submitSuggestion.html", {'user': commonUser})
+    save_tag = transaction.savepoint()
     try:
-        commonUserID = request.session.get("commonUserID",5)
+        commonUserID = request.session.get("commonUserID", 5)
         commonUser = CommonUser.object.get(commonUserID=commonUserID)
         suggestion = request.POST.get("suggestionContent")
         suggestionObject = Suggestion.objects.create(content=suggestion, commonUser=commonUser)
@@ -112,15 +116,19 @@ def submitSuggestion(request):
         for i in nltk.pos_tag(nltk.word_tokenize(suggestionCuttedList)):
             if i[1].startswith('N'):
                 if i[0].lower() in allTagsList:
-                    suggestionObject.tags.add(Tag.objects.get(tagName=i[0]))
+                    tag = Tag.objects.get(tagName=i[0])
+                    suggestionObject.tags.add(tag)
+                    tag.tagShowNum = tag.Suggestion.aggregate(Count("*"))
                 else:
-                    newTag = Tag.objects.create(tagName=i[0])
+                    newTag = Tag.objects.create(tagName=i[0],tagShowNum=1)
                     suggestionObject.tags.add(newTag)
+        suggestionObject.save()
         return render(request, "View/submitSuggestionResult.html",
-                      {"state": 1, "suggestionID": suggestionObject.suggestionID,'user':commonUser})
+                      {"state": 1, "suggestionID": suggestionObject.suggestionID, 'user': commonUser})
     except Exception as e:
         print(e)
-        return render(request, "View/submitSuggestionResult.html", {"state": 0,'user':commonUser})
+        transaction.savepoint_rollback(save_tag)
+        return render(request, "View/submitSuggestionResult.html", {"state": 0, 'user': commonUser})
 
 
 def searchSuggestion(request):
@@ -130,7 +138,7 @@ def searchSuggestion(request):
         suggestion = Suggestion.object.get(suggestionID=suggestionID)
         assert not suggestion.isDelete
         return render(request, "View/searchSuggestion.html", {"suggestion": suggestion, "isAuthor": True,
-                                                              'user':commonUser})
+                                                              'user': commonUser})
     except Exception as e:
         print(e)
         return redirect("welcome")
