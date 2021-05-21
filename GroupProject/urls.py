@@ -33,3 +33,5 @@ urlpatterns = [
     url(r'^media/(?P<path>.*)', serve, {'document_root': MEDIA_ROOT}),
     url(r'^static/(?P<path>.*)', serve, {'document_root': STATICFILES_DIRS[0]}),
 ]
+
+handler404 = views.page_not_found

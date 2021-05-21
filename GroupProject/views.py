@@ -69,3 +69,7 @@ def refreshDB(request):
             except Exception as e:
                 print(e)
     return HttpResponse("Success")
+
+
+def page_not_found(request,exception):
+    return render(request,'Error/404.html')
