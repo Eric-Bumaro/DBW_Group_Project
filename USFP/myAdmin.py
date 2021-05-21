@@ -539,8 +539,25 @@ def adminSubmitComment(request,suggestionID):
         user=CommonUser.object.get(commonUserID=request.session['commonUserID'])
         suggestion=Suggestion.objects.get(suggestionID=suggestionID)
         assert suggestion.commonUser.area in user.VerifiedUser.adminArea.all()
-
-
+        if len(replyContent)!=0:
+            replySuggestion=Suggestion.objects.create(visible=True,content=replyContent,commonUser=user)
+            ReplySuggestion.objects.create(selfSuggestion=replySuggestion,suggestionToReply=suggestion)
+        if choice == 1:
+            suggestion.isDelete=True
+            suggestion.save()
+            SuggestionOperation.objects.create(verifiedUser=user.VerifiedUser, suggestion=suggestion,
+                                               content="Delete the suggestion", operationType='deleteSuggestion')
+        if choice==2:
+            suggestion.visible=True
+            suggestion.save()
+            SuggestionOperation.objects.create(verifiedUser=user.VerifiedUser, suggestion=suggestion,
+                                               content="Show the suggestion", operationType='showSuggestion')
+        return HttpResponseRedirect(reverse("USFP:adminSuSubmitComment", args=(suggestionID,)))
     except Exception as e:
         print(e)
         return redirect("USFP:adminInfor")
+
+
+def adminSuSubmitComment(request,suggestionID):
+    suggestion=Suggestion.objects.get(suggestionID=suggestionID)
+    return render(request,"Admin/adminSuSubmitComment.html",{"suggestion":suggestion})

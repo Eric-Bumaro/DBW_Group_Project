@@ -182,3 +182,36 @@ def userSubmitComment(request, suggestionID):
     except Exception as e:
         print(e)
         return redirect("welcome")
+
+
+def viewTag(request,tagID,num):
+    tag=request.POST.get(tagID=tagID)
+    suggestions=tag.Suggestion.filter(visible=True).order_by("postTime")
+    user=CommonUser.objects.get(commonUserID=request.session.get("commonUserID",5))
+    if int(num) < 1:
+        num = 1
+    else:
+        num = int(num)
+    suggestionPager = Paginator(suggestions, 10)
+    try:
+        suggestionPrepageData = suggestionPager.page(num)
+    except EmptyPage:
+        suggestionPrepageData = suggestionPager.page(suggestionPager.num_pages)
+    begin = (num - int(math.ceil(10.0 / 2)))
+    if begin < 1:
+        begin = 1
+    end = begin + 4
+    if end > suggestionPager.num_pages:
+        end = suggestionPager.num_pages
+    if end <= 5:
+        begin = 1
+    else:
+        begin = end - 4
+    suggestionPageList = range(begin, end + 1)
+    isAdmin=False
+    if user.isVerified():
+        if user.VerifiedUser.isAdmin:
+                isAdmin=True
+    return render(request, "View/viewTag.html",
+                  {"suggestionPager": suggestionPager, 'suggestionPrepageData': suggestionPrepageData,
+                   "suggestionPageList": suggestionPageList, "user": user,"isAdmin":isAdmin,"tag":tag})

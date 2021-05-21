@@ -8,6 +8,8 @@ urlpatterns = [
     url(r'^register/successful/$', views.suRegister, name="suRegister"),
     url(r'^forgetPassword/$', views.forgetPassword, name="forgetPassword"),
     url(r'^suChangePwd/$', views.suChangePwd, name="suChangePwd"),
+    url(r'^viewTag#tagID=(?P<tagID>.*)&num=(?P<num>)$', commonUser.viewTag, name="viewTag"),
+
     url(r'^CommonUser/userInfor/$', commonUser.userInfor, name="userInfor"),
     url(r'^CommonUser/userChange/#changeType=(?P<changeType>.*)$', commonUser.userChange, name="userChangeInfor"),
     url(r'^CommonUser/userSuChange#changeType=(?P<changeType>.*)$', commonUser.userSuChange, name="userSuChange"),
@@ -49,6 +51,8 @@ urlpatterns = [
         name="adminViewUnhandledSuggestion"),
     url(r'^Admin/adminSubmitComment/#suggestionID=(?P<suggestionID>\d*)$', myAdmin.adminSubmitComment,
         name="adminSubmitComment"),
+    url(r'^Admin/adminSuSubmitComment/#suggestionID=(?P<suggestionID>\d*)$', myAdmin.adminSuSubmitComment,
+        name="adminSuSubmitComment"),
 
     url(r'^submitSuggestion$',views.submitSuggestion,name="submitSuggestion"),
     url(r'^searchSuggestion$',views.searchSuggestion,name="searchSuggestion")

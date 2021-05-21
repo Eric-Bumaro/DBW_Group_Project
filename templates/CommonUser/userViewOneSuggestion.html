@@ -32,6 +32,9 @@
     {{ suggestion.content }}
     <br>
     Post time:{{ suggestion.postTime }}&emsp;
+    {% for i in  suggestion.tags%}
+        <a href="{% url 'USFP:viewTag' i.tagID 1 %}">{{ i.tagName }}</a>
+    {% endfor %}
     {% if isAuthor %}
         <a href="{% url 'userChangeSuggestion' suggestion.suggestionID%}">Click to change</a>
     {% endif %}

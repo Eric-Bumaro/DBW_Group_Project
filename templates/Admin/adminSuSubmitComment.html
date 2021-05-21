@@ -1,0 +1,20 @@
+<html>
+<head>
+    <title>Successfully submit</title>
+    <base href="/">
+    <link rel="stylesheet" type="text/css" href="/static/CSS/Admin/adminSuSubmitComment.css">
+</head>
+<body>
+<h2>You have successfully submit your comment!!!</h2>
+<br>
+{% if suggestion.isDelete %}
+    You have deleted it, you can get it back through seeing what you delete recently.
+    <br>
+    <a href="{% url 'USFP:adminViewDeletions' 1 1 1%}">See what your delete recently</a>
+{% else %}
+    <a href="{% url 'USFP:userViewOneSuggestion' suggestion.suggesionID %}">View the suggestion</a>
+    &emsp;
+    <a href="{% url 'USFP:adminViewUnhandledSuggestion' 1 %}">To see other unhandled suggestions</a>
+{% endif %}
+</body>
+</html>

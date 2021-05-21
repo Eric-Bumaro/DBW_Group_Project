@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>View Your Operations</title>
+    <link rel="stylesheet" type="text/css" href="/static/CSS/View/viewTag.css">
+</head>
+<body>
+{% if user.commonUserID %}
+    <p>userID:{{ user.commonUserID }}</p>
+    <p>userName:{{ user.commonUserName }}</p>
+    <p>userImage:<img src="/media/{{ user.commonUserImage }}"/></p>
+    {% if isAdmin %}
+        <p>
+            <a href="{% url 'USFP:adminInfor' %}">View profile</a>
+        </p>
+    {% else %}
+        <p>
+            <a href="{% url 'USFP:userInfor' %}">View profile</a>
+        </p>
+    {% endif %}
+        <p><a href="{% url 'welcome' 1 %}">Logout</a></p>
+{% else %}
+    <br><a href="{% url 'USFP:login' 0 %}">Login</a>
+    <a href="/USFP/register/">Register</a>
+{% endif %}
+<h2>The suggestion with tag:{{ tag.tagName }}</h2>
+    {% for i in  suggestionPrepageData %}
+            {{ i.commonUser.commonUserName }}:
+            <br>
+            {{ i.content }}
+            <br>
+            Post time:{{ i.postTime }}
+            <br>
+            <a href="{% url 'USFP:userViewOneSuggestion' i.suggestionID 1 %}">Click to view</a>
+    {% endfor %}
+    {% if suggestionPrepageData.has_previous %}
+        <a href="{% url 'USFP:viewTag' tag.tagID suggestionPrepageData.previous_page_number  %}">Last Page</a>
+    {% endif %}&emsp;
+    {% for n in  suggestionPageList %}
+        <a href="{% url 'USFP:viewTag' tag.tagID n  %}">{{ n }}</a> &emsp;
+    {% endfor %}
+    {% if suggestionPrepageData.has_next %}
+        <a href="{% url 'USFP:viewTag' tag.tagID suggestionPrepageData.next_page_number  %}">Next Page</a>
+    {% endif %}&emsp;
+<br>
+<a href="/welcome/">Back to the Welcome Page</a>
+</body>
+</html>
