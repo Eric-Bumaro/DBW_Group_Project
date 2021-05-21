@@ -5,7 +5,7 @@
     <link rel="stylesheet" type="text/css" href="/static/CSS/Admin/adminSuSubmitComment.css">
 </head>
 <body>
-<h2>You have successfully submit your comment!!!</h2>
+<h2>You have successfully change your comment!!!</h2>
 <br>
 {% if suggestion.isDelete %}
     You have deleted it, you can get it back through seeing what you delete recently.
@@ -16,5 +16,7 @@
     &emsp;
     <a href="{% url 'USFP:adminViewUnhandledSuggestion' 1 %}">To see other unhandled suggestions</a>
 {% endif %}
+<br>
+<a href="{% url 'welcome' %}">To the welcome page!</a>
 </body>
 </html>

@@ -525,6 +525,7 @@ def adminViewOneSuggestion(request, suggestionID, num):
                                                                      "isManagedBy": isManagedBy,
                                                                      "isReplied": suggestion.isReplied(),
                                                                      'user': user,
+                                                                     'isAuthor':suggestion.commonUser==user,
                                                                      'replySuggestionPrepageData': replySuggestionPrepageData,
                                                                      'replySuggestionPageList': replySuggestionPageList,
                                                                      "suggestion_tags":suggestion.tags.all()})
@@ -553,6 +554,11 @@ def adminSubmitComment(request,suggestionID):
             suggestion.save()
             SuggestionOperation.objects.create(verifiedUser=user.VerifiedUser, suggestion=suggestion,
                                                content="Show the suggestion", operationType='showSuggestion')
+        if choice==3:
+            suggestion.visible=False
+            suggestion.save()
+            SuggestionOperation.objects.create(verifiedUser=user.VerifiedUser, suggestion=suggestion,
+                                               content="Hide the suggestion", operationType='hideSuggestion')
         return HttpResponseRedirect(reverse("USFP:adminSuSubmitComment", args=(suggestionID,)))
     except Exception as e:
         print(e)

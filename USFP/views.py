@@ -116,11 +116,11 @@ def submitSuggestion(request):
         for i in nltk.pos_tag(nltk.word_tokenize(suggestionCuttedList)):
             if i[1].startswith('N'):
                 if i[0].lower() in allTagsList:
-                    tag = Tag.objects.get(tagName=i[0])
+                    tag = Tag.objects.get(tagName=i[0].lower())
                     suggestionObject.tags.add(tag)
-                    tag.tagShowNum = tag.Suggestion.aggregate(Count("*"))
+                    tag.tagShowNum = tag.Suggestion.all().aggregate(Count("suggestionID"))+1
                 else:
-                    newTag = Tag.objects.create(tagName=i[0],tagShowNum=1)
+                    newTag = Tag.objects.create(tagName=i[0].lower(),tagShowNum=1)
                     suggestionObject.tags.add(newTag)
         suggestionObject.save()
         return render(request, "View/submitSuggestionResult.html",
@@ -137,6 +137,9 @@ def searchSuggestion(request):
         commonUser = CommonUser.object.get(commonUserID=request.session.get("commonUserID", 5))
         suggestion = Suggestion.object.get(suggestionID=suggestionID)
         assert not suggestion.isDelete
+        if commonUser.isVerified():
+            if suggestion.commonUser.area in commonUser.VerifiedUser.adminArea.all():
+                return HttpResponseRedirect(reverse("USFP:adminViewOneSuggestion",args=(suggestionID,1)))
         return render(request, "View/searchSuggestion.html", {"suggestion": suggestion, "isAuthor": True,
                                                               'user': commonUser})
     except Exception as e:

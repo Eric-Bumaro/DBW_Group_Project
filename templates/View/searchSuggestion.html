@@ -35,10 +35,13 @@
 {% else %}
     {% if isAuthor %}
         <h3>It is being checked by the admin! Please wait patiently!</h3>
+
+        <a href="{% url 'USFP:userChangeSuggestion' suggestion.suggestionID %}">Click here to change your content</a>
     {% else %}
         <h3>The suggestion is not available!</h3>
     {% endif %}
 {% endif %}
+<br>
 <a href="/welcome/">Back to the Welcome Page</a>
 </body>
 </html>

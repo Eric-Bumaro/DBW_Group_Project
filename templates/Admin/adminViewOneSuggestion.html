@@ -29,6 +29,9 @@ Visible:{{ suggestion.visible }}
 The content:<br>
 {{ suggestion.content }}
 <br>
+{% if isAuthor %}
+    <a href="{% url 'USFP:userChangeSuggestion' suggestion.suggestionID%}">Click to change</a>
+{% endif %}
 {% for i in  suggestion_tags%}
     <a href="{% url 'USFP:viewTag' i.tagID 1 %}">{{ i.tagName }}</a>
 {% endfor %}
@@ -42,16 +45,15 @@ The content:<br>
             <br>
             Post time:{{ i.selfSuggestion.postTime }}
             <br>
-            <a href="{% url 'USFP:adminViewOneSuggestion' i.selfSuggestion.suggestionID 1 %}">Click to view</a>
-            <br>
+            <a href="{% url 'USFP:userViewOneSuggestion' i.selfSuggestion.suggestionID 1 %}">Click to view</a>
             <br>
             {% for i in  suggestion_tags%}
                 <a href="{% url 'USFP:viewTag' i.tagID 1 %}">{{ i.tagName }}</a>
             {% endfor %}
-            {% if isAuthor %}
-                <a href="{% url 'userChangeSuggestion' suggestion.suggestionID%}">Click to change</a>
-            {% endif %}
+            <br>
+            <br><br>
             {% endfor %}
+    <br>
     {% if replySuggestionPrepageData.has_previous %}
         <a href="{% url 'USFP:adminViewOneSuggestion' suggestion.suggestion IsuggestionPrepageData.previous_page_number  %}">Last Page</a>
     {% endif %}&emsp;
@@ -74,7 +76,9 @@ The content:<br>
     <br>
     <input type="radio" name="choice" value=1 onclick="toChoose(this)"><label for="deleteRadio">Delete the suggestion</label>
     {%if not  suggestion.visible%}
-    <input type="radio" name="choice" value=2 onclick="toChoose(this)"><label for="visibleRadio">Make it visible</label>
+        <input type="radio" name="choice" value=2 onclick="toChoose(this)"><label for="visibleRadio">Make it visible</label>
+    {% else %}
+        <input type="radio" name="choice" value=3 onclick="toChoose(this)"><label for="visibleRadio">Make it invisible</label>
     {% endif %}
     <input type="submit" value="submit">
 </form>

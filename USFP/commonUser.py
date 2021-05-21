@@ -2,8 +2,13 @@ import datetime
 import json
 import math
 import os
+
+import jieba
+import nltk
 from PIL import Image
 from django.core.paginator import Paginator, EmptyPage
+from django.db import transaction
+from django.db.models import Count
 from django.http import *
 from django.shortcuts import render, redirect
 from django.urls import reverse
@@ -118,11 +123,12 @@ def userViewOneSuggestion(request, suggestionID, num):
         user = CommonUser.object.get(commonUserID=request.session.get('commonUserID', 5))
         suggestion = Suggestion.object.get(suggestionID=suggestionID)
         if user.isVerified():
-            if user.VerifiedUser.isAdmin:
-                return HttpResponseRedirect(reverse("USFP:adminViewOneSuggestion",args=(suggestionID,1)))
+            if suggestion.commonUser.area in user.VerifiedUser.adminArea.all():
+                return HttpResponseRedirect(reverse("USFP:adminViewOneSuggestion", args=(suggestionID, 1)))
         if suggestion.isReplied():
             replySuggestionList = suggestion.ReplySuggestion.filter(selfSuggestion__isDelete=False,
-                                                                    selfSuggestion__visible=True).order_by("selfSuggestion__postTime")
+                                                                    selfSuggestion__visible=True).order_by(
+                "selfSuggestion__postTime")
         else:
             replySuggestionList = []
         if int(num) < 1:
@@ -150,7 +156,7 @@ def userViewOneSuggestion(request, suggestionID, num):
                                                                          'user': user, 'isVerified': user.isVerified(),
                                                                          'replySuggestionPrepageData': replySuggestionPrepageData,
                                                                          'replySuggestionPageList': replySuggestionPageList,
-                                                                         "suggestion_tags":suggestion.tags.all()})
+                                                                         "suggestion_tags": suggestion.tags.all()})
     except Exception as e:
         print(e)
         return redirect("welcome")
@@ -158,17 +164,38 @@ def userViewOneSuggestion(request, suggestionID, num):
 
 def userChangeSuggestion(request, suggestionID):
     user = CommonUser.object.get(commonUserID=request.session.get("commonUserID", 5))
-    if request.method=="GET":
-        return render(request,"CommonUser/userChangeSuggestion.html",{'suggestionID':suggestionID,'user':user})
+    if request.method == "GET":
+        return render(request, "CommonUser/userChangeSuggestion.html", {'suggestionID': suggestionID, 'user': user})
     suggestion = Suggestion.object.get(suggestionID=suggestionID)
+    save_tag = transaction.savepoint()
     try:
-        newContent=request.POST.get("newSuggestionContent")
-        suggestion.content=newContent
-        if user.isVerified():
-            suggestion.visible=False
+        for i in suggestion.tags.all():
+            i.tagShowNum = i.tagShowNum - 1
+            suggestion.tags.remove(i)
+            i.save()
+        newContent = request.POST.get("newSuggestionContent")
+        suggestionCuttedList = jieba.cut_for_search(newContent)
+        suggestionCuttedList = " ".join(suggestionCuttedList)
+        allTagsList = list(Tag.objects.values_list("tagName", flat=True))
+        suggestion.content = newContent
+        for i in nltk.pos_tag(nltk.word_tokenize(suggestionCuttedList)):
+            if i[1].startswith('N'):
+                if i[0].lower() in allTagsList:
+                    tag = Tag.objects.get(tagName=i[0].lower())
+                    suggestion.tags.add(tag)
+                    tag.tagShowNum = tag.tagShowNum + 1
+                    tag.save()
+                else:
+                    newTag = Tag.objects.create(tagName=i[0].lower(), tagShowNum=1)
+                    suggestion.tags.add(newTag)
         suggestion.save()
+        if not user.isVerified():
+            suggestion.visible = False
+        suggestion.save()
+        return render(request, "CommonUser/userSuChangeSuggestion.html", {'suggestionID': suggestion.suggestionID})
     except Exception as e:
         print(e)
+        transaction.savepoint_rollback(save_tag)
         return redirect("welcome")
 
 
@@ -185,10 +212,10 @@ def userSubmitComment(request, suggestionID):
         return redirect("welcome")
 
 
-def viewTag(request,tagID,num):
-    tag=Tag.objects.get(tagID=tagID)
-    suggestions=tag.Suggestion.filter(visible=True).order_by("postTime")
-    user=CommonUser.objects.get(commonUserID=request.session.get("commonUserID",5))
+def viewTag(request, tagID, num):
+    tag = Tag.objects.get(tagID=tagID)
+    suggestions = tag.Suggestion.filter(visible=True).order_by("postTime")
+    user = CommonUser.objects.get(commonUserID=request.session.get("commonUserID", 5))
     if int(num) < 1:
         num = 1
     else:
@@ -209,10 +236,10 @@ def viewTag(request,tagID,num):
     else:
         begin = end - 4
     suggestionPageList = range(begin, end + 1)
-    isAdmin=False
+    isAdmin = False
     if user.isVerified():
         if user.VerifiedUser.isAdmin:
-                isAdmin=True
+            isAdmin = True
     return render(request, "View/viewTag.html",
                   {"suggestionPager": suggestionPager, 'suggestionPrepageData': suggestionPrepageData,
-                   "suggestionPageList": suggestionPageList, "user": user,"isAdmin":isAdmin,"tag":tag})
+                   "suggestionPageList": suggestionPageList, "user": user, "isAdmin": isAdmin, "tag": tag})

@@ -37,9 +37,11 @@
         <a href="{% url 'USFP:viewTag' i.tagID 1 %}">{{ i.tagName }}</a>
     {% endfor %}
     <br>
-    {% if isAuthor %}
-        <a href="{% url 'USFP:userChangeSuggestion' suggestion.suggestionID%}">Click to change</a>
-    {% endif %}
+    {% ifnotequal user.commonUserID 5 %}
+        {% if isAuthor %}
+            <a href="{% url 'USFP:userChangeSuggestion' suggestion.suggestionID%}">Click to change</a>
+        {% endif %}
+    {% endifnotequal %}
     <br>
     <br>
     {% for i in  replySuggestionPrepageData %}
@@ -76,12 +78,16 @@
     {% endif %}
 
 {% else %}
-    {% if isAuthor %}
-        <h3>It is being checked by the admin! Please wait patiently!</h3>
-        <a herf="{% url 'USFP:userChangeSuggestion' suggestion.suggestionID %}">Click here to change your content</a>
+    {% ifnotequal user.commonUserID 5%}
+        {% if isAuthor%}
+            <h3>It is being checked by the admin! Please wait patiently!</h3>
+            <a href="{% url 'USFP:userChangeSuggestion' suggestion.suggestionID %}">Click here to change your content</a>
+        {% else %}
+            <h3>The suggestion is not available!</h3>
+        {% endif %}
     {% else %}
         <h3>The suggestion is not available!</h3>
-    {% endif %}
+    {% endifnotequal %}
 {% endif %}
 
 <a href="/welcome/">Back to the Welcome Page</a>

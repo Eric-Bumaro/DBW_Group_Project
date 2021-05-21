@@ -12,7 +12,7 @@ class ReDefinedManager(models.Manager):
 class Area(models.Model):
     areaID = models.AutoField(primary_key=True, )
     areaName = models.CharField(max_length=20, null=False, blank=False, unique=True)
-    areaStart = models.DateTimeField(auto_now_add=True, null=False, blank=False)
+    areaStart = models.DateTimeField(auto_now_add=True,null=False, blank=False)
     isDelete = models.BooleanField(null=False, blank=False, default=False)
     deleteDate = models.DateTimeField(blank=True, null=True)
     object = ReDefinedManager()
