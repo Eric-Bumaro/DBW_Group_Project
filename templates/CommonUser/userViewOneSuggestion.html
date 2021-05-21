@@ -31,13 +31,16 @@
     <br>
     {{ suggestion.content }}
     <br>
-    Post time:{{ suggestion.postTime }}&emsp;
-    {% for i in  suggestion.tags%}
+    Post time:{{ suggestion.postTime }}
+    <br>
+    {% for i in  suggestion_tags%}
         <a href="{% url 'USFP:viewTag' i.tagID 1 %}">{{ i.tagName }}</a>
     {% endfor %}
+    <br>
     {% if isAuthor %}
-        <a href="{% url 'userChangeSuggestion' suggestion.suggestionID%}">Click to change</a>
+        <a href="{% url 'USFP:userChangeSuggestion' suggestion.suggestionID%}">Click to change</a>
     {% endif %}
+    <br>
     <br>
     {% for i in  replySuggestionPrepageData %}
             {{ i.selfSuggestion.commonUser.commonUserName }}:
@@ -47,6 +50,8 @@
             Post time:{{ i.selfSuggestion.postTime }}
             <br>
             <a href="{% url 'USFP:userViewOneSuggestion' i.selfSuggestion.suggestionID 1 %}">Click to view</a>
+            <br>
+        <br>
     {% endfor %}
     {% if replySuggestionPrepageData.has_previous %}
         <a href="{% url 'USFP:userViewOneSuggestion' suggestion.suggestionID IsuggestionPrepageData.previous_page_number  %}">Last Page</a>
@@ -73,7 +78,7 @@
 {% else %}
     {% if isAuthor %}
         <h3>It is being checked by the admin! Please wait patiently!</h3>
-        <a herf="{% url 'USFP:userChangeSuggestion' suggestion.suggestionID%}">Click here to change your content</a>
+        <a herf="{% url 'USFP:userChangeSuggestion' suggestion.suggestionID %}">Click here to change your content</a>
     {% else %}
         <h3>The suggestion is not available!</h3>
     {% endif %}

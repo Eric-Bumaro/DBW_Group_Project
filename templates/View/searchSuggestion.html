@@ -25,6 +25,7 @@
     <br><a href="{% url 'USFP:login' 0 %}">Login</a>
     <a href="/USFP/register/">Register</a>
 {% endifnotequal %}
+<br>
 {% if suggestion.visible %}
     AuthorName:{{ suggestion.commonUser.commonUserName }}
     <br>

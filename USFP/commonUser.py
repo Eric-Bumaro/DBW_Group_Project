@@ -122,7 +122,7 @@ def userViewOneSuggestion(request, suggestionID, num):
                 return HttpResponseRedirect(reverse("USFP:adminViewOneSuggestion",args=(suggestionID,1)))
         if suggestion.isReplied():
             replySuggestionList = suggestion.ReplySuggestion.filter(selfSuggestion__isDelete=False,
-                                                                    selfSuggestion__visible=True).order_by("postTime")
+                                                                    selfSuggestion__visible=True).order_by("selfSuggestion__postTime")
         else:
             replySuggestionList = []
         if int(num) < 1:
@@ -149,7 +149,8 @@ def userViewOneSuggestion(request, suggestionID, num):
                                                                          "isAuthor": suggestion.commonUser == user,
                                                                          'user': user, 'isVerified': user.isVerified(),
                                                                          'replySuggestionPrepageData': replySuggestionPrepageData,
-                                                                         'replySuggestionPageList': replySuggestionPageList})
+                                                                         'replySuggestionPageList': replySuggestionPageList,
+                                                                         "suggestion_tags":suggestion.tags.all()})
     except Exception as e:
         print(e)
         return redirect("welcome")
@@ -161,7 +162,7 @@ def userChangeSuggestion(request, suggestionID):
         return render(request,"CommonUser/userChangeSuggestion.html",{'suggestionID':suggestionID,'user':user})
     suggestion = Suggestion.object.get(suggestionID=suggestionID)
     try:
-        newContent=request.POST.get("enwSuggestionContent")
+        newContent=request.POST.get("newSuggestionContent")
         suggestion.content=newContent
         if user.isVerified():
             suggestion.visible=False
@@ -185,7 +186,7 @@ def userSubmitComment(request, suggestionID):
 
 
 def viewTag(request,tagID,num):
-    tag=request.POST.get(tagID=tagID)
+    tag=Tag.objects.get(tagID=tagID)
     suggestions=tag.Suggestion.filter(visible=True).order_by("postTime")
     user=CommonUser.objects.get(commonUserID=request.session.get("commonUserID",5))
     if int(num) < 1:

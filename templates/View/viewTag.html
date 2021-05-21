@@ -6,7 +6,7 @@
     <link rel="stylesheet" type="text/css" href="/static/CSS/View/viewTag.css">
 </head>
 <body>
-{% if user.commonUserID %}
+{% ifnotequal user.commonUserID 5%}
     <p>userID:{{ user.commonUserID }}</p>
     <p>userName:{{ user.commonUserName }}</p>
     <p>userImage:<img src="/media/{{ user.commonUserImage }}"/></p>
@@ -23,7 +23,7 @@
 {% else %}
     <br><a href="{% url 'USFP:login' 0 %}">Login</a>
     <a href="/USFP/register/">Register</a>
-{% endif %}
+{% endifnotequal %}
 <h2>The suggestion with tag:{{ tag.tagName }}</h2>
     {% for i in  suggestionPrepageData %}
             {{ i.commonUser.commonUserName }}:
@@ -33,7 +33,9 @@
             Post time:{{ i.postTime }}
             <br>
             <a href="{% url 'USFP:userViewOneSuggestion' i.suggestionID 1 %}">Click to view</a>
+            <br>
     {% endfor %}
+    <br>
     {% if suggestionPrepageData.has_previous %}
         <a href="{% url 'USFP:viewTag' tag.tagID suggestionPrepageData.previous_page_number  %}">Last Page</a>
     {% endif %}&emsp;

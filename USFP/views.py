@@ -1,3 +1,5 @@
+import nltk
+#nltk.download()
 from django.shortcuts import render
 import json
 import os
@@ -8,7 +10,6 @@ from django.shortcuts import render, redirect
 from django.urls import reverse
 from USFP.models import *
 import jieba
-import jieba.posseg as psg
 
 
 # Create your views here.
@@ -97,21 +98,23 @@ def suChangePwd(request):
 
 def submitSuggestion(request):
     if request.method == 'GET':
-        return render(request, "View/submitSuggestion.html")
+        commonUserID = request.session.get("commonUserID",5)
+        commonUser = CommonUser.object.get(commonUserID=commonUserID)
+        return render(request, "View/submitSuggestion.html",{'user':commonUser})
     try:
-        commonUserID = request.session.get("commonUserID", 5)
+        commonUserID = request.session.get("commonUserID",5)
         commonUser = CommonUser.object.get(commonUserID=commonUserID)
         suggestion = request.POST.get("suggestionContent")
         suggestionObject = Suggestion.objects.create(content=suggestion, commonUser=commonUser)
         suggestionCuttedList = jieba.cut_for_search(suggestion)
         suggestionCuttedList = " ".join(suggestionCuttedList)
-        allTagsList = Tag.objects.values_list("tagName", flat=True)
-        for i in psg.cut(suggestionCuttedList):
-            if i.flag.startswith('n'):
-                if i.word in allTagsList:
-                    suggestionObject.tags.add(Tag.objects.get(tagName=i.word))
+        allTagsList = list(Tag.objects.values_list("tagName", flat=True))
+        for i in nltk.pos_tag(nltk.word_tokenize(suggestionCuttedList)):
+            if i[1].startswith('N'):
+                if i[0].lower() in allTagsList:
+                    suggestionObject.tags.add(Tag.objects.get(tagName=i[0]))
                 else:
-                    newTag = Tag.objects.create(tagName=i.word)
+                    newTag = Tag.objects.create(tagName=i[0])
                     suggestionObject.tags.add(newTag)
         return render(request, "View/submitSuggestionResult.html",
                       {"state": 1, "suggestionID": suggestionObject.suggestionID,'user':commonUser})

@@ -12,7 +12,7 @@
     <br>
     <a href="{% url 'USFP:adminViewDeletions' 1 1 1%}">See what your delete recently</a>
 {% else %}
-    <a href="{% url 'USFP:userViewOneSuggestion' suggestion.suggesionID %}">View the suggestion</a>
+    <a href="{% url 'USFP:userViewOneSuggestion' suggestion.suggestionID 1 %}">View the suggestion</a>
     &emsp;
     <a href="{% url 'USFP:adminViewUnhandledSuggestion' 1 %}">To see other unhandled suggestions</a>
 {% endif %}

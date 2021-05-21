@@ -112,7 +112,7 @@
                 {{ i.postTime }}
             </td>
             <td>
-                <a href="{% url 'USFP:userViewOneSuggestion' i.suggesionID %}">View the suggestion</a>
+                <a href="{% url 'USFP:userViewOneSuggestion' i.suggestionID 1 %}">View the suggestion</a>
             </td>
             <td class="ChooseFunction" style="display: none">
                 <input type="checkbox" class="ChooseFunction" value={{ i.suggestionID }} onclick="onechoose(this)">

@@ -458,9 +458,9 @@ def adminViewUnhandledSuggestion(request, num):
     try:
         unhandledSuggestionList = []
         admin = CommonUser.object.get(commonUserID=request.session['commonUserID'])
-        for area in admin.VerifiedUser.adminArea:
+        for area in admin.VerifiedUser.adminArea.all():
             for user in area.CommonUser.all():
-                unhandledSuggestionList.extend(user.Suggestion.filter(visible=False, isDelete=False).tolist())
+                unhandledSuggestionList.extend(list(user.Suggestion.filter(visible=False, isDelete=False)))
         if int(num) < 1:
             num = 1
         else:
@@ -497,7 +497,7 @@ def adminViewOneSuggestion(request, suggestionID, num):
         assert user.VerifiedUser.isAdmin
         if suggestion.isReplied():
             replySuggestionList = suggestion.ReplySuggestion.filter(selfSuggestion__isDelete=False,
-                                                                    selfSuggestion__visible=False).order_by("postTime")
+                                                                    selfSuggestion__visible=True).order_by("selfSuggestion__postTime")
         else:
             replySuggestionList = []
         if int(num) < 1:
@@ -526,7 +526,8 @@ def adminViewOneSuggestion(request, suggestionID, num):
                                                                      "isReplied": suggestion.isReplied(),
                                                                      'user': user,
                                                                      'replySuggestionPrepageData': replySuggestionPrepageData,
-                                                                     'replySuggestionPageList': replySuggestionPageList})
+                                                                     'replySuggestionPageList': replySuggestionPageList,
+                                                                     "suggestion_tags":suggestion.tags.all()})
     except Exception as e:
         print(e)
         return redirect("USFP:adminInfor")
@@ -535,7 +536,7 @@ def adminViewOneSuggestion(request, suggestionID, num):
 def adminSubmitComment(request,suggestionID):
     try:
         replyContent = request.POST.get("comment","")
-        choice = request.POST.get("choice",0)
+        choice = int(request.POST.get("choice",0))
         user=CommonUser.object.get(commonUserID=request.session['commonUserID'])
         suggestion=Suggestion.objects.get(suggestionID=suggestionID)
         assert suggestion.commonUser.area in user.VerifiedUser.adminArea.all()

@@ -15,7 +15,7 @@ def welcome(request, logout=0):
         user = CommonUser.object.get(commonUserID=request.session['commonUserID'])
         try:
             if user.VerifiedUser.isAdmin:
-                return render(request, 'View/welcome.html', {'user': user,'isAdmin':True})
+                return render(request, 'View/welcome.html', {'user': user,'isAdmin':True,"allTags":Tag.objects.all()})
         except:
             return render(request, 'View/welcome.html', {'user': user, 'isAdmin': False})
     except KeyError as e:
@@ -33,7 +33,10 @@ def getUserKey(request):
 
 
 def getAdKey(request):
-    return HttpResponse(sendAdKey())
+    try:
+        return HttpResponse(sendAdKey())
+    except:
+        return HttpResponse(1)
 
 
 def sendCheckKey(request):
