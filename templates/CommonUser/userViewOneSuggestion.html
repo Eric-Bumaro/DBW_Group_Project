@@ -31,7 +31,7 @@
     <br>
     {{ suggestion.content }}
     <br>
-    Post time:{{ suggestion.postTime }}
+    Post time:{{ suggestion.postTime }}&emsp;Suggestion ID:{{ suggestion.suggestionID }}
     <br>
     {% for i in  suggestion_tags%}
         <a href="{% url 'USFP:viewTag' i.tagID 1 %}">{{ i.tagName }}</a>
@@ -49,7 +49,7 @@
             <br>
             {{ i.selfSuggestion.content }}
             <br>
-            Post time:{{ i.selfSuggestion.postTime }}
+            Post time:{{ i.selfSuggestion.postTime }}&emsp;Suggestion ID:{{ i.selfSuggestion.suggestionID }}
             <br>
             <a href="{% url 'USFP:userViewOneSuggestion' i.selfSuggestion.suggestionID 1 %}">Click to view</a>
             <br>

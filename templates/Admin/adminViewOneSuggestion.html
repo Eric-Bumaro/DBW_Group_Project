@@ -22,7 +22,7 @@
 <body>
 <h2>The Suggestion :</h2>
 Author:{{ suggestion.commonUser.commonUserName }}<br>
-Post time:{{ suggestion.postTime }}<br>
+Post time:{{ suggestion.postTime }}&emsp;Suggestion ID:{{ suggestion.suggestionID }}<br>
 Last modify time:{{ suggestion.modifyTime }}
 Visible:{{ suggestion.visible }}
 <br>
@@ -43,7 +43,7 @@ The content:<br>
             <br>
             {{ i.selfSuggestion.content }}
             <br>
-            Post time:{{ i.selfSuggestion.postTime }}
+            Post time:{{ i.selfSuggestion.postTime }}&emsp;Suggestion ID:{{ i.selfSuggestion.suggestionID }}
             <br>
             <a href="{% url 'USFP:userViewOneSuggestion' i.selfSuggestion.suggestionID 1 %}">Click to view</a>
             <br>

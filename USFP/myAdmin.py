@@ -558,6 +558,7 @@ def adminSubmitComment(request,suggestionID):
             ReplySuggestion.objects.create(selfSuggestion=replySuggestion,suggestionToReply=suggestion)
         if choice == 1:
             suggestion.isDelete=True
+            suggestion.deleteDate=datetime.now()
             try:
                 for j in suggestion.tags.all():
                     j.tagShowNum=j.tagShowNum-1
