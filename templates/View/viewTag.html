@@ -46,6 +46,11 @@
         <a href="{% url 'USFP:viewTag' tag.tagID suggestionPrepageData.next_page_number  %}">Next Page</a>
     {% endif %}&emsp;
 <br>
+<br>
+    {% for i in  allTags%}
+        <a href="{% url 'USFP:viewTag' i.tagID 1 %}">{{ i.tagName }}&emsp;{{ i.tagShowNum }}</a>
+        <br>
+    {% endfor %}
 <a href="/welcome/">Back to the Welcome Page</a>
 </body>
 </html>

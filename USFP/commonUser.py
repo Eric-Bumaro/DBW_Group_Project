@@ -193,7 +193,7 @@ def userChangeSuggestion(request, suggestionID):
                     newTag = Tag.objects.create(tagName=i[0].lower(), tagShowNum=1)
                     suggestion.tags.add(newTag)
         suggestion.save()
-        if not user.isVerified():
+        if not user.isVerified() or not suggestion.isReplied():
             suggestion.visible = False
         suggestion.save()
         return render(request, "CommonUser/userSuChangeSuggestion.html", {'suggestionID': suggestion.suggestionID})
@@ -246,4 +246,5 @@ def viewTag(request, tagID, num):
             isAdmin = True
     return render(request, "View/viewTag.html",
                   {"suggestionPager": suggestionPager, 'suggestionPrepageData': suggestionPrepageData,
-                   "suggestionPageList": suggestionPageList, "user": user, "isAdmin": isAdmin, "tag": tag})
+                   "suggestionPageList": suggestionPageList, "user": user, "isAdmin": isAdmin,
+                   "tag": tag,"allTags":Tag.objects.all().order_by("-tagShowNum")})
