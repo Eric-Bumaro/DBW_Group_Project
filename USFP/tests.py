@@ -9,7 +9,59 @@ from .littleTools import check_contain_chinese
 from .models import *
 import pandas as pd
 from datetime import datetime
+
+
 # Create your tests here.
+
+
+def template():
+    allTagsList=Tag.objects.all()
+    lastUserID=CommonUser.object.last().commonUserID
+    for i in range(0,2000):
+        firstTag=allTagsList[random.randint(0,len(allTagsList)-1)]
+        secondTag=allTagsList[random.randint(0,len(allTagsList)-1)]
+        thirdTag=allTagsList[random.randint(0,len(allTagsList)-1)]
+        suggestion=Suggestion.object.create(content=firstTag.tagName+" "+secondTag.tagName+" "+thirdTag.tagName,
+                                                                                          visible=True,
+                                            commonUser_id=random.randint(1,lastUserID))
+        if random.randint(1,2)>1:
+            suggestion.tags.add(firstTag)
+            suggestion.tags.add(secondTag)
+            suggestion.tags.add(thirdTag)
+            firstTag.tagShowNum +=1
+            secondTag.tagShowNum += 1
+            thirdTag.tagShowNum += 1
+            firstTag.save()
+            secondTag.save()
+            thirdTag.save()
+            suggestion.save()
+        else:
+            ReplySuggestion.objects.create(selfSuggestion=suggestion,suggestionToReply_id=(suggestion.suggestionID%13)+1)
+    # scrapySuggestions=Suggestion.objects.filter(suggestionID__gte=784)
+    # allTagsList = Tag.objects.values_list("tagName", flat=True)
+    # for j in scrapySuggestions:
+    #     j.visible=True
+    #     j.save()
+    #     for i in jieba.analyse.extract_tags(j.content, topK=5, withWeight=True, allowPOS=('n', 'nr', 'ns')):
+    #         if i[0] in allTagsList:
+    #             tag = Tag.objects.get(tagName=i[0])
+    #             j.tags.add(tag)
+    #             tag.tagShowNum = tag.tagShowNum + 1
+    #             tag.save()
+    #         else:
+    #             newTag = Tag.objects.create(tagName=i[0], tagShowNum=1)
+    #             j.tags.add(newTag)
+    #             allTagsList = Tag.objects.values_list("tagName", flat=True)
+    #     j.save()
+    # allReplyMessageID=ReplySuggestion.objects.values_list("selfSuggestion_id",flat=True)
+    # for i in Suggestion.objects.filter(suggestionID__gte=14):
+    #     if i.suggestionID not in allReplyMessageID:
+    #         for j in i.tags.all():
+    #             j.tagShowNum = j.tagShowNum - 1
+    #             i.tags.remove(j)
+    #             j.save()
+    #         ReplySuggestion.objects.create(selfSuggestion=i, suggestionToReply_id=(i.suggestionID % 13) + 1)
+    #         i.save()
 
 
 def randomUser():
@@ -498,7 +550,7 @@ def randomUser():
         , "fZiva", "fZoe", "fZoey", "fZola", "mZoltan", "fZora", "fZoya", "fZula", "fZuri", "mZuriel"
         , "fZyana", "mZylen",
     ]
-    for i in range(0, 400):
+    for i in range(0, 6000):
         size = len(ALL_ENG_NAMES) - 1
         idx_first = random.randint(0, size)
         idx_last = random.randint(0, size)
@@ -508,19 +560,22 @@ def randomUser():
         mail = mailList[random.randint(0, 1)]
         user = CommonUser.objects.create(commonUserName=first_words + " " + last_words,
                                          commonUserPassword=first_words + " " + last_words,
-                                         commonUserEmail=mail, area=Area.objects.get(areaID=(i % 6) + 1))
+                                         commonUserEmail=mail,
+                                         area=Area.objects.get(areaID=(i % len(Area.object.all())) + 1))
         if mail.endswith("@mail.uic.edu.cn"):
             VerifiedUser.objects.create(commonUser=user)
 
+
 def inputExcel():
-    df = pd.read_excel(r'Weibo_result.xlsx', sheet_name=0,header=0)
-    for index,i in df.iterrows():
-        suggestion=i['words'].replace("】","").replace("【","")
-        postTime=datetime.strptime(i["time"], "%Y年%m月%d日 %H:%M")
+    df = pd.read_excel(r'Weibo_result.xlsx', sheet_name=0, header=0)
+    for index, i in df.iterrows():
+        suggestion = i['words'].replace("】", "").replace("【", "")
+        postTime = datetime.strptime(i["time"], "%Y年%m月%d日 %H:%M")
         print(suggestion)
         print(postTime)
-        suggestionObject=Suggestion.objects.create(content=suggestion,commonUser_id=random.randint(1,506),postTime=postTime)
-        allTagsList = list(Tag.objects.values_list("tagName", flat=True))
+        suggestionObject = Suggestion.objects.create(content=suggestion, commonUser_id=random.randint(1, 506),
+                                                     postTime=postTime)
+        allTagsList = Tag.objects.values_list("tagName", flat=True)
         if check_contain_chinese(suggestion):
             for j in jieba.analyse.extract_tags(suggestion, topK=5, withWeight=True, allowPOS=('n', 'nr', 'ns')):
                 if j[0] in allTagsList:
@@ -531,7 +586,7 @@ def inputExcel():
                 else:
                     newTag = Tag.objects.create(tagName=j[0], tagShowNum=1)
                     suggestionObject.tags.add(newTag)
-                allTagsList = list(Tag.objects.values_list("tagName", flat=True))
+                    allTagsList = Tag.objects.values_list("tagName", flat=True)
         else:
             suggestionCuttedList = " ".join(jieba.cut_for_search(suggestion))
             for j in nltk.pos_tag(nltk.word_tokenize(suggestionCuttedList)):
@@ -544,5 +599,5 @@ def inputExcel():
                     else:
                         newTag = Tag.objects.create(tagName=j[0].lower(), tagShowNum=1)
                         suggestionObject.tags.add(newTag)
-                allTagsList = list(Tag.objects.values_list("tagName", flat=True))
+                        allTagsList = Tag.objects.values_list("tagName", flat=True)
         suggestionObject.save()

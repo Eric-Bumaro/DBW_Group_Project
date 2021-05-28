@@ -117,7 +117,7 @@ def submitSuggestion(request):
         commonUser = CommonUser.object.get(commonUserID=commonUserID)
         suggestion = request.POST.get("suggestionContent")
         suggestionObject = Suggestion.objects.create(content=suggestion, commonUser=commonUser)
-        allTagsList = list(Tag.objects.values_list("tagName", flat=True))
+        allTagsList = Tag.objects.values_list("tagName", flat=True)
         suggestionObject.save()
         if check_contain_chinese(suggestion):
             for i in jieba.analyse.extract_tags(suggestion, topK=5, withWeight=True, allowPOS=('n', 'nr', 'ns')):
@@ -129,6 +129,7 @@ def submitSuggestion(request):
                 else:
                     newTag = Tag.objects.create(tagName=i[0], tagShowNum=1)
                     suggestionObject.tags.add(newTag)
+                    allTagsList = Tag.objects.values_list("tagName", flat=True)
         else:
             suggestionCuttedList = " ".join(jieba.cut_for_search(suggestion))
             for i in nltk.pos_tag(nltk.word_tokenize(suggestionCuttedList)):
@@ -141,6 +142,7 @@ def submitSuggestion(request):
                     else:
                         newTag = Tag.objects.create(tagName=i[0].lower(), tagShowNum=1)
                         suggestionObject.tags.add(newTag)
+                        allTagsList = Tag.objects.values_list("tagName", flat=True)
         suggestionObject.save()
         return render(request, "View/submitSuggestionResult.html",
                       {"state": 1, "suggestionID": suggestionObject.suggestionID, 'user': commonUser,

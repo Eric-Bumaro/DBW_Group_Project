@@ -81,7 +81,8 @@ You can view the area you administrate here:
 <br>
 <a href="{% url 'USFP:adminViewOperations' 1 1 1%}">Operation History</a>
 {% ifequal admin.commonUserID 1 %}
-    <button onclick="toRefreshDB()">Refresh The Database</button>
+    <button onclick="toRefreshDB()">Refresh The Database</button> &emsp;
+    <button onclick="startScrapy()">Start The Scrapy</button>
 {% endifequal %}
 <br>
 <a href="{% url 'welcome' %}">Back</a>
@@ -166,6 +167,16 @@ You can view the area you administrate here:
             data: {csrfmiddlewaretoken: '{{ csrf_token }}'},
             success: function (response) {
                 window.location.reload();
+            }
+        });
+    }
+    function startScrapy(){
+        $.ajax({
+            type: "POST",
+            url: '{% url "startScrapy" %}',
+            data: {csrfmiddlewaretoken: '{{ csrf_token }}'},
+            success: function (response) {
+                console.log(response)
             }
         });
     }

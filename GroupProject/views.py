@@ -1,3 +1,4 @@
+import os
 from datetime import datetime
 
 from django.http import HttpResponse
@@ -5,10 +6,12 @@ from django.shortcuts import render
 from USFP import tests
 from USFP.littleTools import *
 from USFP.models import *
+from USFP.tests import randomUser
 
 
 def welcome(request, logout=0):
-    if (logout):
+    tests.template()
+    if logout:
         request.session.clear()
         return render(request, 'View/welcome.html',{"allTags":Tag.objects.filter(tagShowNum__gt=0).order_by("-tagShowNum")})
     try:
@@ -53,7 +56,7 @@ def sendCheckKey(request):
 
 def refreshDB(request):
     try:
-        assert request.session['adID']== 1
+        assert request.session['commonUserID']== 1
         assert request.method=="POST"
     except Exception as e:
         print(e)
@@ -61,8 +64,7 @@ def refreshDB(request):
     userList=CommonUser.objects.filter(isDelete=True)
     areaList=Area.objects.filter(isDelete=True)
     suggestionList=Suggestion.objects.filter(isDelete=True)
-    replySuggestionList=ReplySuggestion.objects.filter(isDelete=True)
-    deleteList=[userList,areaList,suggestionList,replySuggestionList]
+    deleteList=[userList,areaList,suggestionList]
     nowDate=datetime.now()
     for i in deleteList:
         for j in i:
@@ -76,3 +78,14 @@ def refreshDB(request):
 
 def page_not_found(request,exception):
     return render(request,'Error/404.html',{"allTags":Tag.objects.filter(tagShowNum__gt=0).order_by("-tagShowNum")})
+
+
+def startScrapy(request):
+    # try:
+    #     assert request.session['commonUserID']== 1
+    #     assert request.method=="POST"
+    # except Exception as e:
+    #     print(e)
+    #     return HttpResponse("Fail")
+    # os.system('cd ZhiHuScrapy;scrapy crawl ZhiHuScrapy')
+    return HttpResponse("Done")

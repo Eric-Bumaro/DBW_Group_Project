@@ -15,6 +15,7 @@ from USFP.models import *
 from .littleTools import check_contain_chinese
 import jieba.analyse
 
+
 def userInfor(request):
     user = CommonUser.objects.get(commonUserID=request.session['commonUserID'])
     if user.isVerified():
@@ -183,7 +184,7 @@ def userChangeSuggestion(request, suggestionID):
             suggestion.tags.remove(i)
             i.save()
         newContent = request.POST.get("newSuggestionContent")
-        allTagsList = list(Tag.objects.values_list("tagName", flat=True))
+        allTagsList = Tag.objects.values_list("tagName", flat=True)
         suggestion.content = newContent
         if check_contain_chinese(newContent):
             for i in jieba.analyse.extract_tags(newContent, topK=5, withWeight=True, allowPOS=('n', 'nr', 'ns')):
@@ -195,6 +196,7 @@ def userChangeSuggestion(request, suggestionID):
                 else:
                     newTag = Tag.objects.create(tagName=i[0], tagShowNum=1)
                     suggestion.tags.add(newTag)
+                    allTagsList = Tag.objects.values_list("tagName", flat=True)
         else:
             suggestionCuttedList = " ".join(jieba.cut_for_search(newContent))
             for i in nltk.pos_tag(nltk.word_tokenize(suggestionCuttedList)):
@@ -207,6 +209,7 @@ def userChangeSuggestion(request, suggestionID):
                     else:
                         newTag = Tag.objects.create(tagName=i[0].lower(), tagShowNum=1)
                         suggestion.tags.add(newTag)
+                        allTagsList = Tag.objects.values_list("tagName", flat=True)
         suggestion.save()
         if not user.isVerified() or not suggestion.isReplied():
             suggestion.visible = False
