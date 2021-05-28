@@ -11,7 +11,8 @@ from django.http import *
 from django.shortcuts import render, redirect
 from django.urls import reverse
 from nltk.corpus import stopwords
-
+import jieba.analyse
+from USFP.littleTools import check_contain_chinese
 from USFP.models import *
 import jieba
 
@@ -26,9 +27,11 @@ def login(request, error):
             commonUserPassword = login[1]
             return render(request, "View/login.html",
                           {"error": json.dumps(error), "commonUserID": commonUserID,
-                           "commonUserPassword": commonUserPassword})
+                           "commonUserPassword": commonUserPassword,
+                           "allTags":Tag.objects.filter(tagShowNum__gt=0).order_by("-tagShowNum")})
         else:
-            return render(request, "View/login.html", {"error": json.dumps(error)})
+            return render(request, "View/login.html", {"error": json.dumps(error),
+                                                       "allTags":Tag.objects.filter(tagShowNum__gt=0).order_by("-tagShowNum")})
     commonUserPassword = request.POST.get("commonUserPassword", "")
     remind = request.POST.get("cookie", "")
     commonUserID = int(request.POST.get("commonUserID", ""))
@@ -48,7 +51,7 @@ def login(request, error):
 
 def register(request):
     if request.method == 'GET':
-        return render(request, "View/register.html")
+        return render(request, "View/register.html",{"allTags":Tag.objects.filter(tagShowNum__gt=0).order_by("-tagShowNum")})
     commonUserName = request.POST.get("commonUserName", "")
     commonUserPassword = request.POST.get("commonUserPassword", "")
     commonUserEmail = request.POST.get("commonUserEmail", "")
@@ -81,12 +84,13 @@ def register(request):
 
 
 def suRegister(request):
-    return render(request, "View/suRegister.html", {"commonUserID": CommonUser.objects.last().commonUserID})
+    return render(request, "View/suRegister.html", {"commonUserID": CommonUser.objects.last().commonUserID,
+                                                    "allTags":Tag.objects.filter(tagShowNum__gt=0).order_by("-tagShowNum")})
 
 
 def forgetPassword(request):
     if request.method == 'GET':
-        return render(request, "View/forgetpwd.html")
+        return render(request, "View/forgetpwd.html",{"allTags":Tag.objects.filter(tagShowNum__gt=0).order_by("-tagShowNum")})
     commonUserPassword = request.POST.get("commonUserPassword", "")
     commonUserID = request.POST.get("commonUserID", "")
     try:
@@ -97,7 +101,7 @@ def forgetPassword(request):
 
 
 def suChangePwd(request):
-    return render(request, "View/suChangePwd.html")
+    return render(request, "View/suChangePwd.html",{"allTags":Tag.objects.filter(tagShowNum__gt=0).order_by("-tagShowNum")})
 
 
 @transaction.atomic
@@ -105,34 +109,47 @@ def submitSuggestion(request):
     if request.method == 'GET':
         commonUserID = request.session.get("commonUserID", 5)
         commonUser = CommonUser.object.get(commonUserID=commonUserID)
-        return render(request, "View/submitSuggestion.html", {'user': commonUser})
+        return render(request, "View/submitSuggestion.html", {'user': commonUser,
+                                                              "allTags":Tag.objects.filter(tagShowNum__gt=0).order_by("-tagShowNum")})
     save_tag = transaction.savepoint()
     try:
         commonUserID = request.session.get("commonUserID", 5)
         commonUser = CommonUser.object.get(commonUserID=commonUserID)
         suggestion = request.POST.get("suggestionContent")
         suggestionObject = Suggestion.objects.create(content=suggestion, commonUser=commonUser)
-        suggestionCuttedList = jieba.cut_for_search(suggestion)
-        suggestionCuttedList = " ".join(suggestionCuttedList)
         allTagsList = list(Tag.objects.values_list("tagName", flat=True))
         suggestionObject.save()
-        for i in nltk.pos_tag(nltk.word_tokenize(suggestionCuttedList)):
-            if i[1].startswith('N') and i[0] not in stopwords.words('english'):
-                if i[0].lower() in allTagsList:
-                    tag = Tag.objects.get(tagName=i[0].lower())
+        if check_contain_chinese(suggestion):
+            for i in jieba.analyse.extract_tags(suggestion, topK=5, withWeight=True, allowPOS=('n', 'nr', 'ns')):
+                if i[0] in allTagsList:
+                    tag = Tag.objects.get(tagName=i[0])
                     suggestionObject.tags.add(tag)
-                    tag.tagShowNum = tag.tagShowNum+1
+                    tag.tagShowNum = tag.tagShowNum + 1
                     tag.save()
                 else:
-                    newTag = Tag.objects.create(tagName=i[0].lower(),tagShowNum=1)
+                    newTag = Tag.objects.create(tagName=i[0], tagShowNum=1)
                     suggestionObject.tags.add(newTag)
+        else:
+            suggestionCuttedList = " ".join(jieba.cut_for_search(suggestion))
+            for i in nltk.pos_tag(nltk.word_tokenize(suggestionCuttedList)):
+                if i[1].startswith('N'):
+                    if i[0].lower() in allTagsList and i[0] not in stopwords.words('english'):
+                        tag = Tag.objects.get(tagName=i[0].lower())
+                        suggestionObject.tags.add(tag)
+                        tag.tagShowNum = tag.tagShowNum + 1
+                        tag.save()
+                    else:
+                        newTag = Tag.objects.create(tagName=i[0].lower(), tagShowNum=1)
+                        suggestionObject.tags.add(newTag)
         suggestionObject.save()
         return render(request, "View/submitSuggestionResult.html",
-                      {"state": 1, "suggestionID": suggestionObject.suggestionID, 'user': commonUser})
+                      {"state": 1, "suggestionID": suggestionObject.suggestionID, 'user': commonUser,
+                       "allTags":Tag.objects.filter(tagShowNum__gt=0).order_by("-tagShowNum")})
     except Exception as e:
         print(e)
         transaction.savepoint_rollback(save_tag)
-        return render(request, "View/submitSuggestionResult.html", {"state": 0, 'user': commonUser})
+        return render(request, "View/submitSuggestionResult.html", {"state": 0, 'user': commonUser,
+                                                                    "allTags":Tag.objects.filter(tagShowNum__gt=0).order_by("-tagShowNum")})
 
 
 def searchSuggestion(request):
@@ -145,7 +162,8 @@ def searchSuggestion(request):
             if suggestion.commonUser.area in commonUser.VerifiedUser.adminArea.all():
                 return HttpResponseRedirect(reverse("USFP:adminViewOneSuggestion",args=(suggestionID,1)))
         return render(request, "View/searchSuggestion.html", {"suggestion": suggestion, "isAuthor": (suggestion.commonUser.commonUserID==commonUser.commonUserID),
-                                                              'user': commonUser})
+                                                              'user': commonUser,
+                                                              "allTags":Tag.objects.filter(tagShowNum__gt=0).order_by("-tagShowNum")})
     except Exception as e:
         print(e)
         return redirect("welcome")

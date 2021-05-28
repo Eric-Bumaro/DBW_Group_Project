@@ -2,7 +2,7 @@ from datetime import datetime
 
 from django.http import HttpResponse
 from django.shortcuts import render
-
+from USFP import tests
 from USFP.littleTools import *
 from USFP.models import *
 
@@ -10,18 +10,19 @@ from USFP.models import *
 def welcome(request, logout=0):
     if (logout):
         request.session.clear()
-        return render(request, 'View/welcome.html',{"allTags":Tag.objects.all().order_by("-tagShowNum")})
+        return render(request, 'View/welcome.html',{"allTags":Tag.objects.filter(tagShowNum__gt=0).order_by("-tagShowNum")})
     try:
         user = CommonUser.object.get(commonUserID=request.session['commonUserID'])
         try:
             if user.VerifiedUser.isAdmin:
                 return render(request, 'View/welcome.html', {'user': user,'isAdmin':True,
-                                                             "allTags":Tag.objects.all().order_by("-tagShowNum")})
+                                                             "allTags":Tag.objects.filter(tagShowNum__gt=0).order_by("-tagShowNum")})
         except:
-            return render(request, 'View/welcome.html', {'user': user, 'isAdmin': False})
+            return render(request, 'View/welcome.html', {'user': user, 'isAdmin': False,
+                                                         "allTags":Tag.objects.filter(tagShowNum__gt=0).order_by("-tagShowNum")})
     except KeyError as e:
         return render(request, 'View/welcome.html',{'user.commonUserID':5,
-                                                    "allTags":Tag.objects.all().order_by("-tagShowNum")})
+                                                    "allTags":Tag.objects.filter(tagShowNum__gt=0).order_by("-tagShowNum")})
 
 
 def getUserKey(request):
@@ -74,4 +75,4 @@ def refreshDB(request):
 
 
 def page_not_found(request,exception):
-    return render(request,'Error/404.html')
+    return render(request,'Error/404.html',{"allTags":Tag.objects.filter(tagShowNum__gt=0).order_by("-tagShowNum")})

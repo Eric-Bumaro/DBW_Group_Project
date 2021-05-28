@@ -1,9 +1,14 @@
 import random
 
-from django.test import TestCase
+import jieba
+import jieba.analyse
+import nltk
+from nltk.corpus import stopwords
+
+from .littleTools import check_contain_chinese
 from .models import *
-
-
+import pandas as pd
+from datetime import datetime
 # Create your tests here.
 
 
@@ -506,3 +511,38 @@ def randomUser():
                                          commonUserEmail=mail, area=Area.objects.get(areaID=(i % 6) + 1))
         if mail.endswith("@mail.uic.edu.cn"):
             VerifiedUser.objects.create(commonUser=user)
+
+def inputExcel():
+    df = pd.read_excel(r'Weibo_result.xlsx', sheet_name=0,header=0)
+    for index,i in df.iterrows():
+        suggestion=i['words'].replace("】","").replace("【","")
+        postTime=datetime.strptime(i["time"], "%Y年%m月%d日 %H:%M")
+        print(suggestion)
+        print(postTime)
+        suggestionObject=Suggestion.objects.create(content=suggestion,commonUser_id=random.randint(1,506),postTime=postTime)
+        allTagsList = list(Tag.objects.values_list("tagName", flat=True))
+        if check_contain_chinese(suggestion):
+            for j in jieba.analyse.extract_tags(suggestion, topK=5, withWeight=True, allowPOS=('n', 'nr', 'ns')):
+                if j[0] in allTagsList:
+                    tag = Tag.objects.get(tagName=j[0])
+                    suggestionObject.tags.add(tag)
+                    tag.tagShowNum = tag.tagShowNum + 1
+                    tag.save()
+                else:
+                    newTag = Tag.objects.create(tagName=j[0], tagShowNum=1)
+                    suggestionObject.tags.add(newTag)
+                allTagsList = list(Tag.objects.values_list("tagName", flat=True))
+        else:
+            suggestionCuttedList = " ".join(jieba.cut_for_search(suggestion))
+            for j in nltk.pos_tag(nltk.word_tokenize(suggestionCuttedList)):
+                if j[1].startswith('N'):
+                    if j[0].lower() in allTagsList and j[0] not in stopwords.words('english'):
+                        tag = Tag.objects.get(tagName=j[0].lower())
+                        suggestionObject.tags.add(tag)
+                        tag.tagShowNum = tag.tagShowNum + 1
+                        tag.save()
+                    else:
+                        newTag = Tag.objects.create(tagName=j[0].lower(), tagShowNum=1)
+                        suggestionObject.tags.add(newTag)
+                allTagsList = list(Tag.objects.values_list("tagName", flat=True))
+        suggestionObject.save()

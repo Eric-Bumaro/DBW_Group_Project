@@ -8,21 +8,21 @@ import nltk
 from PIL import Image
 from django.core.paginator import Paginator, EmptyPage
 from django.db import transaction
-from django.db.models import Count
 from django.http import *
 from django.shortcuts import render, redirect
 from django.urls import reverse
 from USFP.models import *
-
+from .littleTools import check_contain_chinese
+import jieba.analyse
 
 def userInfor(request):
     user = CommonUser.objects.get(commonUserID=request.session['commonUserID'])
     if user.isVerified():
         return render(request, "CommonUser/userInfor.html",
-                      {"user": user, 'verified': 1})
+                      {"user": user, 'verified': 1,"allTags":Tag.objects.filter(tagShowNum__gt=0).order_by("-tagShowNum")})
     else:
         return render(request, "CommonUser/userInfor.html",
-                      {"user": user, 'verified': 0})
+                      {"user": user, 'verified': 0,"allTags":Tag.objects.filter(tagShowNum__gt=0).order_by("-tagShowNum")})
 
 
 def userChange(request, changeType):
@@ -30,10 +30,12 @@ def userChange(request, changeType):
         if changeType == "EmailAdd" or changeType == "Password":
             return render(request, "CommonUser/userChangeInfor.html",
                           {"changeType_js": json.dumps(changeType), "changeType_py": changeType,
-                           "commonUserID": request.session['commonUserID']})
+                           "commonUserID": request.session['commonUserID'],
+                           "allTags":Tag.objects.filter(tagShowNum__gt=0).order_by("-tagShowNum")})
         if changeType == "Image" or changeType == "Name":
             return render(request, "CommonUser/userChangeInfor.html",
-                          {"changeType_js": json.dumps(changeType), "changeType_py": changeType})
+                          {"changeType_js": json.dumps(changeType), "changeType_py": changeType,
+                           "allTags":Tag.objects.filter(tagShowNum__gt=0).order_by("-tagShowNum")})
 
     user = CommonUser.object.filter(commonUserID=request.session['commonUserID'])
     if changeType == "EmailAdd":
@@ -68,7 +70,8 @@ def userChange(request, changeType):
 
 
 def userSuChange(request, changeType):
-    return render(request, "CommonUser/userSuChange.html", {"changeType": changeType})
+    return render(request, "CommonUser/userSuChange.html", {"changeType": changeType,
+                                                            "allTags":Tag.objects.filter(tagShowNum__gt=0).order_by("-tagShowNum")})
 
 
 def userViewSuggestions(request, num):
@@ -103,7 +106,8 @@ def userViewSuggestions(request, num):
         isAdmin=False
     return render(request, "CommonUser/userViewSuggestions.html",
                   {"suggestionPager": suggestionPager, 'suggestionPrepageData': suggestionPrepageData,
-                   "suggestionPageList": suggestionPageList, "user": user,"isAdmin":isAdmin})
+                   "suggestionPageList": suggestionPageList, "user": user,"isAdmin":isAdmin,
+                   "allTags":Tag.objects.filter(tagShowNum__gt=0).order_by("-tagShowNum")})
 
 
 def userDeleteSuggestions(request):
@@ -160,7 +164,8 @@ def userViewOneSuggestion(request, suggestionID, num):
                                                                          'user': user, 'isVerified': user.isVerified(),
                                                                          'replySuggestionPrepageData': replySuggestionPrepageData,
                                                                          'replySuggestionPageList': replySuggestionPageList,
-                                                                         "suggestion_tags": suggestion.tags.all()})
+                                                                         "suggestion_tags": suggestion.tags.all(),
+                                                                         "allTags":Tag.objects.filter(tagShowNum__gt=0).order_by("-tagShowNum")})
     except Exception as e:
         print(e)
         return redirect("welcome")
@@ -178,25 +183,36 @@ def userChangeSuggestion(request, suggestionID):
             suggestion.tags.remove(i)
             i.save()
         newContent = request.POST.get("newSuggestionContent")
-        suggestionCuttedList = jieba.cut_for_search(newContent)
-        suggestionCuttedList = " ".join(suggestionCuttedList)
         allTagsList = list(Tag.objects.values_list("tagName", flat=True))
         suggestion.content = newContent
-        for i in nltk.pos_tag(nltk.word_tokenize(suggestionCuttedList)):
-            if i[1].startswith('N'):
-                if i[0].lower() in allTagsList and i[0] not in stopwords.words('english'):
-                    tag = Tag.objects.get(tagName=i[0].lower())
+        if check_contain_chinese(newContent):
+            for i in jieba.analyse.extract_tags(newContent, topK=5, withWeight=True, allowPOS=('n', 'nr', 'ns')):
+                if i[0] in allTagsList and i[0] not in stopwords.words('english'):
+                    tag = Tag.objects.get(tagName=i[0])
                     suggestion.tags.add(tag)
                     tag.tagShowNum = tag.tagShowNum + 1
                     tag.save()
                 else:
-                    newTag = Tag.objects.create(tagName=i[0].lower(), tagShowNum=1)
+                    newTag = Tag.objects.create(tagName=i[0], tagShowNum=1)
                     suggestion.tags.add(newTag)
+        else:
+            suggestionCuttedList = " ".join(jieba.cut_for_search(newContent))
+            for i in nltk.pos_tag(nltk.word_tokenize(suggestionCuttedList)):
+                if i[1].startswith('N'):
+                    if i[0].lower() in allTagsList and i[0] not in stopwords.words('english'):
+                        tag = Tag.objects.get(tagName=i[0].lower())
+                        suggestion.tags.add(tag)
+                        tag.tagShowNum = tag.tagShowNum + 1
+                        tag.save()
+                    else:
+                        newTag = Tag.objects.create(tagName=i[0].lower(), tagShowNum=1)
+                        suggestion.tags.add(newTag)
         suggestion.save()
         if not user.isVerified() or not suggestion.isReplied():
             suggestion.visible = False
         suggestion.save()
-        return render(request, "CommonUser/userSuChangeSuggestion.html", {'suggestionID': suggestion.suggestionID})
+        return render(request, "CommonUser/userSuChangeSuggestion.html", {'suggestionID': suggestion.suggestionID,
+                                                                          "allTags":Tag.objects.filter(tagShowNum__gt=0).order_by("-tagShowNum")})
     except Exception as e:
         print(e)
         transaction.savepoint_rollback(save_tag)
@@ -247,4 +263,4 @@ def viewTag(request, tagID, num):
     return render(request, "View/viewTag.html",
                   {"suggestionPager": suggestionPager, 'suggestionPrepageData': suggestionPrepageData,
                    "suggestionPageList": suggestionPageList, "user": user, "isAdmin": isAdmin,
-                   "tag": tag,"allTags":Tag.objects.all().order_by("-tagShowNum")})
+                   "tag": tag,"allTags":Tag.objects.filter(tagShowNum__gt=0).order_by("-tagShowNum")})
