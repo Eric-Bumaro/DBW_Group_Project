@@ -23,7 +23,7 @@
 
         <header class="demo-header mdl-layout__header mdl-layout__header--scroll mdl-color--grey-100 mdl-color-text--grey-800">
           <div class="mdl-layout__header-row">
-            <div onclick="window.location.href='../'"class="mdl-layout-title" style="margin-left: 0px;">UIC意见反馈系统</div>
+            <div class="mdl-layout-title" style="margin-left: 0px;">UIC意见反馈系统</div>
             <div class="mdl-layout-spacer"></div>
             <div class="form-row" style="width:300px; height:auto; display:inline-block" >
               <form action="{% url 'USFP:searchSuggestion' %}" method="post"  style="width:300px; height:auto; display:inline-block"  class="mdl-textfield mdl-js-textfield">
@@ -44,45 +44,42 @@
     <div class="demo-ribbon"></div>
 
 
-    <main class="demo-container mdl-grid">
-    <div class="demo-card-wide mdl-card mdl-shadow--2dp " style="width: max-content; margin: auto;">
-        <div class="mdl-card__title">
-          <h2 class="mdl-card__title-text">Welcome</h2>
+    <main>
+        <div class="demo-container mdl-grid">
+            <div class="demo-card-wide mdl-card mdl-shadow--2dp " style="width: max-content; margin: auto;">
+                <div class="mdl-card__title">
+                <h2 class="mdl-card__title-text">Welcome</h2>
+                </div>
+                <div class="mdl-card__supporting-text">
+                    这里是UIC同学们的小家呀！
+                    大家可以在这里便捷地反馈自己的意见！
+                    也可以看看最近学校的近况呢！
+                </div>
+                <div class="mdl-card__actions mdl-card--border">
+                <a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect">
+                    Get Started
+                </a>
+                </div>
+            </div>
         </div>
-        <div class="mdl-card__supporting-text">
-            这里是UIC同学们的小家呀！
-            大家可以在这里便捷地反馈自己的意见！
-            也可以看看最近学校的近况呢！
-        </div>
-        <div class="mdl-card__actions mdl-card--border">
-        <a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect">
-            Get Started
-        </a>
-        </div>
-    </div>
-
-    <div>
-    <table class="mdl-data-table mdl-js-data-table mdl-data-table--selectable mdl-shadow--2dp">
-        <thead>
-            <tr>
-            <th class="mdl-data-table__cell--non-numeric">关键词</th>
-            <th>出现频率</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for i in  allTags%}
-            <tr>
-            <td class="mdl-data-table__cell--non-numeric">
-                <a href="{% url 'USFP:viewTag' i.tagID 1 %}">{{ i.tagName }}&emsp;</a>
-            </td>
-            <td>{{ i.tagShowNum }}</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </div>
-    </table>
-
-
+        <table class="demo-card-wide mdl-data-table mdl-js-data-table mdl-data-table--selectable mdl-shadow--2dp" style="width: max-content; margin: auto;">
+            <thead>
+                <tr>
+                <th class="mdl-data-table__cell--non-numeric">关键词</th>
+                <th>出现频率</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for i in  allTags%}
+                <tr>
+                <td class="mdl-data-table__cell--non-numeric">
+                    <a href="{% url 'USFP:viewTag' i.tagID 1 %}">{{ i.tagName }}&emsp;</a>
+                </td>
+                <td>{{ i.tagShowNum }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     </main>
 
 
@@ -120,7 +117,7 @@
 
 
         <div style="float: right">
-            <button href="{% url 'USFP:submitSuggestion' %}" class="mdl-button mdl-js-button mdl-button--accent mdl-button--raised" style="margin-right: -39%;" onclick="window.location.href='../result_web/results_all.html'">Suggestion Submit</button>
+            <button href="{% url 'USFP:submitSuggestion' %}" class="mdl-button mdl-js-button mdl-button--accent mdl-button--raised" style="margin-right: -39%;">Suggestion Submit</button>
         </div>
 
         
