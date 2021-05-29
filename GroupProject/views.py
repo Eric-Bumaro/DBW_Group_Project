@@ -3,14 +3,11 @@ from datetime import datetime
 
 from django.http import HttpResponse
 from django.shortcuts import render
-from USFP import tests
 from USFP.littleTools import *
 from USFP.models import *
-from USFP.tests import randomUser
 
 
 def welcome(request, logout=0):
-    tests.template()
     if logout:
         request.session.clear()
         return render(request, 'View/welcome.html',{"allTags":Tag.objects.filter(tagShowNum__gt=0).order_by("-tagShowNum")})

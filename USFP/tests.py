@@ -15,28 +15,29 @@ from datetime import datetime
 
 
 def template():
-    allTagsList=Tag.objects.all()
-    lastUserID=CommonUser.object.last().commonUserID
-    for i in range(0,2000):
-        firstTag=allTagsList[random.randint(0,len(allTagsList)-1)]
-        secondTag=allTagsList[random.randint(0,len(allTagsList)-1)]
-        thirdTag=allTagsList[random.randint(0,len(allTagsList)-1)]
-        suggestion=Suggestion.object.create(content=firstTag.tagName+" "+secondTag.tagName+" "+thirdTag.tagName,
-                                                                                          visible=True,
-                                            commonUser_id=random.randint(1,lastUserID))
-        if random.randint(1,2)>1:
-            suggestion.tags.add(firstTag)
-            suggestion.tags.add(secondTag)
-            suggestion.tags.add(thirdTag)
-            firstTag.tagShowNum +=1
-            secondTag.tagShowNum += 1
-            thirdTag.tagShowNum += 1
-            firstTag.save()
-            secondTag.save()
-            thirdTag.save()
-            suggestion.save()
-        else:
-            ReplySuggestion.objects.create(selfSuggestion=suggestion,suggestionToReply_id=(suggestion.suggestionID%13)+1)
+        pass
+    # allTagsList=Tag.objects.all()
+    # lastUserID=CommonUser.object.last().commonUserID
+    # for i in range(0,2000):
+    #     firstTag=allTagsList[random.randint(0,len(allTagsList)-1)]
+    #     secondTag=allTagsList[random.randint(0,len(allTagsList)-1)]
+    #     thirdTag=allTagsList[random.randint(0,len(allTagsList)-1)]
+    #     suggestion=Suggestion.object.create(content=firstTag.tagName+" "+secondTag.tagName+" "+thirdTag.tagName,
+    #                                                                                       visible=True,
+    #                                         commonUser_id=random.randint(1,lastUserID))
+    #     if random.randint(1,2)>1:
+    #         suggestion.tags.add(firstTag)
+    #         suggestion.tags.add(secondTag)
+    #         suggestion.tags.add(thirdTag)
+    #         firstTag.tagShowNum +=1
+    #         secondTag.tagShowNum += 1
+    #         thirdTag.tagShowNum += 1
+    #         firstTag.save()
+    #         secondTag.save()
+    #         thirdTag.save()
+    #         suggestion.save()
+    #     else:
+    #        ReplySuggestion.objects.create(selfSuggestion=suggestion,suggestionToReply_id=(suggestion.suggestionID%13)+1)
     # scrapySuggestions=Suggestion.objects.filter(suggestionID__gte=784)
     # allTagsList = Tag.objects.values_list("tagName", flat=True)
     # for j in scrapySuggestions:
