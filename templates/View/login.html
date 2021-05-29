@@ -1,41 +1,140 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Login In</title>
-    <link rel="stylesheet" type="text/css" href="/static/CSS/View/login.css">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="description" content="UIC suggestion platform">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+    <link rel="shortcut icon" href="../favicon.ico" />
+    <title>Welcome</title>
+    <base href="/">
+    <link rel="stylesheet" type="text/css" href="../..//static/CSS/View/welcome.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/water.css@2/out/water.css">
+    <link rel="stylesheet" href="../../static/CSS/icon.css">
+    <link rel="stylesheet" href="../../static/CSS/general.css">
+    <link rel="stylesheet" href="../../static/CSS/material.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x" crossorigin="anonymous">
+    <script src="../../static/JavaScript/axios.min.js"></script>
+    <script src="../../static/JavaScript/material.min.js"></script>
+    <script src="/static/JavaScript/jquery-3.4.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-gtEjrD/SeCtmISkJkNUaaKMoLD0//ElJ19smozuHV6z3Iehds+3Ulb9Bn9Plx0x4" crossorigin="anonymous"></script>
 </head>
-<script src="/static/JavaScript/jquery-3.4.1.min.js"></script>
+
+
 <body>
-<form action="{% url 'USFP:login' 0 %}" method="post">
-    {% csrf_token %}
-    <p>
-        <label class="tipText" for="userID">ID:</label><br><input type="text"
-                                                                  name="commonUserID"
-                                                                  id="commonUserID"
-                                                                  value="{{ commonUserID }}"
-                                                                  required/>
-    </p>
-    <p>
-        <label class="tipText" for="commonUserPassword">Password:</label>
-    <p>
-        <input type="password" name="commonUserPassword" id="commonUserPassword" value="{{ commonUserPassword }}" required/>
-    </p>
-    <p>
-    <h3 id="errormsg"></h3>
-    </p>
-    <p>
-        <input type="checkbox" name="cookie" value=1>Remember the id and password(3 days)
-    </p>
-    <p>
-        <label>&emsp;&emsp;&emsp;</label><input type="submit" value="Login"/>
-        &emsp;<a href="{% url 'USFP:forgetPassword' %}">Forget password</a>
-    </p>
-    <br>
-    <a href="/welcome/">Back to the Welcome Page</a>
-</form>
+
+    <div id="feedback_div" class="demo-layout mdl-layout mdl-layout--fixed-header mdl-js-layout mdl-color--grey-100" style="position: absolute; bottom: 0; left: 0">
+
+        <header class="demo-header mdl-layout__header mdl-layout__header--scroll mdl-color--grey-100 mdl-color-text--grey-800">
+            <div class="mdl-layout__header-row">
+              <div onclick="window.location.href='/welcome/'" class="mdl-layout-title" style="margin-left: 0px;">UIC意见反馈系统</div>
+              <div class="mdl-layout-spacer"></div>
+              <div class="form-row container" style="width:300px; height:auto; display:inline-block" >
+                <form action="{% url 'USFP:searchSuggestion' %}" method="post"  style="width:300px; height:auto; display:inline-block"  class="mdl-textfield mdl-js-textfield" action="#">
+                    {% csrf_token %}
+                    <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label align-self-start" style="height:auto; display:inline-block">
+                        <input class="mdl-textfield__input" type="text" οninput=“value=value.replace(/[^\d]/g,’’)” name="searchSuggestionID" id="searchSuggestionID">
+                        <label class="mdl-textfield__label" for="searchSuggestionID" class="mdl-textfield__label">Input the suggestion id</label>
+                    </div>
+                    <div class="align-self-right" style="height:auto; display:inline-block">
+                        <input type="submit" value="search" class="material-icons" style="width:auto; display:inline-block;   font-size: 19px;">
+                    </div>
+                </form>
+              </div>
+            </div>
+          </header>
+
+
+    <div class="demo-ribbon"></div>
+
+
+    <div class="demo-container mdl-grid">
+        <div class="demo-card-wide mdl-card mdl-shadow--2dp " style="width: max-content; margin: auto;">
+            <div class="mdl-card__title">
+            <h2 class="mdl-card__title-text">Welcome</h2>
+            </div>
+            <div class="mdl-card__supporting-text">
+                这里是UIC同学们的小家呀！
+                大家可以在这里便捷地反馈自己的意见！
+                也可以看看最近学校的近况呢！
+            </div>
+
+            <form action="{% url 'USFP:login' 0 %}" method="post">
+            {% csrf_token %}
+            <p>
+                <label class="tipText" for="userID">ID:</label><br><input type="text"
+                                                                        name="commonUserID"
+                                                                        id="commonUserID"
+                                                                        value="{{ commonUserID }}"
+                                                                        required/>
+            </p>
+            <p style="height:auto; display:inline-block">
+                <label class="tipText" for="commonUserPassword">Password:</label>
+                <input type="password" name="commonUserPassword" id="commonUserPassword" value="{{ commonUserPassword }}" required/>
+            </p>
+            <p>
+            <h3 id="errormsg"></h3>
+            </p>
+            <p>
+                <input type="checkbox" name="cookie" value=1>Remember the id and password(3 days)
+            </p>
+            <p class="mdl-card__actions mdl-card--border">
+                <label>&emsp;&emsp;&emsp;</label><input type="submit" value="Login"/>
+                &emsp;<a href="{% url 'USFP:forgetPassword' %}">Forget password</a>
+            </p>
+            <br>
+            </form>
+        </div>
+    </div>
+
+
+
+    <footer class="demo-footer mdl-mini-footer" style=" width: 100%;">
+        <div style="flex-direction: column; left:0px">
+        {% if user.commonUserID %}
+        <div>
+            <p>userID:{{ user.commonUserID }}</p>
+        </div>
+        <div></div>
+            <p>userName:{{ user.commonUserName }}</p>
+        </div>
+        <div>
+            <p>userImage:<img src="/media/{{ user.commonUserImage }}"/></p>
+        </div>
+        {% if isAdmin %}
+            <p>
+                <a href="{% url 'USFP:adminInfor' %}">View profile</a>
+            </p>
+        {% else %}
+            <p>
+                <a href="{% url 'USFP:userInfor' %}">View profile</a>
+            </p>
+        {% endif %}
+            <p><a href="{% url 'welcome' 1 %}">Logout</a></p>
+        {% else %}
+            <div style="height:auto; width:auto; display:inline-block">
+                <br><a href="{% url 'USFP:login' 0 %}">Login</a>
+            </div>
+            <div style="height:auto; width:auto; display:inline-block">
+            </div>
+            <div style="height:auto; width:auto; display:inline-block">
+                <a href="/USFP/register/">Register</a>
+            </div>
+        {% endif %}
+    </div>
+
+
+    <div style="right:0px">
+        <button href="{% url 'USFP:submitSuggestion' %}" class="mdl-button mdl-js-button mdl-button--accent mdl-button--raised" style="margin-right: -39%;">Suggestion Submit</button>
+    </div>
+
+    
+    </footer>
+
 </body>
+
+
+
 <script>
     if({{ error|safe }}== "1")
 {
