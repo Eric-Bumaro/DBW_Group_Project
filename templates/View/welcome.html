@@ -13,6 +13,8 @@
     <link rel="stylesheet" href="../../static/CSS/icon.css">
     <link rel="stylesheet" href="../../static/CSS/general.css">
     <link rel="stylesheet" href="../../static/CSS/material.min.css">
+    <script src="../../static/JavaScript/axios.min.js"></script>
+    <script src="../../static/JavaScript/material.min.js"></script>
 </head>
 
 <body>
@@ -25,12 +27,16 @@
               <div onclick="window.location.href='/welcome/'" class="mdl-layout-title" style="margin-left: 0px;">UIC意见反馈系统</div>
               <div class="mdl-layout-spacer"></div>
               <div class="form-row" style="width:300px; height:auto; display:inline-block" >
-                <form action="{% url 'USFP:searchSuggestion' %}" method="post" class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label" style="width:300px; height:auto; display:inline-block"  class="mdl-textfield mdl-js-textfield"  action="#">
-                  {% csrf_token %}
-                      <input type="text"  οninput=“value=value.replace(/[^\d]/g,’’)”  style="height:auto; width:auto; display:inline-block" id="suggestionID">
-                      <label class="mdl-textfield__label" style="position: auto; top: 40;" for = "suggestionID">Input the suggestion id</label>
-                      <input type="submit" value="search" class="material-icons" style="height:auto; width:auto; display:inline-block; font-size: 19px;">
-                </form>
+                <form action="{% url 'USFP:searchSuggestion' %}" method="post"  style="width:300px; height:auto; display:inline-block"  class="mdl-textfield mdl-js-textfield" action="#">
+                    {% csrf_token %}
+                    <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label" style="height:auto; display:inline-block">
+                        <input class="mdl-textfield__input" type="text" οninput=“value=value.replace(/[^\d]/g,’’)” name="searchSuggestionID" id="searchSuggestionID">
+                        <label class="mdl-textfield__label" for="searchSuggestionID" class="mdl-textfield__label">Input the suggestion id</label>
+                    </div>
+                    <div style="height:auto; display:inline-block">
+                        <input type="submit" value="search" class="material-icons" style="width:auto; display:inline-block;   font-size: 19px;">
+                    </div>
+                  </form>
               </div>
             </div>
           </header>
@@ -38,6 +44,13 @@
 
     <div class="demo-ribbon"></div>
 
+    <!-- <form >
+        <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+          <input class="mdl-textfield__input" type="text" pattern="-?[0-9]*(\.[0-9]+)?" id="sample4">
+          <label class="mdl-textfield__label" for="sample4">Number...</label>
+          <span class="mdl-textfield__error">Input is not a number!</span>
+        </div>
+      </form> -->
 
     <main>
         <div class="demo-container mdl-grid">
@@ -57,7 +70,7 @@
                 </div>
             </div>
         </div>
-        <table class="demo-card-wide mdl-data-table mdl-js-data-table mdl-data-table--selectable mdl-shadow--2dp" style="width: max-content; margin: auto;">
+        <table class="demo-card-wide mdl-data-table mdl-js-data-table mdl-shadow--2dp" style="width: max-content; margin: auto;">
             <thead>
                 <tr>
                 <th class="mdl-data-table__cell--non-numeric">关键词</th>
@@ -103,6 +116,8 @@
             {% else %}
                 <div style="height:auto; width:auto; display:inline-block">
                     <br><a href="{% url 'USFP:login' 0 %}">Login</a>
+                </div>
+                <div style="height:auto; width:auto; display:inline-block">
                 </div>
                 <div style="height:auto; width:auto; display:inline-block">
                     <a href="/USFP/register/">Register</a>
