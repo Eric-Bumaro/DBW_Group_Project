@@ -10170,8 +10170,8 @@ _:-ms-input-placeholder, :root .mdl-slider.mdl-slider.is-upgraded {
 
 .mdl-textfield__label {
   bottom: 0;
-  color: rgba(0,0,0, 0.26);
-  font-size: 16px;
+  color: rgba(177, 170, 170, 0.26);
+  font-size: 20px;
   left: 0;
   right: 0;
   pointer-events: none;

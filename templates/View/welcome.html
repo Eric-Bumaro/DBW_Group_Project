@@ -20,25 +20,20 @@
 
     <div id="feedback_div" class="demo-layout mdl-layout mdl-layout--fixed-header mdl-js-layout mdl-color--grey-100" style="position: absolute; bottom: 0; left: 0">
 
-
         <header class="demo-header mdl-layout__header mdl-layout__header--scroll mdl-color--grey-100 mdl-color-text--grey-800">
-          <div class="mdl-layout__header-row">
-            <div class="mdl-layout-title" style="margin-left: 0px;">UIC意见反馈系统</div>
-            <div class="mdl-layout-spacer"></div>
-            <div class="form-row" style="width:300px; height:auto; display:inline-block" >
-              <form action="{% url 'USFP:searchSuggestion' %}" method="post"  style="width:300px; height:auto; display:inline-block"  class="mdl-textfield mdl-js-textfield">
-                {% csrf_token %}
-                <div style="height:auto; display:inline-block">
-                    <input type="text" οninput=“value=value.replace(/[^\d]/g,’’)” name="searchSuggestionID" required style="width:auto; display:inline-block">
-                    <label for="searchSuggestionID"  class="mdl-textfield__label">Input the suggestion id</label>
-                </div>
-                <div style="display:inline-block">
-                    <input type="submit" value="search" class="material-icons" style="width:auto; display:inline-block">
-                </div>
-              </form>
+            <div class="mdl-layout__header-row">
+              <div onclick="window.location.href='/welcome/'" class="mdl-layout-title" style="margin-left: 0px;">UIC意见反馈系统</div>
+              <div class="mdl-layout-spacer"></div>
+              <div class="form-row" style="width:300px; height:auto; display:inline-block" >
+                <form action="{% url 'USFP:searchSuggestion' %}" method="post" class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label" style="width:300px; height:auto; display:inline-block"  class="mdl-textfield mdl-js-textfield"  action="#">
+                  {% csrf_token %}
+                      <input type="text"  οninput=“value=value.replace(/[^\d]/g,’’)”  style="height:auto; width:auto; display:inline-block" id="suggestionID">
+                      <label class="mdl-textfield__label" style="position: auto; top: 40;" for = "suggestionID">Input the suggestion id</label>
+                      <input type="submit" value="search" class="material-icons" style="height:auto; width:auto; display:inline-block; font-size: 19px;">
+                </form>
+              </div>
             </div>
-          </div>
-        </header>
+          </header>
 
 
     <div class="demo-ribbon"></div>
@@ -84,7 +79,7 @@
 
 
     <footer class="demo-footer mdl-mini-footer" style=" width: 100%;">
-        <div style="flex-direction: column">
+        <div style="flex-direction: column; left:0px">
             {% if user.commonUserID %}
             <div>
                 <p>userID:{{ user.commonUserID }}</p>
@@ -106,17 +101,17 @@
             {% endif %}
                 <p><a href="{% url 'welcome' 1 %}">Logout</a></p>
             {% else %}
-                <div>
+                <div style="height:auto; width:auto; display:inline-block">
                     <br><a href="{% url 'USFP:login' 0 %}">Login</a>
                 </div>
-                <div>
+                <div style="height:auto; width:auto; display:inline-block">
                     <a href="/USFP/register/">Register</a>
                 </div>
             {% endif %}
         </div>
 
 
-        <div style="float: right">
+        <div style="right:0px">
             <button href="{% url 'USFP:submitSuggestion' %}" class="mdl-button mdl-js-button mdl-button--accent mdl-button--raised" style="margin-right: -39%;">Suggestion Submit</button>
         </div>
 
