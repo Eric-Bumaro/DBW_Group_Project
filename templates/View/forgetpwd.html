@@ -1,10 +1,63 @@
-<html>
-<head>
-    <title>Forget Password</title>
-    <link rel="stylesheet" type="text/css" href="/static/CSS/View/forgetpwd.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/water.css@2/out/water.css">
-</head>
+{% extends "base.html" %}
+
+<title>Forget Password</title>
+<link rel="stylesheet" type="text/css" href="/static/CSS/View/forgetpwd.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/water.css@2/out/water.css">
 <script src="/static/JavaScript/jquery-3.4.1.min.js"></script>
+
+
+{% block content %}
+
+    <div class="demo-container mdl-grid">
+        <div class="demo-card-wide mdl-card mdl-shadow--2dp " style="width: max-content; margin: auto;">
+            <div class="mdl-card__title">
+            <h2 class="mdl-card__title-text">Welcome</h2>
+            </div>
+            <div class="mdl-card__supporting-text">
+                这里是UIC同学们的小家呀！
+                大家可以在这里便捷地反馈自己的意见！
+                也可以看看最近学校的近况呢！
+            </div>
+
+            <form action="{% url 'USFP:forgetPassword' %}" method="post" name="forPassForm" onsubmit="return check()" style="display: grid; justify-items: center;">
+                {% csrf_token %}
+                <p>
+                    <label class="tipText" for="commonUserID">ID:</label>
+                    <input type="text" name="commonUserID" id="commonUserID"/>
+                </p>
+            
+                <p>
+                    <label for="pwd">Password:</label><input type="password" name="commonUserPassword"
+                                                                                     id="commonUserPassword" required>
+                </p>
+                <p>
+                    <label for="checkPassword"> Confirm Password:</label><input type="password" name="checkPassword" id="checkPassword"
+                                                                           required>
+                </p>
+                <p style="display: grid; justify-items: center;">
+                    <label for="userKey">Send a check-id key to your Email address and check it:</label>
+                    <input type="text" id="userKey" name="userKey" required>
+                    <label id="sendKeybutton">
+                        <button onclick="sendHide()">Click here to send!</button>
+                    </label>
+                </p>
+                <p>
+                <h3 id="errormsg"></h3>
+                </p>
+                <p  class="mdl-card__actions mdl-card--border" style="display: grid; justify-items: center;">
+                <label>&emsp;&emsp;&emsp;</label><input type="submit" value="Change">
+                </p>
+                &emsp;
+                <a href="/welcome/">Back to the Welcome Page</a>
+            </form>
+        </div>
+    </div>
+
+{% endblock %}
+ 
+
+
+{% block script %}
 <script>
     var userKey;
 
@@ -55,35 +108,4 @@
         return true;
     }
 </script>
-<body>
-<form action="{% url 'USFP:forgetPassword' %}" method="post" name="forPassForm" onsubmit="return check()">
-    {% csrf_token %}
-    <p>
-        <label class="tipText" for="commonUserID">&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;ID:</label>
-        <input type="text" name="commonUserID" id="commonUserID"/>
-    </p>
-
-    <p>
-        <label for="pwd">&emsp;&emsp;&emsp;&emsp;Password:</label><input type="password" name="commonUserPassword"
-                                                                         id="commonUserPassword" required>
-    </p>
-    <p>
-        <label for="checkPassword"> Confirm Password:</label><input type="password" name="checkPassword" id="checkPassword"
-                                                               required>
-    </p>
-    <p>
-        <label for="userKey">Send a check-id key to your Email address and check it:</label>
-        <input type="text" id="userKey" name="userKey" required>
-        <label id="sendKeybutton">
-            <button onclick="sendHide()">Click here to send!</button>
-        </label>
-    </p>
-    <p>
-    <h3 id="errormsg"></h3>
-    </p>
-    <label>&emsp;&emsp;&emsp;</label><input type="submit" value="Change">
-    &emsp;
-    <a href="/welcome/">Back to the Welcome Page</a>
-</form>
-</body>
-</html>
+{% endblock %}
