@@ -20,7 +20,7 @@ def adminInfor(request):
         return render(request, "Admin/adminInfor.html",
                       {"admin": admin, "areaSet": adminArea,
                        "areaIDs_js": json.dumps(list(adminArea.values("areaID"))),
-                       "allTags":Tag.objects.filter(tagShowNum__gt=0).order_by("-tagShowNum")})
+                       "allTags":Tag.objects.filter(tagShowNum__gt=0).order_by("-tagShowNum")[1:11]})
     else:
         for i in adminArea:
             try:
@@ -54,7 +54,7 @@ def adminChangeInfor(request, changeType):
         else:
             return render(request, "Admin/adminChangeInfor.html",
                           {"changeType_js": json.dumps(changeType), "changeType_py": changeType,
-                           "allTags":Tag.objects.filter(tagShowNum__gt=0).order_by("-tagShowNum")})
+                           "allTags":Tag.objects.filter(tagShowNum__gt=0).order_by("-tagShowNum")[1:11]})
 
     admin = CommonUser.objects.get(commonUserID=request.session['commonUserID'])
     if changeType == "Email":
@@ -86,7 +86,7 @@ def adminSuChange(request, changeType):
         request.session["cID"]
     except KeyError:
         return HttpResponseRedirect(reverse("welcome", args=(1,)))
-    return render(request, "Admin/adminSuChange.html", {"changeType": changeType,"allTags":Tag.objects.filter(tagShowNum__gt=0).order_by("-tagShowNum")})
+    return render(request, "Admin/adminSuChange.html", {"changeType": changeType,"allTags":Tag.objects.filter(tagShowNum__gt=0).order_by("-tagShowNum")[1:11]})
 
 
 def adminViewArea(request, num, areaID):
@@ -111,18 +111,18 @@ def adminViewArea(request, num, areaID):
     begin = (num - int(math.ceil(10.0 / 2)))
     if begin < 1:
         begin = 1
-    end = begin + 4
+    end = begin + 9
     if end > pager.num_pages:
         end = pager.num_pages
-    if end <= 5:
+    if end <= 10:
         begin = 1
     else:
-        begin = end - 4
+        begin = end - 9
     pagelist = range(begin, end + 1)
     return render(request, "Admin/adminViewArea.html",
                   {"pager": pager, 'prepageData': prepageData, "pageList": pagelist, "areaID": area.areaID,
                    "areaName": area.areaName,
-                   "allTags":Tag.objects.filter(tagShowNum__gt=0).order_by("-tagShowNum")})
+                   "allTags":Tag.objects.filter(tagShowNum__gt=0).order_by("-tagShowNum")[1:11]})
 
 
 def adminDeleteUsers(request):
@@ -168,13 +168,13 @@ def adminViewOperations(request, areaOperationNum, userOperationNum, suggestionO
     begin = (areaOperationNum - int(math.ceil(10.0 / 2)))
     if begin < 1:
         begin = 1
-    end = begin + 4
+    end = begin + 9
     if end > areaPager.num_pages:
         end = areaPager.num_pages
-    if end <= 5:
+    if end <= 10:
         begin = 1
     else:
-        begin = end - 4
+        begin = end - 9
     areaPageList = range(begin, end + 1)
     userOperations = user.VerifiedUser.UserOperation.order_by("-operationTakeDate")
     if int(userOperationNum) < 1:
@@ -189,13 +189,13 @@ def adminViewOperations(request, areaOperationNum, userOperationNum, suggestionO
     begin = (userOperationNum - int(math.ceil(10.0 / 2)))
     if begin < 1:
         begin = 1
-    end = begin + 4
+    end = begin + 9
     if end > userPager.num_pages:
         end = userPager.num_pages
-    if end <= 5:
+    if end <= 10:
         begin = 1
     else:
-        begin = end - 4
+        begin = end - 9
     userPageList = range(begin, end + 1)
     suggestionOperations = user.VerifiedUser.SuggestionOperation.order_by("-operationTakeDate")
     if int(suggestionOperationNum) < 1:
@@ -210,20 +210,20 @@ def adminViewOperations(request, areaOperationNum, userOperationNum, suggestionO
     begin = (suggestionOperationNum - int(math.ceil(10.0 / 2)))
     if begin < 1:
         begin = 1
-    end = begin + 4
+    end = begin + 9
     if end > suggestionPager.num_pages:
         end = suggestionPager.num_pages
-    if end <= 5:
+    if end <= 10:
         begin = 1
     else:
-        begin = end - 4
+        begin = end - 9
     suggestionPageList = range(begin, end + 1)
     return render(request, "Admin/adminViewOperations.html",
                   {"areaOpNum": areaOperationNum, 'areaPrepageData': areaPrepageData, "areaPageList": areaPageList,
                    "userOpNum": userOperationNum, "userPrepageData": userPrepageData, "userPageList": userPageList,
                    "suggestionOpNum": suggestionOperationNum, "suggestionPrepageData": suggestionPrepageData,
                    "suggestionPageList": suggestionPageList,
-                   "allTags":Tag.objects.filter(tagShowNum__gt=0).order_by("-tagShowNum")}
+                   "allTags":Tag.objects.filter(tagShowNum__gt=0).order_by("-tagShowNum")[1:11]}
                   )
 
 
@@ -237,7 +237,7 @@ def adminViewUser(request, commonUserID):
         areaNameList = admin.VerifiedUser.adminArea.filter(isDelete=False).values_list('areaName', flat=True)
         return render(request, "Admin/adminViewUser.html",
                       {"user": user, "areaNameList": areaNameList, "isVerified": user.isVerified(),
-                       "allTags":Tag.objects.filter(tagShowNum__gt=0).order_by("-tagShowNum")})
+                       "allTags":Tag.objects.filter(tagShowNum__gt=0).order_by("-tagShowNum")[1:11]})
     return HttpResponseRedirect(reverse("welcome", args=(1,)))
 
 
@@ -292,17 +292,17 @@ def adminViewUserSuggestions(request, commonUserID, num):
     begin = (num - int(math.ceil(10.0 / 2)))
     if begin < 1:
         begin = 1
-    end = begin + 4
+    end = begin + 9
     if end > pager.num_pages:
         end = pager.num_pages
-    if end <= 5:
+    if end <= 10:
         begin = 1
     else:
-        begin = end - 4
+        begin = end - 9
     pagelist = range(begin, end + 1)
     return render(request, "Admin/adminViewUserSuggestions.html",
                   {"pager": pager, 'prepageData': prepageData, "pageList": pagelist, "commonUserID": commonUserID,
-                   "allTags":Tag.objects.filter(tagShowNum__gt=0).order_by("-tagShowNum")})
+                   "allTags":Tag.objects.filter(tagShowNum__gt=0).order_by("-tagShowNum")[1:11]})
 
 
 def adminOperateSuggestions(request):
@@ -370,13 +370,13 @@ def adminViewDeletions(request, areaDeletionNum, userDeletionNum, suggestionDele
     begin = (areaDeletionNum - int(math.ceil(10.0 / 2)))
     if begin < 1:
         begin = 1
-    end = begin + 4
+    end = begin + 9
     if end > areaPager.num_pages:
         end = areaPager.num_pages
-    if end <= 5:
+    if end <= 10:
         begin = 1
     else:
-        begin = end - 4
+        begin = end - 9
     areaPageList = range(begin, end + 1)
     userOperations = user.VerifiedUser.UserOperation.filter(operationType="deleteUser",
                                                             operationTakeDate__gt=datetime.now() - timedelta(
@@ -393,13 +393,13 @@ def adminViewDeletions(request, areaDeletionNum, userDeletionNum, suggestionDele
     begin = (userDeletionNum - int(math.ceil(10.0 / 2)))
     if begin < 1:
         begin = 1
-    end = begin + 4
+    end = begin + 9
     if end > userPager.num_pages:
         end = userPager.num_pages
-    if end <= 5:
+    if end <= 10:
         begin = 1
     else:
-        begin = end - 4
+        begin = end - 9
     userPageList = range(begin, end + 1)
     suggestionOperations = user.VerifiedUser.SuggestionOperation.filter(operationType="deleteSuggestion",
                                                                         operationTakeDate__gt=datetime.now() - timedelta(
@@ -416,20 +416,20 @@ def adminViewDeletions(request, areaDeletionNum, userDeletionNum, suggestionDele
     begin = (suggestionDeletionNum - int(math.ceil(10.0 / 2)))
     if begin < 1:
         begin = 1
-    end = begin + 4
+    end = begin + 9
     if end > suggestionPager.num_pages:
         end = suggestionPager.num_pages
-    if end <= 5:
+    if end <= 10:
         begin = 1
     else:
-        begin = end - 4
+        begin = end - 9
     suggestionPageList = range(begin, end + 1)
     return render(request, "Admin/adminViewDeletions.html",
                   {"areaDeletionNum": areaDeletionNum, 'areaPrepageData': areaPrepageData, "areaPageList": areaPageList,
                    "userDeletionNum": userDeletionNum, "userPrepageData": userPrepageData, "userPageList": userPageList,
                    "suggestionDeletionNum": suggestionDeletionNum, "suggestionPrepageData": suggestionPrepageData,
                    "suggestionPageList": suggestionPageList,
-                   "allTags":Tag.objects.filter(tagShowNum__gt=0).order_by("-tagShowNum")}
+                   "allTags":Tag.objects.filter(tagShowNum__gt=0).order_by("-tagShowNum")[1:11]}
                   )
 
 
@@ -492,18 +492,18 @@ def adminViewUnhandledSuggestion(request, num):
         begin = (num - int(math.ceil(10.0 / 2)))
         if begin < 1:
             begin = 1
-        end = begin + 4
+        end = begin + 9
         if end > suggestionPager.num_pages:
             end = suggestionPager.num_pages
-        if end <= 5:
+        if end <= 10:
             begin = 1
         else:
-            begin = end - 4
+            begin = end - 9
         suggestionPageList = range(begin, end + 1)
         return render(request, "Admin/adminViewUnhandledSuggestion.html",
                       {"suggestionNum": num, 'suggestionPrepageData': suggestionPrepageData,
                        "suggestionPageList": suggestionPageList,
-                       "allTags":Tag.objects.filter(tagShowNum__gt=0).order_by("-tagShowNum")})
+                       "allTags":Tag.objects.filter(tagShowNum__gt=0).order_by("-tagShowNum")[1:11]})
     except Exception as e:
         print(e)
         return redirect("welcome")
@@ -532,13 +532,13 @@ def adminViewOneSuggestion(request, suggestionID, num):
         begin = (replyNum - int(math.ceil(10.0 / 2)))
         if begin < 1:
             begin = 1
-        end = begin + 4
+        end = begin + 9
         if end > replySuggestionPager.num_pages:
             end = replySuggestionPager.num_pages
-        if end <= 5:
+        if end <= 10:
             begin = 1
         else:
-            begin = end - 4
+            begin = end - 9
         replySuggestionPageList = range(begin, end + 1)
         isManagedBy = suggestion.commonUser.area in user.VerifiedUser.adminArea.all()
         return render(request, "Admin/adminViewOneSuggestion.html", {"suggestion": suggestion,
@@ -549,7 +549,7 @@ def adminViewOneSuggestion(request, suggestionID, num):
                                                                      'replySuggestionPrepageData': replySuggestionPrepageData,
                                                                      'replySuggestionPageList': replySuggestionPageList,
                                                                      "suggestion_tags":suggestion.tags.all(),
-                                                                     "allTags":Tag.objects.filter(tagShowNum__gt=0).order_by("-tagShowNum")})
+                                                                     "allTags":Tag.objects.filter(tagShowNum__gt=0).order_by("-tagShowNum")[1:11]})
     except Exception as e:
         print(e)
         return redirect("USFP:adminInfor")
@@ -596,4 +596,4 @@ def adminSubmitComment(request,suggestionID):
 def adminSuSubmitComment(request,suggestionID):
     suggestion=Suggestion.objects.get(suggestionID=suggestionID)
     return render(request,"Admin/adminSuSubmitComment.html",{"suggestion":suggestion,
-                                                             "allTags":Tag.objects.filter(tagShowNum__gt=0).order_by("-tagShowNum")})
+                                                             "allTags":Tag.objects.filter(tagShowNum__gt=0).order_by("-tagShowNum")[1:11]})

@@ -10,24 +10,28 @@ from USFP.models import *
 def welcome(request, logout=0):
     if logout:
         request.session.clear()
-        return render(request, 'View/welcome.html',{"allTags":Tag.objects.filter(tagShowNum__gt=0).order_by("-tagShowNum")})
+        return render(request, 'View/welcome.html',
+                      {"allTags": Tag.objects.filter(tagShowNum__gt=0).order_by("-tagShowNum")[1:11]})
     try:
         user = CommonUser.object.get(commonUserID=request.session['commonUserID'])
         try:
             if user.VerifiedUser.isAdmin:
-                return render(request, 'View/welcome.html', {'user': user,'isAdmin':True,
-                                                             "allTags":Tag.objects.filter(tagShowNum__gt=0).order_by("-tagShowNum")})
+                return render(request, 'View/welcome.html', {'user': user, 'isAdmin': True,
+                                                             "allTags": Tag.objects.filter(tagShowNum__gt=0).order_by(
+                                                                 "-tagShowNum")[1:11]})
         except:
             return render(request, 'View/welcome.html', {'user': user, 'isAdmin': False,
-                                                         "allTags":Tag.objects.filter(tagShowNum__gt=0).order_by("-tagShowNum")})
+                                                         "allTags": Tag.objects.filter(tagShowNum__gt=0).order_by(
+                                                             "-tagShowNum")[1:11]})
     except KeyError as e:
-        return render(request, 'View/welcome.html',{'user.commonUserID':5,
-                                                    "allTags":Tag.objects.filter(tagShowNum__gt=0).order_by("-tagShowNum")})
+        return render(request, 'View/welcome.html', {'user.commonUserID': 5,
+                                                     "allTags": Tag.objects.filter(tagShowNum__gt=0).order_by(
+                                                         "-tagShowNum")[1:11]})
 
 
 def getUserKey(request):
     try:
-        commonUserID=request.POST.get('commonUserID',"")
+        commonUserID = request.POST.get('commonUserID', "")
         to_add = CommonUser.object.get(commonUserID=int(commonUserID)).commonUserEmail
         key = sendEmail(to_add)
         return HttpResponse(key)
@@ -44,7 +48,7 @@ def getAdKey(request):
 
 def sendCheckKey(request):
     try:
-        emailAdd = request.POST.get('emailAdd',"")
+        emailAdd = request.POST.get('emailAdd', "")
         key = sendEmail(emailAdd)
         return HttpResponse(key)
     except:
@@ -53,16 +57,16 @@ def sendCheckKey(request):
 
 def refreshDB(request):
     try:
-        assert request.session['commonUserID']== 1
-        assert request.method=="POST"
+        assert request.session['commonUserID'] == 1
+        assert request.method == "POST"
     except Exception as e:
         print(e)
         return HttpResponse("Fail")
-    userList=CommonUser.objects.filter(isDelete=True)
-    areaList=Area.objects.filter(isDelete=True)
-    suggestionList=Suggestion.objects.filter(isDelete=True)
-    deleteList=[userList,areaList,suggestionList]
-    nowDate=datetime.now()
+    userList = CommonUser.objects.filter(isDelete=True)
+    areaList = Area.objects.filter(isDelete=True)
+    suggestionList = Suggestion.objects.filter(isDelete=True)
+    deleteList = [userList, areaList, suggestionList]
+    nowDate = datetime.now()
     for i in deleteList:
         for j in i:
             try:
@@ -73,8 +77,9 @@ def refreshDB(request):
     return HttpResponse("Success")
 
 
-def page_not_found(request,exception):
-    return render(request,'Error/404.html',{"allTags":Tag.objects.filter(tagShowNum__gt=0).order_by("-tagShowNum")})
+def page_not_found(request, exception):
+    return render(request, 'Error/404.html',
+                  {"allTags": Tag.objects.filter(tagShowNum__gt=0).order_by("-tagShowNum")[1:11]})
 
 
 def startScrapy(request):

@@ -8,10 +8,11 @@ urlpatterns = [
     url(r'^register/successful/$', views.suRegister, name="suRegister"),
     url(r'^forgetPassword/$', views.forgetPassword, name="forgetPassword"),
     url(r'^suChangePwd/$', views.suChangePwd, name="suChangePwd"),
-    url(r'^viewTag#tagID=(?P<tagID>\d*)&num=(?P<num>\d)$', commonUser.viewTag, name="viewTag"),
+    url(r'^viewAllTags#num=(?P<num>\d*)$', views.viewAllTags, name="viewAllTags"),
+    url(r'^viewTag#tagID=(?P<tagID>\d*)&num=(?P<num>\d*)$', views.viewTag, name="viewTag"),
+
     url(r'^userChangeSuggestion/#suggestionID=(?P<suggestionID>\d*)$', commonUser.userChangeSuggestion,
         name="userChangeSuggestion"),
-
     url(r'^CommonUser/userDeleteSuggestions$', commonUser.userDeleteSuggestions,name="userDeleteSuggestions"),
     url(r'^CommonUser/userInfor/$', commonUser.userInfor, name="userInfor"),
     url(r'^CommonUser/userChange/#changeType=(?P<changeType>.*)$', commonUser.userChange, name="userChangeInfor"),

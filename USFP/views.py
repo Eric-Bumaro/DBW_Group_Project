@@ -1,5 +1,8 @@
+import math
+
 import nltk
 # nltk.download()
+from django.core.paginator import *
 from django.db import transaction
 from django.db.models import *
 from django.shortcuts import render
@@ -28,10 +31,11 @@ def login(request, error):
             return render(request, "View/login.html",
                           {"error": json.dumps(error), "commonUserID": commonUserID,
                            "commonUserPassword": commonUserPassword,
-                           "allTags":Tag.objects.filter(tagShowNum__gt=0).order_by("-tagShowNum")})
+                           "allTags": Tag.objects.filter(tagShowNum__gt=0).order_by("-tagShowNum")})
         else:
             return render(request, "View/login.html", {"error": json.dumps(error),
-                                                       "allTags":Tag.objects.filter(tagShowNum__gt=0).order_by("-tagShowNum")})
+                                                       "allTags": Tag.objects.filter(tagShowNum__gt=0).order_by(
+                                                           "-tagShowNum")})
     commonUserPassword = request.POST.get("commonUserPassword", "")
     remind = request.POST.get("cookie", "")
     commonUserID = int(request.POST.get("commonUserID", ""))
@@ -51,7 +55,8 @@ def login(request, error):
 
 def register(request):
     if request.method == 'GET':
-        return render(request, "View/register.html",{"allTags":Tag.objects.filter(tagShowNum__gt=0).order_by("-tagShowNum")})
+        return render(request, "View/register.html",
+                      {"allTags": Tag.objects.filter(tagShowNum__gt=0).order_by("-tagShowNum")})
     commonUserName = request.POST.get("commonUserName", "")
     commonUserPassword = request.POST.get("commonUserPassword", "")
     commonUserEmail = request.POST.get("commonUserEmail", "")
@@ -85,12 +90,14 @@ def register(request):
 
 def suRegister(request):
     return render(request, "View/suRegister.html", {"commonUserID": CommonUser.objects.last().commonUserID,
-                                                    "allTags":Tag.objects.filter(tagShowNum__gt=0).order_by("-tagShowNum")})
+                                                    "allTags": Tag.objects.filter(tagShowNum__gt=0).order_by(
+                                                        "-tagShowNum")})
 
 
 def forgetPassword(request):
     if request.method == 'GET':
-        return render(request, "View/forgetpwd.html",{"allTags":Tag.objects.filter(tagShowNum__gt=0).order_by("-tagShowNum")})
+        return render(request, "View/forgetpwd.html",
+                      {"allTags": Tag.objects.filter(tagShowNum__gt=0).order_by("-tagShowNum")})
     commonUserPassword = request.POST.get("commonUserPassword", "")
     commonUserID = request.POST.get("commonUserID", "")
     try:
@@ -101,7 +108,8 @@ def forgetPassword(request):
 
 
 def suChangePwd(request):
-    return render(request, "View/suChangePwd.html",{"allTags":Tag.objects.filter(tagShowNum__gt=0).order_by("-tagShowNum")})
+    return render(request, "View/suChangePwd.html",
+                  {"allTags": Tag.objects.filter(tagShowNum__gt=0).order_by("-tagShowNum")})
 
 
 @transaction.atomic
@@ -110,7 +118,8 @@ def submitSuggestion(request):
         commonUserID = request.session.get("commonUserID", 5)
         commonUser = CommonUser.object.get(commonUserID=commonUserID)
         return render(request, "View/submitSuggestion.html", {'user': commonUser,
-                                                              "allTags":Tag.objects.filter(tagShowNum__gt=0).order_by("-tagShowNum")})
+                                                              "allTags": Tag.objects.filter(tagShowNum__gt=0).order_by(
+                                                                  "-tagShowNum")})
     save_tag = transaction.savepoint()
     try:
         commonUserID = request.session.get("commonUserID", 5)
@@ -146,12 +155,13 @@ def submitSuggestion(request):
         suggestionObject.save()
         return render(request, "View/submitSuggestionResult.html",
                       {"state": 1, "suggestionID": suggestionObject.suggestionID, 'user': commonUser,
-                       "allTags":Tag.objects.filter(tagShowNum__gt=0).order_by("-tagShowNum")})
+                       "allTags": Tag.objects.filter(tagShowNum__gt=0).order_by("-tagShowNum")})
     except Exception as e:
         print(e)
         transaction.savepoint_rollback(save_tag)
         return render(request, "View/submitSuggestionResult.html", {"state": 0, 'user': commonUser,
-                                                                    "allTags":Tag.objects.filter(tagShowNum__gt=0).order_by("-tagShowNum")})
+                                                                    "allTags": Tag.objects.filter(
+                                                                        tagShowNum__gt=0).order_by("-tagShowNum")})
 
 
 def searchSuggestion(request):
@@ -162,10 +172,79 @@ def searchSuggestion(request):
         assert not suggestion.isDelete
         if commonUser.isVerified():
             if suggestion.commonUser.area in commonUser.VerifiedUser.adminArea.all():
-                return HttpResponseRedirect(reverse("USFP:adminViewOneSuggestion",args=(suggestionID,1)))
-        return render(request, "View/searchSuggestion.html", {"suggestion": suggestion, "isAuthor": (suggestion.commonUser.commonUserID==commonUser.commonUserID),
+                return HttpResponseRedirect(reverse("USFP:adminViewOneSuggestion", args=(suggestionID, 1)))
+        return render(request, "View/searchSuggestion.html", {"suggestion": suggestion, "isAuthor": (
+                suggestion.commonUser.commonUserID == commonUser.commonUserID),
                                                               'user': commonUser,
-                                                              "allTags":Tag.objects.filter(tagShowNum__gt=0).order_by("-tagShowNum")})
+                                                              "allTags": Tag.objects.filter(tagShowNum__gt=0).order_by(
+                                                                  "-tagShowNum")})
     except Exception as e:
         print(e)
         return redirect("welcome")
+
+
+def viewTag(request, tagID, num):
+    tag = Tag.objects.get(tagID=tagID)
+    suggestions = tag.Suggestion.filter(visible=True).order_by("postTime")
+    user = CommonUser.objects.get(commonUserID=request.session.get("commonUserID", 5))
+    if int(num) < 1:
+        num = 1
+    else:
+        num = int(num)
+    suggestionPager = Paginator(suggestions, 10)
+    try:
+        suggestionPrepageData = suggestionPager.page(num)
+    except EmptyPage:
+        suggestionPrepageData = suggestionPager.page(suggestionPager.num_pages)
+    begin = (num - int(math.ceil(10.0 / 2)))
+    if begin < 1:
+        begin = 1
+    end = begin + 9
+    if end > suggestionPager.num_pages:
+        end = suggestionPager.num_pages
+    if end <= 10:
+        begin = 1
+    else:
+        begin = end - 9
+    suggestionPageList = range(begin, end + 1)
+    isAdmin = False
+    if user.isVerified():
+        if user.VerifiedUser.isAdmin:
+            isAdmin = True
+    return render(request, "View/viewTag.html",
+                  {"suggestionPager": suggestionPager, 'suggestionPrepageData': suggestionPrepageData,
+                   "suggestionPageList": suggestionPageList, "user": user, "isAdmin": isAdmin,
+                   "tag": tag, "allTags": Tag.objects.filter(tagShowNum__gt=0).order_by("-tagShowNum")[1:11]})
+
+
+def viewAllTags(request, num):
+    user = CommonUser.objects.get(commonUserID=request.session.get("commonUserID", 5))
+    tags = Tag.objects.order_by("tagName")
+    if int(num) < 1:
+        num = 1
+    else:
+        num = int(num)
+    tagsPager = Paginator(tags, 10)
+    try:
+        tagsPrepageData = tagsPager.page(num)
+    except EmptyPage:
+        tagsPrepageData = tagsPager.page(tagsPager.num_pages)
+    begin = (num - int(math.ceil(10.0 / 2)))
+    if begin < 1:
+        begin = 1
+    end = begin + 10
+    if end > tagsPager.num_pages:
+        end = tagsPager.num_pages
+    if end <= 10:
+        begin = 1
+    else:
+        begin = end - 9
+    tagsPageList = range(begin, end + 1)
+    isAdmin = False
+    if user.isVerified():
+        if user.VerifiedUser.isAdmin:
+            isAdmin = True
+    return render(request, "View/viewAllTags.html",
+                  {"tagsPager": tagsPager, 'tagsPrepageData': tagsPrepageData,
+                   "tagsPageList": tagsPageList, "user": user, "isAdmin": isAdmin,
+                   "allTags": Tag.objects.filter(tagShowNum__gt=0).order_by("-tagShowNum")[1:11]})

@@ -20,10 +20,12 @@ def userInfor(request):
     user = CommonUser.objects.get(commonUserID=request.session['commonUserID'])
     if user.isVerified():
         return render(request, "CommonUser/userInfor.html",
-                      {"user": user, 'verified': 1,"allTags":Tag.objects.filter(tagShowNum__gt=0).order_by("-tagShowNum")})
+                      {"user": user, 'verified': 1,
+                       "allTags": Tag.objects.filter(tagShowNum__gt=0).order_by("-tagShowNum")[1:11]})
     else:
         return render(request, "CommonUser/userInfor.html",
-                      {"user": user, 'verified': 0,"allTags":Tag.objects.filter(tagShowNum__gt=0).order_by("-tagShowNum")})
+                      {"user": user, 'verified': 0,
+                       "allTags": Tag.objects.filter(tagShowNum__gt=0).order_by("-tagShowNum")[1:11]})
 
 
 def userChange(request, changeType):
@@ -32,11 +34,11 @@ def userChange(request, changeType):
             return render(request, "CommonUser/userChangeInfor.html",
                           {"changeType_js": json.dumps(changeType), "changeType_py": changeType,
                            "commonUserID": request.session['commonUserID'],
-                           "allTags":Tag.objects.filter(tagShowNum__gt=0).order_by("-tagShowNum")})
+                           "allTags": Tag.objects.filter(tagShowNum__gt=0).order_by("-tagShowNum")[1:11]})
         if changeType == "Image" or changeType == "Name":
             return render(request, "CommonUser/userChangeInfor.html",
                           {"changeType_js": json.dumps(changeType), "changeType_py": changeType,
-                           "allTags":Tag.objects.filter(tagShowNum__gt=0).order_by("-tagShowNum")})
+                           "allTags": Tag.objects.filter(tagShowNum__gt=0).order_by("-tagShowNum")[1:11]})
 
     user = CommonUser.object.filter(commonUserID=request.session['commonUserID'])
     if changeType == "EmailAdd":
@@ -72,7 +74,8 @@ def userChange(request, changeType):
 
 def userSuChange(request, changeType):
     return render(request, "CommonUser/userSuChange.html", {"changeType": changeType,
-                                                            "allTags":Tag.objects.filter(tagShowNum__gt=0).order_by("-tagShowNum")})
+                                                            "allTags": Tag.objects.filter(tagShowNum__gt=0).order_by(
+                                                                "-tagShowNum")[1:11]})
 
 
 def userViewSuggestions(request, num):
@@ -93,29 +96,29 @@ def userViewSuggestions(request, num):
     begin = (suggestionNum - int(math.ceil(10.0 / 2)))
     if begin < 1:
         begin = 1
-    end = begin + 4
+    end = begin + 9
     if end > suggestionPager.num_pages:
         end = suggestionPager.num_pages
-    if end <= 5:
+    if end <= 10:
         begin = 1
     else:
-        begin = end - 4
+        begin = end - 9
     suggestionPageList = range(begin, end + 1)
     try:
-        isAdmin=user.VerifiedUser.isAdmin
+        isAdmin = user.VerifiedUser.isAdmin
     except:
-        isAdmin=False
+        isAdmin = False
     return render(request, "CommonUser/userViewSuggestions.html",
                   {"suggestionPager": suggestionPager, 'suggestionPrepageData': suggestionPrepageData,
-                   "suggestionPageList": suggestionPageList, "user": user,"isAdmin":isAdmin,
-                   "allTags":Tag.objects.filter(tagShowNum__gt=0).order_by("-tagShowNum")})
+                   "suggestionPageList": suggestionPageList, "user": user, "isAdmin": isAdmin,
+                   "allTags": Tag.objects.filter(tagShowNum__gt=0).order_by("-tagShowNum")[1:11]})
 
 
 def userDeleteSuggestions(request):
     if request.method == 'GET':
         return HttpResponse('Fail')
     deleteList = [i for i in request.POST.get("listToDelete").split("-") if len(i) != 0]
-    user=CommonUser.object.get(commonUserID=request.session['commonUserID'])
+    user = CommonUser.object.get(commonUserID=request.session['commonUserID'])
     try:
         for i in deleteList:
             suggestionToDelete = Suggestion.object.get(suggestionID=int(i))
@@ -152,21 +155,24 @@ def userViewOneSuggestion(request, suggestionID, num):
         begin = (replyNum - int(math.ceil(10.0 / 2)))
         if begin < 1:
             begin = 1
-        end = begin + 4
+        end = begin + 9
         if end > replySuggestionPager.num_pages:
             end = replySuggestionPager.num_pages
-        if end <= 5:
+        if end <= 10:
             begin = 1
         else:
-            begin = end - 4
+            begin = end - 9
         replySuggestionPageList = range(begin, end + 1)
         return render(request, "CommonUser/userViewOneSuggestion.html", {"suggestion": suggestion,
-                                                                         "isAuthor":(suggestion.commonUser.commonUserID==user.commonUserID),
+                                                                         "isAuthor": (
+                                                                                     suggestion.commonUser.commonUserID == user.commonUserID),
                                                                          'user': user, 'isVerified': user.isVerified(),
                                                                          'replySuggestionPrepageData': replySuggestionPrepageData,
                                                                          'replySuggestionPageList': replySuggestionPageList,
                                                                          "suggestion_tags": suggestion.tags.all(),
-                                                                         "allTags":Tag.objects.filter(tagShowNum__gt=0).order_by("-tagShowNum")})
+                                                                         "allTags": Tag.objects.filter(
+                                                                             tagShowNum__gt=0).order_by("-tagShowNum")[
+                                                                                    1:11]})
     except Exception as e:
         print(e)
         return redirect("welcome")
@@ -215,7 +221,9 @@ def userChangeSuggestion(request, suggestionID):
             suggestion.visible = False
         suggestion.save()
         return render(request, "CommonUser/userSuChangeSuggestion.html", {'suggestionID': suggestion.suggestionID,
-                                                                          "allTags":Tag.objects.filter(tagShowNum__gt=0).order_by("-tagShowNum")})
+                                                                          "allTags": Tag.objects.filter(
+                                                                              tagShowNum__gt=0).order_by("-tagShowNum")[
+                                                                                     1:11]})
     except Exception as e:
         print(e)
         transaction.savepoint_rollback(save_tag)
@@ -234,36 +242,3 @@ def userSubmitComment(request, suggestionID):
         print(e)
         return redirect("welcome")
 
-
-def viewTag(request, tagID, num):
-    tag = Tag.objects.get(tagID=tagID)
-    suggestions = tag.Suggestion.filter(visible=True).order_by("postTime")
-    user = CommonUser.objects.get(commonUserID=request.session.get("commonUserID", 5))
-    if int(num) < 1:
-        num = 1
-    else:
-        num = int(num)
-    suggestionPager = Paginator(suggestions, 10)
-    try:
-        suggestionPrepageData = suggestionPager.page(num)
-    except EmptyPage:
-        suggestionPrepageData = suggestionPager.page(suggestionPager.num_pages)
-    begin = (num - int(math.ceil(10.0 / 2)))
-    if begin < 1:
-        begin = 1
-    end = begin + 4
-    if end > suggestionPager.num_pages:
-        end = suggestionPager.num_pages
-    if end <= 5:
-        begin = 1
-    else:
-        begin = end - 4
-    suggestionPageList = range(begin, end + 1)
-    isAdmin = False
-    if user.isVerified():
-        if user.VerifiedUser.isAdmin:
-            isAdmin = True
-    return render(request, "View/viewTag.html",
-                  {"suggestionPager": suggestionPager, 'suggestionPrepageData': suggestionPrepageData,
-                   "suggestionPageList": suggestionPageList, "user": user, "isAdmin": isAdmin,
-                   "tag": tag,"allTags":Tag.objects.filter(tagShowNum__gt=0).order_by("-tagShowNum")})
