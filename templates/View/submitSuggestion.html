@@ -1,39 +1,51 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Submit Your Suggestion</title>
-    <base href="/">
-    <link rel="stylesheet" type="text/css" href="/static/CSS/View/submitSuggestion.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/water.css@2/out/water.css">
-</head>
-<body>
-{% ifnotequal user.commonUserID 5%}
-    <p>userID:{{ user.commonUserID }}</p>
-    <p>userName:{{ user.commonUserName }}</p>
-    <p>userImage:<img src="/media/{{ user.commonUserImage }}"/></p>
-    {% if isAdmin %}
-        <p>
-            <a href="{% url 'USFP:adminInfor' %}">View profile</a>
-        </p>
-    {% else %}
-        <p>
-            <a href="{% url 'USFP:userInfor' %}">View profile</a>
-        </p>
-    {% endif %}
-        <p><a href="{% url 'welcome' 1 %}">Logout</a></p>
-{% else %}
-    <br><a href="{% url 'USFP:login' 0 %}">Login</a>
-    <a href="/USFP/register/">Register</a>
-{% endifnotequal %}
-<h5>Write your suggestion here!</h5>
-<form action="{% url 'USFP:submitSuggestion' %}" method="post">
-    {% csrf_token %}
-    <textarea rows="10" cols="30" name="suggestionContent" required>
-    </textarea>
-    <br>
-    <input type="submit" value="Submit your Suggestion"/>
-</form>
-    <a href="/welcome/">Back to the Welcome Page</a>
-</body>
-</html>
+{% extends "base.html" %}
+
+<title>Submit Your Suggestion</title>
+<base href="/">
+<link rel="stylesheet" type="text/css" href="/static/CSS/View/submitSuggestion.css">
+
+
+{% block content %}
+
+    <div class="demo-container mdl-grid">
+        <div class="demo-card-wide mdl-card mdl-shadow--2dp " style="width: max-content; margin: auto;">
+            <div class="mdl-card__title">
+            <h2 class="mdl-card__title-text">Welcome</h2>
+            </div>
+            <div class="mdl-card__supporting-text">
+                这里是UIC同学们的小家呀！
+                大家可以在这里便捷地反馈自己的意见！
+                也可以看看最近学校的近况呢！
+            </div>
+        <div  style="display: grid; justify-items: center;">
+            {% ifnotequal user.commonUserID 5%}
+            <p>userID:{{ user.commonUserID }}</p>
+            <p>userName:{{ user.commonUserName }}</p>
+            <p>userImage:<img src="/media/{{ user.commonUserImage }}"/></p>
+            {% if isAdmin %}
+                <p>
+                    <a href="{% url 'USFP:adminInfor' %}">View profile</a>
+                </p>
+            {% else %}
+                <p>
+                    <a href="{% url 'USFP:userInfor' %}">View profile</a>
+                </p>
+            {% endif %}
+                <p><a href="{% url 'welcome' 1 %}">Logout</a></p>
+            {% else %}
+                <br><a href="{% url 'USFP:login' 0 %}">Login</a>
+                <a href="/USFP/register/">Register</a>
+            {% endifnotequal %}
+            <h5>Write your suggestion here!</h5>
+            <form action="{% url 'USFP:submitSuggestion' %}" method="post">
+                {% csrf_token %}
+                <textarea rows="10" cols="30" name="suggestionContent" required>
+                </textarea>
+                <br>
+                <input type="submit" value="Submit your Suggestion"/>
+            </form>
+                <a href="/welcome/">Back to the Welcome Page</a>
+        </div>
+
+{% endblock %}
+ 

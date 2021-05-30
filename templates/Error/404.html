@@ -1,13 +1,15 @@
-<html>
-<head>
-    <title>Change Your Information</title>
-    <base href="/">
-    <link rel="stylesheet" type="text/css" href="/static/CSS/Error/404.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/water.css@2/out/water.css">
-</head>
-<body>
+{% extends "base.html" %}
+
+<title>404！Not found!</title>
+<base href="/">
+<link rel="stylesheet" type="text/css" href="/static/CSS/Error/404.css">
+
+
+{% block content %}
+
 404！Not found!
 <br>
 <a href="{% url 'welcome' %}">Back to the Welcome Page</a>
-</body>
-</html>
+
+{% endblock %}
+ 

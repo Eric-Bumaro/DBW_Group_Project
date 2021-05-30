@@ -20,7 +20,7 @@
                 也可以看看最近学校的近况呢！
             </div>
 
-        <form action="/USFP/register/" method="post" name="registForm" onsubmit="return check()" enctype="multipart/form-data"  style="width: max-content; margin: auto;">
+        <form action="/USFP/register/" method="post" name="registForm" onsubmit="return check()" enctype="multipart/form-data"   style="display: grid; justify-items: center;">
             {% csrf_token %}
             <p>
                 <label for="commonUserName">Name:</label><input type="text" name="commonUserName" id="commonUserName"
@@ -34,21 +34,21 @@
                 <label for="checkPassword"> Confirm Password:</label><input type="password" name="checkPassword" maxlength=20
                                                                         id="checkPassword" required>
             </p>
-            <p>
+            <p   style="display: grid; justify-items: center;">
                 <label for="commonUserEmail">Email:(If it is an uic email address, you will be seen as verified!)</label><input type="email" id="commonUserEmail" name="commonUserEmail"
                                                                                             oninput="showWantAdmin()" required>
                         <br>
             </p>
-            <p>
-                <label for="photo">Profile Photo:</label><input type="file" name="photo" id="photo"
-                                                                            accept="image/*">
-            </p>
-            <p>
+            <p  style="display: grid; justify-items: center;">
                 <label for="commonUserKey">Send a check-id key to your Email address and check it:</label>
                 <input type="text" id="commonUserKey" name="commonUserKey" required>
                 <label id="sendCuKeyButton">
                     <button onclick="sendHideCommonUserCheck()">Click here to send!</button>
                 </label>
+            </p>
+            <p>
+                <label for="photo">Profile Photo:</label><input type="file" name="photo" id="photo"
+                                                                            accept="image/*">
             </p>
             <p id="chooseToBeAdmin" style="display: none">
                 <label for="wantToBeAdmin">If you want to ba an admin, please click</label>
@@ -64,7 +64,7 @@
             <p>
                 <label id="checkResult" style="color: #ea2020"></label>
             </p>
-            <p  class="mdl-card__actions mdl-card--border" >
+            <p  class="mdl-card__actions mdl-card--border"   style="display: grid; justify-items: center;">
                 <label>&emsp;&emsp;&emsp;</label><input type="submit" value="Register">
                 &emsp;
                 <a href="/welcome/">Back to the Welcome Page</a>
