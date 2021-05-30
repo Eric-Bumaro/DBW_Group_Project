@@ -17,24 +17,6 @@
                 也可以看看最近学校的近况呢！
             </div>
             <div>
-                {% ifnotequal user.commonUserID 5%}
-                    <p>userID:{{ user.commonUserID }}</p>
-                    <p>userName:{{ user.commonUserName }}</p>
-                    <p>userImage:<img src="/media/{{ user.commonUserImage }}"/></p>
-                    {% if isAdmin %}
-                        <p>
-                            <a href="{% url 'USFP:adminInfor' %}">View profile</a>
-                        </p>
-                    {% else %}
-                        <p>
-                            <a href="{% url 'USFP:userInfor' %}">View profile</a>
-                        </p>
-                    {% endif %}
-                        <p><a href="{% url 'welcome' 1 %}">Logout</a></p>
-                    {% else %}
-                        <br><a href="{% url 'USFP:login' 0 %}">Login</a>
-                        <a href="/USFP/register/">Register</a>
-                    {% endifnotequal %}
                     {% if state %}
                     <h2>You have Successfully submit the suggestion!!</h2>
                     <br>

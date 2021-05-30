@@ -1,11 +1,82 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Admin View User</title>
-    <base href="/">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/water.css@2/out/water.css">
-</head>
+{% extends "base.html" %}
+<title>Admin View User</title>
+<base href="/">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/water.css@2/out/water.css">
+
+
+{% block content %}
+
+    <div style="display: grid; justify-items: center;">
+        <button onclick="showChange()" id="toChangeButton">Click here if you want to make changes</button>
+        <h1>For this user:</h1>
+        <br>
+        <form action={% url 'USFP:adminUpdateUser' user.commonUserID %} method="post" onsubmit="return checked()">
+            {% csrf_token %}
+            <table border="1" cellspacing="0">
+                <tr>
+                    <th>Key</th>
+                    <th>Value</th>
+                    <th class="ChangeFun" style="display: none">
+                        To Change
+                    </th>
+                </tr>
+                <tr>
+                    <td>ID</td>
+                    <td>{{ user.commonUserID }}</td>
+                </tr>
+                <tr>
+                    <td>Name</td>
+                    <td>{{ user.commonUserName }}</td>
+                </tr>
+                <tr>
+                    <td>Image</td>
+                    <td><img src=" /media/{{ user.commonUserImage }}"/></td>
+                    <td class="ChangeFun">
+                        <input type="radio" name="deletePhoto" id="deletePhoto" class="ChangeFun"
+                                                  onclick="changeDeletePhoto()" style="display: none" value="1">
+                        <label for="deletePhoto" class="ChangeFun" style="display: none">Delete the photo</label>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Email</td>
+                    <td>{{ user.commonUserEmail }}</td>
+                </tr>
+                <tr>
+                    <td>IsVerified</td>
+                    <td>{{isVerified }}</td>
+                </tr>
+                <tr>
+                    <td>Area</td>
+                    <td>{{ user.area.areaName }}</td>
+                    <td class="ChangeFun" style="display: none">
+                        <input type="radio" name="changeArea" class="ChangeFun" onclick="changeUserArea()"
+                               style="display: none" value="1" id="changeArea">
+                        <label for="changeArea" class="ChangeFun" style="display: none">Click to change the area</label>
+                        <select style="display: none" name="newArName" id="newArName">
+                            {% for i in areaNameList %}
+                                {% ifequal i user.area.areaName %}
+                                    <option selected value="{{ i }}">{{ i }}</option>
+                                {% else %}
+                                    <option value="{{ i }}">{{ i }}</option>
+                                {% endifequal %}
+                            {% endfor %}
+                        </select>
+                    </td>
+                </tr>
+            </table>
+            <input type="submit" class="ChangeFun" style="display: none" value="Click here to submit"/>
+            <button onclick="cancelChange()" class="ChangeFun" style="display: none">Cancel</button>
+        </form>
+        <a href="{% url 'USFP:adminViewUserSuggestions' user.commonUserID 1 %}">To view the suggestions of the user</a>
+        <a href="{% url 'USFP:adminViewArea' 1 user.area.areaID %}">To view the area</a>
+        <a href="{% url 'USFP:adminInfor' %}">Back to your information.</a>
+    </div>
+
+{% endblock %}
+ 
+
+
+{% block script %}
 <script src="/static/JavaScript/jquery-3.4.1.min.js"></script>
 <script>
     var nodeList = document.getElementsByClassName("ChangeFun");
@@ -57,69 +128,4 @@
     }
 
 </script>
-<body>
-<button onclick="showChange()" id="toChangeButton">Click here if you want to make changes</button>
-<h1>For this user:</h1>
-<br>
-<form action={% url 'USFP:adminUpdateUser' user.commonUserID %} method="post" onsubmit="return checked()">
-    {% csrf_token %}
-    <table border="1" cellspacing="0">
-        <tr>
-            <th>Key</th>
-            <th>Value</th>
-            <th class="ChangeFun" style="display: none">
-                To Change
-            </th>
-        </tr>
-        <tr>
-            <td>ID</td>
-            <td>{{ user.commonUserID }}</td>
-        </tr>
-        <tr>
-            <td>Name</td>
-            <td>{{ user.commonUserName }}</td>
-        </tr>
-        <tr>
-            <td>Image</td>
-            <td><img src=" /media/{{ user.commonUserImage }}"/></td>
-            <td class="ChangeFun">
-                <input type="radio" name="deletePhoto" id="deletePhoto" class="ChangeFun"
-                                          onclick="changeDeletePhoto()" style="display: none" value="1">
-                <label for="deletePhoto" class="ChangeFun" style="display: none">Delete the photo</label>
-            </td>
-        </tr>
-        <tr>
-            <td>Email</td>
-            <td>{{ user.commonUserEmail }}</td>
-        </tr>
-        <tr>
-            <td>IsVerified</td>
-            <td>{{isVerified }}</td>
-        </tr>
-        <tr>
-            <td>Area</td>
-            <td>{{ user.area.areaName }}</td>
-            <td class="ChangeFun" style="display: none">
-                <input type="radio" name="changeArea" class="ChangeFun" onclick="changeUserArea()"
-                       style="display: none" value="1" id="changeArea">
-                <label for="changeArea" class="ChangeFun" style="display: none">Click to change the area</label>
-                <select style="display: none" name="newArName" id="newArName">
-                    {% for i in areaNameList %}
-                        {% ifequal i user.area.areaName %}
-                            <option selected value="{{ i }}">{{ i }}</option>
-                        {% else %}
-                            <option value="{{ i }}">{{ i }}</option>
-                        {% endifequal %}
-                    {% endfor %}
-                </select>
-            </td>
-        </tr>
-    </table>
-    <input type="submit" class="ChangeFun" style="display: none" value="Click here to submit"/>
-    <button onclick="cancelChange()" class="ChangeFun" style="display: none">Cancel</button>
-</form>
-<a href="{% url 'USFP:adminViewUserSuggestions' user.commonUserID 1 %}">To view the suggestions of the user</a>
-<a href="{% url 'USFP:adminViewArea' 1 user.area.areaID %}">To view the area</a>
-<a href="{% url 'USFP:adminInfor' %}">Back to your information.</a>
-</body>
-</html>
+{% endblock %}

@@ -1,12 +1,84 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>View One Suggestion</title>
-    <base href="/">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/water.css@2/out/water.css">
-</head>
+{% extends "base.html" %}
+<title>View One Suggestion</title>
+<base href="/">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/water.css@2/out/water.css">
 <script src="/static/JavaScript/jquery-3.4.1.min.js"></script>
+
+
+{% block content %}
+
+    <div style="display: grid; justify-items: center;">
+        <h2>The Suggestion :</h2>
+        Author:{{ suggestion.commonUser.commonUserName }} User ID:{{ suggestion.commonUser.commonUserID}}<br>
+        Post time:{{ suggestion.postTime }}&emsp;Suggestion ID:{{ suggestion.suggestionID }}<br>
+        Last modify time:{{ suggestion.modifyTime }}
+        Visible:{{ suggestion.visible }}
+        <br>
+        The content:<br>
+        {{ suggestion.content }}
+        <br>
+        {% if isAuthor %}
+            <a href="{% url 'USFP:userChangeSuggestion' suggestion.suggestionID%}">Click to change</a>
+        {% endif %}
+        {% for i in  suggestion_tags%}
+            <a href="{% url 'USFP:viewTag' i.tagID 1 %}">{{ i.tagName }}</a>
+        {% endfor %}
+        <br>
+        <br>
+        {% if isReplied %}
+            {% for i in  replySuggestionPrepageData %}
+                    {{ i.selfSuggestion.commonUser.commonUserName }}:
+                    <br>
+                    {{ i.selfSuggestion.content }}
+                    <br>
+                    Post time:{{ i.selfSuggestion.postTime }}&emsp;Suggestion ID:{{ i.selfSuggestion.suggestionID }}
+                    <br>
+                    <a href="{% url 'USFP:userViewOneSuggestion' i.selfSuggestion.suggestionID 1 %}">Click to view</a>
+                    <br>
+                    {% for i in  suggestion_tags%}
+                        <a href="{% url 'USFP:viewTag' i.tagID 1 %}">{{ i.tagName }}</a>
+                    {% endfor %}
+                    <br>
+                    <br><br>
+                    {% endfor %}
+            <br>
+            {% if replySuggestionPrepageData.has_previous %}
+                <a href="{% url 'USFP:adminViewOneSuggestion' suggestion.suggestion IsuggestionPrepageData.previous_page_number  %}">Last Page</a>
+            {% endif %}&emsp;
+            {% for n in  replySuggestionPageList %}
+            <a href="{% url 'USFP:adminViewOneSuggestion' suggestion.suggestionID n  %}">{{ n }}</a> &emsp;
+            {% endfor %}
+            {% if replySuggestionPrepageData.has_next %}
+                <a href="{% url 'USFP:adminViewOneSuggestion' suggestion.suggestionID suggestionPrepageData.next_page_number  %}">Next Page</a>
+            {% endif %}&emsp;
+        {% else %}
+            <h5>It has not been replied!</h5>
+        {% endif %}
+        
+        {% if isManagedBy %}
+        <form action="{% url 'USFP:adminSubmitComment' suggestion.suggestionID %}" method="post">
+            {% csrf_token %}
+            Comment here:
+            <br>
+            <textarea name="comment" rows="10" cols="30"></textarea>
+            <br>
+            <input type="radio" name="choice" value=1 onclick="toChoose(this)"><label for="deleteRadio">Delete the suggestion</label>
+            {%if not  suggestion.visible%}
+                <input type="radio" name="choice" value=2 onclick="toChoose(this)"><label for="visibleRadio">Make it visible</label>
+            {% else %}
+                <input type="radio" name="choice" value=3 onclick="toChoose(this)"><label for="visibleRadio">Make it invisible</label>
+            {% endif %}
+            <input type="submit" value="submit">
+        </form>
+        {% endif %}
+        <a href="{% url 'USFP:adminInfor' %}">Back to your information</a>
+    </div>
+
+{% endblock %}
+ 
+
+
+{% block script %}
 <script>
     function toChoose(element){
         var radio = $(element);
@@ -19,70 +91,4 @@
         }
     }
 </script>
-<body>
-<h2>The Suggestion :</h2>
-Author:{{ suggestion.commonUser.commonUserName }} User ID:{{ suggestion.commonUser.commonUserID}}<br>
-Post time:{{ suggestion.postTime }}&emsp;Suggestion ID:{{ suggestion.suggestionID }}<br>
-Last modify time:{{ suggestion.modifyTime }}
-Visible:{{ suggestion.visible }}
-<br>
-The content:<br>
-{{ suggestion.content }}
-<br>
-{% if isAuthor %}
-    <a href="{% url 'USFP:userChangeSuggestion' suggestion.suggestionID%}">Click to change</a>
-{% endif %}
-{% for i in  suggestion_tags%}
-    <a href="{% url 'USFP:viewTag' i.tagID 1 %}">{{ i.tagName }}</a>
-{% endfor %}
-<br>
-<br>
-{% if isReplied %}
-    {% for i in  replySuggestionPrepageData %}
-            {{ i.selfSuggestion.commonUser.commonUserName }}:
-            <br>
-            {{ i.selfSuggestion.content }}
-            <br>
-            Post time:{{ i.selfSuggestion.postTime }}&emsp;Suggestion ID:{{ i.selfSuggestion.suggestionID }}
-            <br>
-            <a href="{% url 'USFP:userViewOneSuggestion' i.selfSuggestion.suggestionID 1 %}">Click to view</a>
-            <br>
-            {% for i in  suggestion_tags%}
-                <a href="{% url 'USFP:viewTag' i.tagID 1 %}">{{ i.tagName }}</a>
-            {% endfor %}
-            <br>
-            <br><br>
-            {% endfor %}
-    <br>
-    {% if replySuggestionPrepageData.has_previous %}
-        <a href="{% url 'USFP:adminViewOneSuggestion' suggestion.suggestion IsuggestionPrepageData.previous_page_number  %}">Last Page</a>
-    {% endif %}&emsp;
-    {% for n in  replySuggestionPageList %}
-    <a href="{% url 'USFP:adminViewOneSuggestion' suggestion.suggestionID n  %}">{{ n }}</a> &emsp;
-    {% endfor %}
-    {% if replySuggestionPrepageData.has_next %}
-        <a href="{% url 'USFP:adminViewOneSuggestion' suggestion.suggestionID suggestionPrepageData.next_page_number  %}">Next Page</a>
-    {% endif %}&emsp;
-{% else %}
-    <h5>It has not been replied!</h5>
-{% endif %}
-
-{% if isManagedBy %}
-<form action="{% url 'USFP:adminSubmitComment' suggestion.suggestionID %}" method="post">
-    {% csrf_token %}
-    Comment here:
-    <br>
-    <textarea name="comment" rows="10" cols="30"></textarea>
-    <br>
-    <input type="radio" name="choice" value=1 onclick="toChoose(this)"><label for="deleteRadio">Delete the suggestion</label>
-    {%if not  suggestion.visible%}
-        <input type="radio" name="choice" value=2 onclick="toChoose(this)"><label for="visibleRadio">Make it visible</label>
-    {% else %}
-        <input type="radio" name="choice" value=3 onclick="toChoose(this)"><label for="visibleRadio">Make it invisible</label>
-    {% endif %}
-    <input type="submit" value="submit">
-</form>
-{% endif %}
-<a href="{% url 'USFP:adminInfor' %}">Back to your information</a>
-</body>
-</html>
+{% endblock %}

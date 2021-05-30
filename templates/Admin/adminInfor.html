@@ -1,93 +1,98 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Admin Information</title>
-    <base href="/">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/water.css@2/out/water.css">
-</head>
+{% extends "base.html" %}
+<title>Admin Information</title>
+<base href="/">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/water.css@2/out/water.css">
 <script src="/static/JavaScript/jquery-3.4.1.min.js"></script>
-<body>
 
-<h1>Here is your personal information:</h1>
-<br>
-<a href="{% url 'USFP:userViewSuggestions' 1 %}">View your suggestions!</a>
-&emsp;
-<a href="{% url 'USFP:adminViewUnhandledSuggestion' 1 %}">View the unhandled suggestion</a>
-<table border="1" cellspacing="0">
-    <tr>
-        <th>Key</th>
-        <th>Value</th>
-        <th>Function</th>
-    </tr>
-    <tr>
-        <td>Admin ID</td>
-        <td>{{ admin.commonUserID }}</td>
-        <td>Change ID is not allowed!</td>
-    </tr>
-    <tr>
-        <td>Name</td>
-        <td>{{ admin.commonUserName }}</td>
-        <td><a href="{% url 'USFP:adminChangeInfor' 'Name' %}">Click here to change!</a></td>
-    </tr>
-    <tr>
-        <td>Email</td>
-        <td>{{ admin.commonUserEmail }}</td>
-        <td><a href="{% url 'USFP:adminChangeInfor' 'Email' %}">Click here to change!</a></td>
-    </tr>
-    <tr>
-        <td>Image</td>
-        <td><img src="/media/{{ admin.commonUserImage }}"/></td>
-        <td><a href="{% url 'USFP:adminChangeInfor' 'Image' %}">Click here to change!</a></td>
-    </tr>
-</table>
-You can view the area you administrate here:
-<button onclick="showChange()" id="toChangeButton">Click here if you want to make changes</button>
-<form action={% url "USFP:adminInfor" %} method="post" onsubmit=" return checked()">
-    {% csrf_token %}
-    <table border="1" cellspacing="0">
-        <tr>
-            <th>
-                Area ID
-            </th>
-            <th>
-                Area name
-            </th>
-            <th>
-                To view
-            </th>
-        </tr>
-        {% for i in areaSet %}
-            <tr>
-                <td>
-                    {{ i.areaID }}
-                </td>
-                <td>
-                    {{ i.areaName }}
-                </td>
-                <td>
-                    <a href="{% url 'USFP:adminViewArea' 1 i.areaID %}">To view</a>
-                </td>
-                <td class="ChooseUnit" style="display: none">
-                </td>
-            </tr>
-        {% endfor %}
-    </table>
-    <a href="{% url 'USFP:adminChangeInfor' 'Password' %}">Here to change your password!</a>
-    <input type="submit" class="ChangeFunction" style="display: none" value="Click here to submit"/>
-    <button onclick="cancelChange()" class="ChangeFunction" style="display: none">Cancel</button>
-</form>
-<br>
-<a href="{% url 'USFP:adminViewOperations' 1 1 1%}">Operation History</a>
-{% ifequal admin.commonUserID 1 %}
-    <button onclick="toRefreshDB()">Refresh The Database</button> &emsp;
-    <button onclick="startScrapy()">Start The Scrapy</button> &emsp;
-    <button onclick="refreshGraph()">Refresh The Graph</button> &emsp;
-{% endifequal %}
-<br>
-<a href="{% url 'welcome' %}">Back</a>
-<a href="{% url 'welcome' 1 %}">Logout</a>
-</body>
+
+{% block content %}
+
+    <div class="demo-container mdl-grid">
+            <div style="display: grid; justify-items: center;">
+                <h1>Here is your personal information:</h1>
+                <br>
+                <a href="{% url 'USFP:userViewSuggestions' 1 %}">View your suggestions!</a>
+                &emsp;
+                <a href="{% url 'USFP:adminViewUnhandledSuggestion' 1 %}">View the unhandled suggestion</a>
+                <table border="1" cellspacing="0">
+                    <tr>
+                        <th>Key</th>
+                        <th>Value</th>
+                        <th>Function</th>
+                    </tr>
+                    <tr>
+                        <td>Admin ID</td>
+                        <td>{{ admin.commonUserID }}</td>
+                        <td>Change ID is not allowed!</td>
+                    </tr>
+                    <tr>
+                        <td>Name</td>
+                        <td>{{ admin.commonUserName }}</td>
+                        <td><a href="{% url 'USFP:adminChangeInfor' 'Name' %}">Click here to change!</a></td>
+                    </tr>
+                    <tr>
+                        <td>Email</td>
+                        <td>{{ admin.commonUserEmail }}</td>
+                        <td><a href="{% url 'USFP:adminChangeInfor' 'Email' %}">Click here to change!</a></td>
+                    </tr>
+                    <tr>
+                        <td>Image</td>
+                        <td><img src="/media/{{ admin.commonUserImage }}"/></td>
+                        <td><a href="{% url 'USFP:adminChangeInfor' 'Image' %}">Click here to change!</a></td>
+                    </tr>
+                </table>
+                You can view the area you administrate here:
+                <button onclick="showChange()" id="toChangeButton">Click here if you want to make changes</button>
+                <form action={% url "USFP:adminInfor" %} method="post" onsubmit=" return checked()">
+                    {% csrf_token %}
+                    <table border="1" cellspacing="0">
+                        <tr>
+                            <th>
+                                Area ID
+                            </th>
+                            <th>
+                                Area name
+                            </th>
+                            <th>
+                                To view
+                            </th>
+                        </tr>
+                        {% for i in areaSet %}
+                            <tr>
+                                <td>
+                                    {{ i.areaID }}
+                                </td>
+                                <td>
+                                    {{ i.areaName }}
+                                </td>
+                                <td>
+                                    <a href="{% url 'USFP:adminViewArea' 1 i.areaID %}">To view</a>
+                                </td>
+                                <td class="ChooseUnit" style="display: none">
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </table>
+                    <a href="{% url 'USFP:adminChangeInfor' 'Password' %}">Here to change your password!</a>
+                    <input type="submit" class="ChangeFunction" style="display: none" value="Click here to submit"/>
+                    <button onclick="cancelChange()" class="ChangeFunction" style="display: none">Cancel</button>
+                </form>
+                <br>
+                <a href="{% url 'USFP:adminViewOperations' 1 1 1%}">Operation History</a>
+                {% ifequal admin.commonUserID 1 %}
+                    <button onclick="toRefreshDB()">Refresh The Database</button> &emsp;
+                    <button onclick="startScrapy()">Start The Scrapy</button> &emsp;
+                    <button onclick="refreshGraph()">Refresh The Graph</button> &emsp;
+                {% endifequal %}
+                <br>
+            </div>
+    </div>
+
+{% endblock %}
+ 
+
+
+{% block script %}
 <script>
     var i = 0;
     var checkResult = true;
@@ -191,4 +196,4 @@ You can view the area you administrate here:
         });
     }
 </script>
-</html>
+{% endblock %}
