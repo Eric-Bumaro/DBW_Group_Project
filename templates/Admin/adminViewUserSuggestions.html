@@ -19,6 +19,18 @@
         for (let i = 0; i < nodeList.length; i++) {
             nodeList[i].style.display = "block";
         }
+        for (let i = 0; i < nodeToHideList.length; i++) {
+            nodeToHideList[i].style.display = "block";
+        }
+        for (let i = 0; i < nodeToShowList.length; i++) {
+            nodeToShowList[i].style.display = "block";
+        }
+        for (let i = 0; i < nodeToDeleteList.length; i++) {
+            nodeToDeleteList[i].style.display = "block";
+        }
+        for (let i = 0; i < nodeList.length; i++) {
+            nodeList[i].style.display = "block";
+        }
         document.getElementById("toChooseButton").style.display = "none";
     }
 
@@ -191,7 +203,7 @@
                 {{ i.modifyTime }}
             </td>
             <td>
-                <a href="{% url 'USFP:adminViewOneSuggestion' i.suggestionID %}">View the suggestion</a>
+                <a href="{% url 'USFP:adminViewOneSuggestion' i.suggestionID 1%}">View the suggestion</a>
             </td>
             <td>
                 {{ i.visible }}

@@ -58,7 +58,7 @@
         {% block footer %}
         <footer class="demo-footer mdl-mini-footer" style=" width: 100%; display:flex;">
             <div style="flex-direction: column; left:0px">
-            {% if user.commonUserID %}
+            {% ifnotequal user.commonUserID 5%}
             <div>
                 <p>userID:{{ user.commonUserID }}</p>
             </div>
@@ -87,7 +87,7 @@
                 <div style="height:auto; width:auto; display:inline-block">
                     <a href="/USFP/register/">Register</a>
                 </div>
-            {% endif %}
+            {% endifnotequal %}
         </div>
 
 

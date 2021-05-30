@@ -18,8 +18,10 @@ import wordcloud
 def welcome(request, logout=0):
     if logout:
         request.session.clear()
+        user = CommonUser.object.get(commonUserID=request.session.get('commonUserID', 5))
         return render(request, 'View/welcome.html',
-                      {"allTags": Tag.objects.filter(tagShowNum__gt=0).order_by("-tagShowNum")[1:11]})
+                      {"allTags": Tag.objects.filter(tagShowNum__gt=0).order_by("-tagShowNum")[1:11],
+                       'user': user, 'isAdmin': False,})
     try:
         user = CommonUser.object.get(commonUserID=request.session.get('commonUserID', 5))
         if user.VerifiedUser.isAdmin:
@@ -29,10 +31,10 @@ def welcome(request, logout=0):
             return render(request, 'View/welcome.html', {'user': user, 'isAdmin': False,
                                                  "allTags": Tag.objects.filter(tagShowNum__gt=0).order_by(
                                                      "-tagShowNum")[1:11]})
-
-    except KeyError as e:
-        print(e)
-        return HttpResponse("None")
+    except Exception:
+        return render(request, 'View/welcome.html', {'user': user, 'isAdmin': False,
+                                                     "allTags": Tag.objects.filter(tagShowNum__gt=0).order_by(
+                                                         "-tagShowNum")[1:11]})
 
 
 def getUserKey(request):
