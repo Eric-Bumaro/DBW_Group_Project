@@ -3,9 +3,10 @@ from email.header import Header
 from email.mime.text import MIMEText
 from email.utils import parseaddr, formataddr
 import smtplib
+from django.db import connection
+
 
 def showSQL():
-    from django.db import connection
     print(connection.queries[-1]['sql'])
 
 

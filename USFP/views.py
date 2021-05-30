@@ -1,21 +1,18 @@
+import datetime
 import math
-
 import nltk
 # nltk.download()
 from django.core.paginator import *
 from django.db import transaction
-from django.db.models import *
-from django.shortcuts import render
 import json
 import os
-import random
 from PIL import Image
 from django.http import *
 from django.shortcuts import render, redirect
 from django.urls import reverse
 from nltk.corpus import stopwords
 import jieba.analyse
-from USFP.littleTools import check_contain_chinese
+from USFP.littleTools import *
 from USFP.models import *
 import jieba
 
