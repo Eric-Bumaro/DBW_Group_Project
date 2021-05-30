@@ -112,7 +112,8 @@ def refreshGraph(request):
 
         tagsList=list(Tag.objects.order_by("-tagShowNum")[1:11].values_list("tagName",flat=True))
         tagsShowNumList=list(Tag.objects.order_by("-tagShowNum")[1:11].values_list("tagShowNum",flat=True))
-        p = figure(x_range=tagsList, plot_height=250, title="Tag Counts",tooltips="top: @top")
+        p = figure(x_range=tagsList, plot_height=300, title="Tag Counts",tooltips="top: @top",toolbar_location="above",
+                   tools="pan,wheel_zoom,save,reset,undo,redo")
         p.vbar(x=tagsList, top=tagsShowNumList, width=0.9,
                fill_color= bp.Blues[256][50:220:17],)
         p.xgrid.grid_line_color = None
