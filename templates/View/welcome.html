@@ -1,49 +1,8 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="description" content="UIC suggestion platform">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
-    <link rel="shortcut icon" href="/static/favicon.ico" />
-    <title>Welcome</title>
-    <base href="/">
-    <link rel="stylesheet" type="text/css" href="../..//static/CSS/View/welcome.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/water.css@2/out/water.css">
-    <link rel="stylesheet" href="../../static/CSS/icon.css">
-    <link rel="stylesheet" href="../../static/CSS/general.css">
-    <link rel="stylesheet" href="../../static/CSS/material.min.css">
-    <script src="../../static/JavaScript/axios.min.js"></script>
-    <script src="../../static/JavaScript/material.min.js"></script>
-</head>
-
-<body>
+{% extends "base.html" %}
 
 
-    <div id="feedback_div" class="demo-layout mdl-layout mdl-layout--fixed-header mdl-js-layout mdl-color--grey-100" style="position: absolute; bottom: 0; left: 0">
 
-        <header class="demo-header mdl-layout__header mdl-layout__header--scroll mdl-color--grey-100 mdl-color-text--grey-800">
-            <div class="mdl-layout__header-row">
-              <div onclick="window.location.href='/welcome/'" class="mdl-layout-title" style="margin-left: 0px;">UIC意见反馈系统</div>
-              <div class="mdl-layout-spacer"></div>
-              <div class="form-row" style="width:300px; height:auto; display:inline-block" >
-                <form action="{% url 'USFP:searchSuggestion' %}" method="post"  style="width:300px; height:auto; display:inline-block"  class="mdl-textfield mdl-js-textfield" action="#">
-                    {% csrf_token %}
-                    <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label" style="height:auto; display:inline-block">
-                        <input class="mdl-textfield__input" type="text" οninput=“value=value.replace(/[^\d]/g,’’)” name="searchSuggestionID" id="searchSuggestionID">
-                        <label class="mdl-textfield__label" for="searchSuggestionID" class="mdl-textfield__label">Input the suggestion id</label>
-                    </div>
-                    <div style="height:auto; display:inline-block">
-                        <input type="submit" value="search" class="material-icons" style="width:auto; display:inline-block;   font-size: 19px;">
-                    </div>
-                  </form>
-              </div>
-            </div>
-          </header>
-
-
-    <div class="demo-ribbon"></div>
-
+{% block content %}
     <main>
         <div class="demo-container mdl-grid">
             <div class="demo-card-wide mdl-card mdl-shadow--2dp " style="width: max-content; margin: auto;">
@@ -81,48 +40,4 @@
             </tbody>
         </table>
     </main>
-
-
-    <footer class="demo-footer mdl-mini-footer" style=" width: 100%;">
-        <div style="flex-direction: column; left:0px">
-            {% if user.commonUserID %}
-            <div>
-                <p>userID:{{ user.commonUserID }}</p>
-            </div>
-            <div></div>
-                <p>userName:{{ user.commonUserName }}</p>
-            </div>
-            <div>
-                <p>userImage:<img src="/media/{{ user.commonUserImage }}"/></p>
-            </div>
-            {% if isAdmin %}
-                <p>
-                    <a href="{% url 'USFP:adminInfor' %}">View profile</a>
-                </p>
-            {% else %}
-                <p>
-                    <a href="{% url 'USFP:userInfor' %}">View profile</a>
-                </p>
-            {% endif %}
-                <p><a href="{% url 'welcome' 1 %}">Logout</a></p>
-            {% else %}
-                <div style="height:auto; width:auto; display:inline-block">
-                    <br><a href="{% url 'USFP:login' 0 %}">Login</a>
-                </div>
-                <div style="height:auto; width:auto; display:inline-block">
-                </div>
-                <div style="height:auto; width:auto; display:inline-block">
-                    <a href="/USFP/register/">Register</a>
-                </div>
-            {% endif %}
-        </div>
-
-
-        <div style="right:0px">
-            <button href="{% url 'USFP:submitSuggestion' %}" class="mdl-button mdl-js-button mdl-button--accent mdl-button--raised" style="margin-right: -39%;">Suggestion Submit</button>
-        </div>
-
-        
-        </footer>
-</body>
-</html>
+{% endblock %}
