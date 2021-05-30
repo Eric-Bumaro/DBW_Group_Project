@@ -14,26 +14,25 @@ from USFP.littleTools import *
 from USFP.models import *
 import wordcloud
 
+
 def welcome(request, logout=0):
     if logout:
         request.session.clear()
         return render(request, 'View/welcome.html',
                       {"allTags": Tag.objects.filter(tagShowNum__gt=0).order_by("-tagShowNum")[1:11]})
     try:
-        user = CommonUser.object.get(commonUserID=request.session['commonUserID'])
-        try:
-            if user.VerifiedUser.isAdmin:
-                return render(request, 'View/welcome.html', {'user': user, 'isAdmin': True,
-                                                             "allTags": Tag.objects.filter(tagShowNum__gt=0).order_by(
-                                                                 "-tagShowNum")[1:11]})
-        except:
+        user = CommonUser.object.get(commonUserID=request.session.get('commonUserID', 5))
+        if user.VerifiedUser.isAdmin:
+            return render(request, 'View/welcome.html', {'user': user, 'isAdmin': True,
+                                                         "allTags": Tag.objects.filter(tagShowNum__gt=0).order_by("-tagShowNum")[1:11]})
+        else:
             return render(request, 'View/welcome.html', {'user': user, 'isAdmin': False,
-                                                         "allTags": Tag.objects.filter(tagShowNum__gt=0).order_by(
-                                                             "-tagShowNum")[1:11]})
+                                                 "allTags": Tag.objects.filter(tagShowNum__gt=0).order_by(
+                                                     "-tagShowNum")[1:11]})
+
     except KeyError as e:
-        return render(request, 'View/welcome.html', {'user.commonUserID': 5,
-                                                     "allTags": Tag.objects.filter(tagShowNum__gt=0).order_by(
-                                                         "-tagShowNum")[1:11]})
+        print(e)
+        return HttpResponse("None")
 
 
 def getUserKey(request):
@@ -88,14 +87,14 @@ def refreshGraph(request):
     try:
         assert request.session['commonUserID'] == 1
         assert request.method == "POST"
-        tagAndNUmList=list(Tag.objects.order_by("-tagShowNum")[1:41].values_list("tagName","tagShowNum"))
-        tadAndNumDict={}
+        tagAndNUmList = list(Tag.objects.order_by("-tagShowNum")[1:41].values_list("tagName", "tagShowNum"))
+        tadAndNumDict = {}
         for i in tagAndNUmList:
-            tadAndNumDict[i[0]]=i[1]
-        webImageLocation=os.path.join(".", ".",os.getcwd(), "media","webImage")
-        mask = np.array(Image.open(os.path.join(webImageLocation,"Slander man剪影.PNG")))
+            tadAndNumDict[i[0]] = i[1]
+        webImageLocation = os.path.join(".", ".", os.getcwd(), "media", "webImage")
+        mask = np.array(Image.open(os.path.join(webImageLocation, "Slander man剪影.PNG")))
         wc = wordcloud.WordCloud(
-            font_path=os.path.join(webImageLocation,"simsun.ttf"),
+            font_path=os.path.join(webImageLocation, "simsun.ttf"),
             mask=mask,
             max_words=40,
             max_font_size=70,
@@ -104,18 +103,19 @@ def refreshGraph(request):
         wc.generate_from_frequencies(tadAndNumDict)
         image_colors = wordcloud.ImageColorGenerator(mask)
         wc.recolor(color_func=image_colors)
-        if os.path.isfile(os.path.join(webImageLocation,"WordCloud.PNG")):
+        if os.path.isfile(os.path.join(webImageLocation, "WordCloud.PNG")):
             os.remove(os.path.join(webImageLocation, "WordCloud.PNG"))
         plt.imshow(wc)
         plt.axis('off')
         plt.savefig(os.path.join(webImageLocation, "WordCloud.PNG"))
 
-        tagsList=list(Tag.objects.order_by("-tagShowNum")[1:11].values_list("tagName",flat=True))
-        tagsShowNumList=list(Tag.objects.order_by("-tagShowNum")[1:11].values_list("tagShowNum",flat=True))
-        p = figure(x_range=tagsList, plot_height=300, title="Tag Counts",tooltips="top: @top",toolbar_location="above",
+        tagsList = list(Tag.objects.order_by("-tagShowNum")[1:11].values_list("tagName", flat=True))
+        tagsShowNumList = list(Tag.objects.order_by("-tagShowNum")[1:11].values_list("tagShowNum", flat=True))
+        p = figure(x_range=tagsList, plot_height=300, title="Tag Counts", tooltips="top: @top",
+                   toolbar_location="above",
                    tools="pan,wheel_zoom,save,reset,undo,redo")
         p.vbar(x=tagsList, top=tagsShowNumList, width=0.9,
-               fill_color= bp.Blues[256][50:220:17],)
+               fill_color=bp.Blues[256][50:220:17], )
         p.xgrid.grid_line_color = None
         if os.path.isfile(os.path.join(webImageLocation, "Bar.html")):
             os.remove(os.path.join(webImageLocation, "Bar.html"))
