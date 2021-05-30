@@ -3,10 +3,13 @@ from datetime import datetime
 
 import numpy as np
 from PIL import Image
+from bokeh.transform import factor_cmap
 from django.http import HttpResponse
 from django.shortcuts import render
 from matplotlib import pyplot as plt
-
+from bokeh.io import show, output_file, save
+from bokeh.plotting import figure
+import bokeh.palettes as bp
 from USFP.littleTools import *
 from USFP.models import *
 import wordcloud
@@ -106,7 +109,18 @@ def refreshGraph(request):
         plt.imshow(wc)
         plt.axis('off')
         plt.savefig(os.path.join(webImageLocation, "WordCloud.PNG"))
-        return HttpResponse("Fail")
+
+        tagsList=list(Tag.objects.order_by("-tagShowNum")[1:11].values_list("tagName",flat=True))
+        tagsShowNumList=list(Tag.objects.order_by("-tagShowNum")[1:11].values_list("tagShowNum",flat=True))
+        p = figure(x_range=tagsList, plot_height=250, title="Tag Counts",tooltips="top: @top")
+        p.vbar(x=tagsList, top=tagsShowNumList, width=0.9,
+               fill_color= bp.Blues[256][1:256:26],)
+        p.xgrid.grid_line_color = None
+        path = os.path.join(webImageLocation, "Bar.html")
+        output_file(path)
+        save(obj=p, filename=path, title="output")
+
+        return HttpResponse("Success!")
     except Exception as e:
         print(e)
         return HttpResponse("Fail")
