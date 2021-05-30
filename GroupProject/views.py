@@ -90,17 +90,17 @@ def refreshGraph(request):
     try:
         assert request.session['commonUserID'] == 1
         assert request.method == "POST"
-        tagAndNUmList = list(Tag.objects.order_by("-tagShowNum")[1:41].values_list("tagName", "tagShowNum"))
+        tagAndNUmList = list(Tag.objects.order_by("-tagShowNum")[1:40].values_list("tagName", "tagShowNum"))
         tadAndNumDict = {}
         for i in tagAndNUmList:
             tadAndNumDict[i[0]] = i[1]
         webImageLocation = os.path.join(".", ".", os.getcwd(), "media", "webImage")
-        mask = np.array(Image.open(os.path.join(webImageLocation, "Slander man剪影.PNG")))
+        mask = np.array(Image.open(os.path.join(webImageLocation, "cat.PNG")))
         wc = wordcloud.WordCloud(
             font_path=os.path.join(webImageLocation, "simsun.ttf"),
             mask=mask,
             max_words=40,
-            max_font_size=70,
+            max_font_size=100,
             background_color='white'
         )
         wc.generate_from_frequencies(tadAndNumDict)
