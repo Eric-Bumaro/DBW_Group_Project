@@ -30,6 +30,7 @@ urlpatterns = [
     path('getUserKey/', views.getUserKey, name='getUserKey'),
     url(r'^sendCheckKey/', views.sendCheckKey, name='sendCheckKey'),
     path('refreshDB/', views.refreshDB, name='refreshDB'),
+    path('refreshGraph/', views.refreshGraph, name='refreshGraph'),
     path('startScrapy/', views.startScrapy,name="startScrapy"),
     url(r'^media/(?P<path>.*)', serve, {'document_root': MEDIA_ROOT}),
     url(r'^static/(?P<path>.*)', serve, {'document_root': STATICFILES_DIRS[0]}),

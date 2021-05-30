@@ -1,11 +1,15 @@
 import os
 from datetime import datetime
 
+import numpy as np
+from PIL import Image
 from django.http import HttpResponse
 from django.shortcuts import render
+from matplotlib import pyplot as plt
+
 from USFP.littleTools import *
 from USFP.models import *
-
+import wordcloud
 
 def welcome(request, logout=0):
     if logout:
@@ -75,6 +79,37 @@ def refreshDB(request):
             except Exception as e:
                 print(e)
     return HttpResponse("Success")
+
+
+def refreshGraph(request):
+    try:
+        assert request.session['commonUserID'] == 1
+        assert request.method == "POST"
+        tagAndNUmList=list(Tag.objects.order_by("-tagShowNum")[1:41].values_list("tagName","tagShowNum"))
+        tadAndNumDict={}
+        for i in tagAndNUmList:
+            tadAndNumDict[i[0]]=i[1]
+        webImageLocation=os.path.join(".", ".",os.getcwd(), "media","webImage")
+        mask = np.array(Image.open(os.path.join(webImageLocation,"Slander man剪影.PNG")))
+        wc = wordcloud.WordCloud(
+            font_path=os.path.join(webImageLocation,"simsun.ttf"),
+            mask=mask,
+            max_words=40,
+            max_font_size=70,
+            background_color='white'
+        )
+        wc.generate_from_frequencies(tadAndNumDict)
+        image_colors = wordcloud.ImageColorGenerator(mask)
+        wc.recolor(color_func=image_colors)
+        if os.path.isfile(os.path.join(webImageLocation,"WordCloud.PNG")):
+            os.remove(os.path.join(webImageLocation, "WordCloud.PNG"))
+        plt.imshow(wc)
+        plt.axis('off')
+        plt.savefig(os.path.join(webImageLocation, "WordCloud.PNG"))
+        return HttpResponse("Fail")
+    except Exception as e:
+        print(e)
+        return HttpResponse("Fail")
 
 
 def page_not_found(request, exception):
