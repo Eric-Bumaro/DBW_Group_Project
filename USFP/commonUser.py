@@ -178,6 +178,7 @@ def userViewOneSuggestion(request, suggestionID, num):
         return redirect("welcome")
 
 
+@transaction.atomic
 def userChangeSuggestion(request, suggestionID):
     user = CommonUser.object.get(commonUserID=request.session.get("commonUserID", 5))
     if request.method == "GET":
