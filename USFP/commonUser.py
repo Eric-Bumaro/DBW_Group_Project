@@ -165,7 +165,7 @@ def userViewOneSuggestion(request, suggestionID, num):
         replySuggestionPageList = range(begin, end + 1)
         return render(request, "CommonUser/userViewOneSuggestion.html", {"suggestion": suggestion,
                                                                          "isAuthor": (
-                                                                                     suggestion.commonUser.commonUserID == user.commonUserID),
+                                                                                 suggestion.commonUser.commonUserID == user.commonUserID),
                                                                          'user': user, 'isVerified': user.isVerified(),
                                                                          'replySuggestionPrepageData': replySuggestionPrepageData,
                                                                          'replySuggestionPageList': replySuggestionPageList,
@@ -242,4 +242,3 @@ def userSubmitComment(request, suggestionID):
     except Exception as e:
         print(e)
         return redirect("welcome")
-

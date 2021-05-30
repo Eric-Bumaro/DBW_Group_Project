@@ -22,12 +22,12 @@ import jieba
 def login(request, error):
     if request.method == "GET":
         if 'login' in request.COOKIES.keys():
-            user=CommonUser.object.get(commonUserID=request.session.get("commonUserID",5))
+            user = CommonUser.object.get(commonUserID=request.session.get("commonUserID", 5))
             login = request.get_signed_cookie("login", salt="hello").split(',')
             commonUserID = login[0]
             commonUserPassword = login[1]
             return render(request, "View/login.html",
-                          {"error": json.dumps(error), "commonUserID": commonUserID,"user":user,
+                          {"error": json.dumps(error), "commonUserID": commonUserID, "user": user,
                            "commonUserPassword": commonUserPassword,
                            "allTags": Tag.objects.filter(tagShowNum__gt=0).order_by("-tagShowNum")})
         else:
@@ -55,7 +55,7 @@ def register(request):
     user = CommonUser.object.get(commonUserID=request.session.get("commonUserID", 5))
     if request.method == 'GET':
         return render(request, "View/register.html",
-                      {"allTags": Tag.objects.filter(tagShowNum__gt=0).order_by("-tagShowNum"),"user":user,})
+                      {"allTags": Tag.objects.filter(tagShowNum__gt=0).order_by("-tagShowNum"), "user": user, })
     commonUserName = request.POST.get("commonUserName", "")
     commonUserPassword = request.POST.get("commonUserPassword", "")
     commonUserEmail = request.POST.get("commonUserEmail", "")
@@ -89,16 +89,17 @@ def register(request):
 
 def suRegister(request):
     user = CommonUser.object.get(commonUserID=request.session.get("commonUserID", 5))
-    return render(request, "View/suRegister.html", {"commonUserID": CommonUser.objects.last().commonUserID,"user":user,
-                                                    "allTags": Tag.objects.filter(tagShowNum__gt=0).order_by(
-                                                        "-tagShowNum")})
+    return render(request, "View/suRegister.html",
+                  {"commonUserID": CommonUser.objects.last().commonUserID, "user": user,
+                   "allTags": Tag.objects.filter(tagShowNum__gt=0).order_by(
+                       "-tagShowNum")})
 
 
 def forgetPassword(request):
     user = CommonUser.object.get(commonUserID=request.session.get("commonUserID", 5))
     if request.method == 'GET':
         return render(request, "View/forgetpwd.html",
-                      {"allTags": Tag.objects.filter(tagShowNum__gt=0).order_by("-tagShowNum"),"user":user,})
+                      {"allTags": Tag.objects.filter(tagShowNum__gt=0).order_by("-tagShowNum"), "user": user, })
     commonUserPassword = request.POST.get("commonUserPassword", "")
     commonUserID = request.POST.get("commonUserID", "")
     try:
@@ -111,7 +112,7 @@ def forgetPassword(request):
 def suChangePwd(request):
     user = CommonUser.object.get(commonUserID=request.session.get("commonUserID", 5))
     return render(request, "View/suChangePwd.html",
-                  {"allTags": Tag.objects.filter(tagShowNum__gt=0).order_by("-tagShowNum"),"user":user,})
+                  {"allTags": Tag.objects.filter(tagShowNum__gt=0).order_by("-tagShowNum"), "user": user, })
 
 
 @transaction.atomic

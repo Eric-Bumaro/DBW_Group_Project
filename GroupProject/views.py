@@ -21,16 +21,17 @@ def welcome(request, logout=0):
         user = CommonUser.object.get(commonUserID=request.session.get('commonUserID', 5))
         return render(request, 'View/welcome.html',
                       {"allTags": Tag.objects.filter(tagShowNum__gt=0).order_by("-tagShowNum")[1:11],
-                       'user': user, 'isAdmin': False,})
+                       'user': user, 'isAdmin': False, })
     try:
         user = CommonUser.object.get(commonUserID=request.session.get('commonUserID', 5))
         if user.VerifiedUser.isAdmin:
             return render(request, 'View/welcome.html', {'user': user, 'isAdmin': True,
-                                                         "allTags": Tag.objects.filter(tagShowNum__gt=0).order_by("-tagShowNum")[1:11]})
+                                                         "allTags": Tag.objects.filter(tagShowNum__gt=0).order_by(
+                                                             "-tagShowNum")[1:11]})
         else:
             return render(request, 'View/welcome.html', {'user': user, 'isAdmin': False,
-                                                 "allTags": Tag.objects.filter(tagShowNum__gt=0).order_by(
-                                                     "-tagShowNum")[1:11]})
+                                                         "allTags": Tag.objects.filter(tagShowNum__gt=0).order_by(
+                                                             "-tagShowNum")[1:11]})
     except Exception:
         return render(request, 'View/welcome.html', {'user': user, 'isAdmin': False,
                                                      "allTags": Tag.objects.filter(tagShowNum__gt=0).order_by(

@@ -18,9 +18,9 @@ def adminInfor(request):
     adminArea = admin.VerifiedUser.adminArea.filter(isDelete=False)
     if request.method == "GET":
         return render(request, "Admin/adminInfor.html",
-                      {"admin": admin, "areaSet": adminArea,
+                      {"admin": admin, "areaSet": adminArea, "user": admin,
                        "areaIDs_js": json.dumps(list(adminArea.values("areaID"))),
-                       "allTags":Tag.objects.filter(tagShowNum__gt=0).order_by("-tagShowNum")[1:11]})
+                       "allTags": Tag.objects.filter(tagShowNum__gt=0).order_by("-tagShowNum")[1:11]})
     else:
         for i in adminArea:
             try:
@@ -46,15 +46,16 @@ def adminInfor(request):
 
 def adminChangeInfor(request, changeType):
     if request.method == 'GET':
+        admin = CommonUser.object.get(commonUserID=request.session["commonUserID"])
         if changeType == "Email" or changeType == "Password":
             return render(request, "Admin/adminChangeInfor.html",
                           {"changeType_js": json.dumps(changeType), "changeType_py": changeType,
-                           "commonUserID": request.session["commonUserID"],
-                           "allTags":Tag.objects.filter(tagShowNum__gt=0).order_by("-tagShowNum")})
+                           "commonUserID": request.session["commonUserID"], "user": admin,
+                           "allTags": Tag.objects.filter(tagShowNum__gt=0).order_by("-tagShowNum")})
         else:
             return render(request, "Admin/adminChangeInfor.html",
-                          {"changeType_js": json.dumps(changeType), "changeType_py": changeType,
-                           "allTags":Tag.objects.filter(tagShowNum__gt=0).order_by("-tagShowNum")[1:11]})
+                          {"changeType_js": json.dumps(changeType), "changeType_py": changeType, "user": admin,
+                           "allTags": Tag.objects.filter(tagShowNum__gt=0).order_by("-tagShowNum")[1:11]})
 
     admin = CommonUser.objects.get(commonUserID=request.session['commonUserID'])
     if changeType == "Email":
@@ -82,11 +83,14 @@ def adminChangeInfor(request, changeType):
 
 
 def adminSuChange(request, changeType):
+    admin = CommonUser.object.get(commonUserID=request.session["commonUserID"])
     try:
         request.session["cID"]
     except KeyError:
         return HttpResponseRedirect(reverse("welcome", args=(1,)))
-    return render(request, "Admin/adminSuChange.html", {"changeType": changeType,"allTags":Tag.objects.filter(tagShowNum__gt=0).order_by("-tagShowNum")[1:11]})
+    return render(request, "Admin/adminSuChange.html", {"user": admin, "changeType": changeType,
+                                                        "allTags": Tag.objects.filter(tagShowNum__gt=0).order_by(
+                                                            "-tagShowNum")[1:11]})
 
 
 def adminViewArea(request, num, areaID):
@@ -122,7 +126,8 @@ def adminViewArea(request, num, areaID):
     return render(request, "Admin/adminViewArea.html",
                   {"pager": pager, 'prepageData': prepageData, "pageList": pagelist, "areaID": area.areaID,
                    "areaName": area.areaName,
-                   "allTags":Tag.objects.filter(tagShowNum__gt=0).order_by("-tagShowNum")[1:11]})
+                   "user": admin,
+                   "allTags": Tag.objects.filter(tagShowNum__gt=0).order_by("-tagShowNum")[1:11]})
 
 
 def adminDeleteUsers(request):
@@ -223,7 +228,8 @@ def adminViewOperations(request, areaOperationNum, userOperationNum, suggestionO
                    "userOpNum": userOperationNum, "userPrepageData": userPrepageData, "userPageList": userPageList,
                    "suggestionOpNum": suggestionOperationNum, "suggestionPrepageData": suggestionPrepageData,
                    "suggestionPageList": suggestionPageList,
-                   "allTags":Tag.objects.filter(tagShowNum__gt=0).order_by("-tagShowNum")[1:11]}
+                   "user": user,
+                   "allTags": Tag.objects.filter(tagShowNum__gt=0).order_by("-tagShowNum")[1:11]}
                   )
 
 
@@ -237,7 +243,7 @@ def adminViewUser(request, commonUserID):
         areaNameList = admin.VerifiedUser.adminArea.filter(isDelete=False).values_list('areaName', flat=True)
         return render(request, "Admin/adminViewUser.html",
                       {"user": user, "areaNameList": areaNameList, "isVerified": user.isVerified(),
-                       "allTags":Tag.objects.filter(tagShowNum__gt=0).order_by("-tagShowNum")[1:11]})
+                       "allTags": Tag.objects.filter(tagShowNum__gt=0).order_by("-tagShowNum")[1:11]})
     return HttpResponseRedirect(reverse("welcome", args=(1,)))
 
 
@@ -302,7 +308,8 @@ def adminViewUserSuggestions(request, commonUserID, num):
     pagelist = range(begin, end + 1)
     return render(request, "Admin/adminViewUserSuggestions.html",
                   {"pager": pager, 'prepageData': prepageData, "pageList": pagelist, "commonUserID": commonUserID,
-                   "allTags":Tag.objects.filter(tagShowNum__gt=0).order_by("-tagShowNum")[1:11]})
+                   "user": admin,
+                   "allTags": Tag.objects.filter(tagShowNum__gt=0).order_by("-tagShowNum")[1:11]})
 
 
 def adminOperateSuggestions(request):
@@ -429,7 +436,8 @@ def adminViewDeletions(request, areaDeletionNum, userDeletionNum, suggestionDele
                    "userDeletionNum": userDeletionNum, "userPrepageData": userPrepageData, "userPageList": userPageList,
                    "suggestionDeletionNum": suggestionDeletionNum, "suggestionPrepageData": suggestionPrepageData,
                    "suggestionPageList": suggestionPageList,
-                   "allTags":Tag.objects.filter(tagShowNum__gt=0).order_by("-tagShowNum")[1:11]}
+                   "allTags": Tag.objects.filter(tagShowNum__gt=0).order_by("-tagShowNum")[1:11],
+                   "user": user}
                   )
 
 
@@ -503,7 +511,8 @@ def adminViewUnhandledSuggestion(request, num):
         return render(request, "Admin/adminViewUnhandledSuggestion.html",
                       {"suggestionNum": num, 'suggestionPrepageData': suggestionPrepageData,
                        "suggestionPageList": suggestionPageList,
-                       "allTags":Tag.objects.filter(tagShowNum__gt=0).order_by("-tagShowNum")[1:11]})
+                       "user": admin,
+                       "allTags": Tag.objects.filter(tagShowNum__gt=0).order_by("-tagShowNum")[1:11]})
     except Exception as e:
         print(e)
         return redirect("welcome")
@@ -511,13 +520,14 @@ def adminViewUnhandledSuggestion(request, num):
 
 def adminViewOneSuggestion(request, suggestionID, num):
     try:
-        user = CommonUser.object.get(commonUserID=request.session.get('commonUserID'))
+        user = CommonUser.object.get(commonUserID=request.session.get('commonUserID', 5))
         suggestion = Suggestion.object.get(suggestionID=suggestionID)
         assert user.isVerified()
         assert user.VerifiedUser.isAdmin
         if suggestion.isReplied():
             replySuggestionList = suggestion.ReplySuggestion.filter(selfSuggestion__isDelete=False,
-                                                                    selfSuggestion__visible=True).order_by("selfSuggestion__postTime")
+                                                                    selfSuggestion__visible=True).order_by(
+                "selfSuggestion__postTime")
         else:
             replySuggestionList = []
         if int(num) < 1:
@@ -545,45 +555,48 @@ def adminViewOneSuggestion(request, suggestionID, num):
                                                                      "isManagedBy": isManagedBy,
                                                                      "isReplied": suggestion.isReplied(),
                                                                      'user': user,
-                                                                     'isAuthor':(suggestion.commonUser.commonUserID==user.commonUserID),
+                                                                     'isAuthor': (
+                                                                                 suggestion.commonUser.commonUserID == user.commonUserID),
                                                                      'replySuggestionPrepageData': replySuggestionPrepageData,
                                                                      'replySuggestionPageList': replySuggestionPageList,
-                                                                     "suggestion_tags":suggestion.tags.all(),
-                                                                     "allTags":Tag.objects.filter(tagShowNum__gt=0).order_by("-tagShowNum")[1:11]})
+                                                                     "suggestion_tags": suggestion.tags.all(),
+                                                                     "allTags": Tag.objects.filter(
+                                                                         tagShowNum__gt=0).order_by("-tagShowNum")[
+                                                                                1:11]})
     except Exception as e:
         print(e)
         return redirect("USFP:adminInfor")
 
 
-def adminSubmitComment(request,suggestionID):
+def adminSubmitComment(request, suggestionID):
     try:
-        replyContent = request.POST.get("comment","")
-        choice = int(request.POST.get("choice",0))
-        user=CommonUser.object.get(commonUserID=request.session['commonUserID'])
-        suggestion=Suggestion.objects.get(suggestionID=suggestionID)
+        replyContent = request.POST.get("comment", "")
+        choice = int(request.POST.get("choice", 0))
+        user = CommonUser.object.get(commonUserID=request.session['commonUserID'])
+        suggestion = Suggestion.objects.get(suggestionID=suggestionID)
         assert suggestion.commonUser.area in user.VerifiedUser.adminArea.all()
-        if len(replyContent)!=0:
-            replySuggestion=Suggestion.objects.create(visible=True,content=replyContent,commonUser=user)
-            ReplySuggestion.objects.create(selfSuggestion=replySuggestion,suggestionToReply=suggestion)
+        if len(replyContent) != 0:
+            replySuggestion = Suggestion.objects.create(visible=True, content=replyContent, commonUser=user)
+            ReplySuggestion.objects.create(selfSuggestion=replySuggestion, suggestionToReply=suggestion)
         if choice == 1:
-            suggestion.isDelete=True
-            suggestion.deleteDate=datetime.now()
+            suggestion.isDelete = True
+            suggestion.deleteDate = datetime.now()
             try:
                 for j in suggestion.tags.all():
-                    j.tagShowNum=j.tagShowNum-1
+                    j.tagShowNum = j.tagShowNum - 1
                     j.save()
             except Exception as e:
                 print(e)
             suggestion.save()
             SuggestionOperation.objects.create(verifiedUser=user.VerifiedUser, suggestion=suggestion,
                                                content="Delete the suggestion", operationType='deleteSuggestion')
-        if choice==2:
-            suggestion.visible=True
+        if choice == 2:
+            suggestion.visible = True
             suggestion.save()
             SuggestionOperation.objects.create(verifiedUser=user.VerifiedUser, suggestion=suggestion,
                                                content="Show the suggestion", operationType='showSuggestion')
-        if choice==3:
-            suggestion.visible=False
+        if choice == 3:
+            suggestion.visible = False
             suggestion.save()
             SuggestionOperation.objects.create(verifiedUser=user.VerifiedUser, suggestion=suggestion,
                                                content="Hide the suggestion", operationType='hideSuggestion')
@@ -593,7 +606,9 @@ def adminSubmitComment(request,suggestionID):
         return redirect("USFP:adminInfor")
 
 
-def adminSuSubmitComment(request,suggestionID):
-    suggestion=Suggestion.objects.get(suggestionID=suggestionID)
-    return render(request,"Admin/adminSuSubmitComment.html",{"suggestion":suggestion,
-                                                             "allTags":Tag.objects.filter(tagShowNum__gt=0).order_by("-tagShowNum")[1:11]})
+def adminSuSubmitComment(request, suggestionID):
+    user = CommonUser.object.get(commonUserID=request.session.get('commonUserID', 5))
+    suggestion = Suggestion.objects.get(suggestionID=suggestionID)
+    return render(request, "Admin/adminSuSubmitComment.html", {"suggestion": suggestion, 'user': user,
+                                                               "allTags": Tag.objects.filter(tagShowNum__gt=0).order_by(
+                                                                   "-tagShowNum")[1:11]})
