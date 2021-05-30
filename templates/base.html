@@ -92,7 +92,7 @@
 
 
         <div style="right:0px; display:flex; place-items: right;">
-            <button action="{% url 'USFP:submitSuggestion' %}" class="mdl-button mdl-js-button mdl-button--accent mdl-button--raised" style="margin-right: -39%;">Suggestion Submit</button>
+            <button onclick="toSubmitSuggestion()" class="mdl-button mdl-js-button mdl-button--accent mdl-button--raised" style="margin-right: -39%;">Suggestion Submit</button>
         </div>    
         </footer>
 
@@ -105,7 +105,11 @@
         {% block script %}
         {% endblock %}
 
-
+<script>
+    function toSubmitSuggestion(){
+        window.location.href="{% url 'USFP:submitSuggestion' %}"
+    }
+</script>
 </html>
 
 
