@@ -1,40 +1,52 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Successfully Submit</title>
-    <base href="/">
-    <link rel="stylesheet" type="text/css" href="/static/CSS/View/submitSuggestionResult.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/water.css@2/out/water.css">
-</head>
-<body>
-{% ifnotequal user.commonUserID 5%}
-    <p>userID:{{ user.commonUserID }}</p>
-    <p>userName:{{ user.commonUserName }}</p>
-    <p>userImage:<img src="/media/{{ user.commonUserImage }}"/></p>
-    {% if isAdmin %}
-        <p>
-            <a href="{% url 'USFP:adminInfor' %}">View profile</a>
-        </p>
-    {% else %}
-        <p>
-            <a href="{% url 'USFP:userInfor' %}">View profile</a>
-        </p>
-    {% endif %}
-        <p><a href="{% url 'welcome' 1 %}">Logout</a></p>
-{% else %}
-    <br><a href="{% url 'USFP:login' 0 %}">Login</a>
-    <a href="/USFP/register/">Register</a>
-{% endifnotequal %}
-{% if state %}
-<h2>You have Successfully submit the suggestion!!</h2>
-<br>
-<h5>You can remember your suggestion ID to search it later:{{ suggestionID }}</h5>
-{% else %}
-<h2>Fail to submit the suggestion!!</h2>
-<br>
-<h5>Please contact the admin to see why!</h5>
-{% endif %}
-<a href="/welcome/">Back to the Welcome Page</a>
-</body>
-</html>
+{% extends "base.html" %}
+
+<title>Successfully Submit</title>
+<base href="/">
+<link rel="stylesheet" type="text/css" href="/static/CSS/View/submitSuggestionResult.css">
+
+
+{% block content %}
+
+    <div class="demo-container mdl-grid">
+        <div class="demo-card-wide mdl-card mdl-shadow--2dp " style="width: max-content; margin: auto;">
+            <div class="mdl-card__title">
+            <h2 class="mdl-card__title-text">Welcome</h2>
+            </div>
+            <div class="mdl-card__supporting-text">
+                这里是UIC同学们的小家呀！
+                大家可以在这里便捷地反馈自己的意见！
+                也可以看看最近学校的近况呢！
+            </div>
+            <div>
+                {% ifnotequal user.commonUserID 5%}
+                    <p>userID:{{ user.commonUserID }}</p>
+                    <p>userName:{{ user.commonUserName }}</p>
+                    <p>userImage:<img src="/media/{{ user.commonUserImage }}"/></p>
+                    {% if isAdmin %}
+                        <p>
+                            <a href="{% url 'USFP:adminInfor' %}">View profile</a>
+                        </p>
+                    {% else %}
+                        <p>
+                            <a href="{% url 'USFP:userInfor' %}">View profile</a>
+                        </p>
+                    {% endif %}
+                        <p><a href="{% url 'welcome' 1 %}">Logout</a></p>
+                    {% else %}
+                        <br><a href="{% url 'USFP:login' 0 %}">Login</a>
+                        <a href="/USFP/register/">Register</a>
+                    {% endifnotequal %}
+                    {% if state %}
+                    <h2>You have Successfully submit the suggestion!!</h2>
+                    <br>
+                    <h5>You can remember your suggestion ID to search it later:{{ suggestionID }}</h5>
+                    {% else %}
+                    <h2>Fail to submit the suggestion!!</h2>
+                    <br>
+                    <h5>Please contact the admin to see why!</h5>
+                    {% endif %}
+                    <a href="/welcome/">Back to the Welcome Page</a>
+                    </div>
+
+{% endblock %}
+ 
