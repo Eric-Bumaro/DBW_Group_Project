@@ -1,51 +1,8 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="description" content="UIC suggestion platform">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
-    <link rel="shortcut icon" href="/static/favicon.ico" />
-    <title>Welcome</title>
-    <base href="/">
-    <link rel="stylesheet" type="text/css" href="../..//static/CSS/View/welcome.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/water.css@2/out/water.css">
-    <link rel="stylesheet" href="../../static/CSS/icon.css">
-    <link rel="stylesheet" href="../../static/CSS/general.css">
-    <link rel="stylesheet" href="../../static/CSS/material.min.css">
-    <!-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x" crossorigin="anonymous"> -->
-    <script src="../../static/JavaScript/axios.min.js"></script>
-    <script src="../../static/JavaScript/material.min.js"></script>
-    <script src="/static/JavaScript/jquery-3.4.1.min.js"></script>
-    <!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-gtEjrD/SeCtmISkJkNUaaKMoLD0//ElJ19smozuHV6z3Iehds+3Ulb9Bn9Plx0x4" crossorigin="anonymous"></script> -->
-</head>
+{% extends "base.html" %}
 
 
-<body>
 
-    <div id="feedback_div" class="demo-layout mdl-layout mdl-layout--fixed-header mdl-js-layout mdl-color--grey-100" style="position: absolute; bottom: 0; left: 0">
-
-        <header class="demo-header mdl-layout__header mdl-layout__header--scroll mdl-color--grey-100 mdl-color-text--grey-800">
-            <div class="mdl-layout__header-row">
-              <div onclick="window.location.href='/welcome/'" class="mdl-layout-title" style="margin-left: 0px;">UIC意见反馈系统</div>
-              <div class="mdl-layout-spacer"></div>
-              <div class="form-row container" style="width:300px; height:auto; display:inline-block" >
-                <form action="{% url 'USFP:searchSuggestion' %}" method="post"  style="width:300px; height:auto; display:flex;"  class="mdl-textfield mdl-js-textfield" action="#">
-                    {% csrf_token %}
-                    <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label align-self-start" style="height:auto; place-items: center;">
-                        <input class="mdl-textfield__input" type="text" οninput=“value=value.replace(/[^\d]/g,’’)” name="searchSuggestionID" id="searchSuggestionID">
-                        <label class="mdl-textfield__label" for="searchSuggestionID" class="mdl-textfield__label">Input the suggestion id</label>
-                    </div>
-                    <div class="align-self-right" style="display:flex;">
-                        <input type="submit" value="search" class="material-icons">
-                    </div>
-                </form>
-              </div>
-            </div>
-          </header>
-
-
-    <div class="demo-ribbon"></div>
+{% block content %}
 
 
     <div class="demo-container mdl-grid">
@@ -59,7 +16,7 @@
                 也可以看看最近学校的近况呢！
             </div>
 
-            <form action="{% url 'USFP:login' 0 %}" method="post">
+            <form action="{% url 'USFP:login' 0 %}" method="post" style="display: grid; justify-items: center;">
             {% csrf_token %}
             <p>
                 <label class="tipText" for="userID">ID:</label><br><input type="text"
@@ -73,12 +30,10 @@
                 <input type="password" name="commonUserPassword" id="commonUserPassword" value="{{ commonUserPassword }}" required/>
             </p>
             <p>
-            <h3 id="errormsg"></h3>
-            </p>
-            <p>
                 <input type="checkbox" name="cookie" value=1>Remember the id and password(3 days)
             </p>
-            <p class="mdl-card__actions mdl-card--border">
+            <h3 id="errormsg"></h3>
+            <p class="mdl-card__actions mdl-card--border" style="display: grid; justify-items: center;">
                 <label>&emsp;&emsp;&emsp;</label><input type="submit" value="Login"/>
                 &emsp;<a href="{% url 'USFP:forgetPassword' %}">Forget password</a>
             </p>
@@ -87,58 +42,16 @@
         </div>
     </div>
 
+{% endblock %}
+
+ 
 
 
-    <footer class="demo-footer mdl-mini-footer" style=" width: 100%; display:flex;">
-        <div style="flex-direction: column; left:0px">
-        {% if user.commonUserID %}
-        <div>
-            <p>userID:{{ user.commonUserID }}</p>
-        </div>
-        <div></div>
-            <p>userName:{{ user.commonUserName }}</p>
-        </div>
-        <div>
-            <p>userImage:<img src="/media/{{ user.commonUserImage }}"/></p>
-        </div>
-        {% if isAdmin %}
-            <p>
-                <a href="{% url 'USFP:adminInfor' %}">View profile</a>
-            </p>
-        {% else %}
-            <p>
-                <a href="{% url 'USFP:userInfor' %}">View profile</a>
-            </p>
-        {% endif %}
-            <p><a href="{% url 'welcome' 1 %}">Logout</a></p>
-        {% else %}
-            <div style="height:auto; width:auto; display:inline-block">
-                <br><a href="{% url 'USFP:login' 0 %}">Login</a>
-            </div>
-            <div style="height:auto; width:auto; display:inline-block">
-            </div>
-            <div style="height:auto; width:auto; display:inline-block">
-                <a href="/USFP/register/">Register</a>
-            </div>
-        {% endif %}
-    </div>
-
-
-    <div style="right:0px; display:flex; place-items: right;">
-        <button href="{% url 'USFP:submitSuggestion' %}" class="mdl-button mdl-js-button mdl-button--accent mdl-button--raised" style="margin-right: -39%;">Suggestion Submit</button>
-    </div>
-
-    
-    </footer>
-
-</body>
-
-
-
+{% block script %}
 <script>
     if({{ error|safe }}== "1")
 {
         document.getElementById("errormsg").innerText = "ID or passsword is wrong!!!";
 }
 </script>
-</html>
+{% endblock %}
