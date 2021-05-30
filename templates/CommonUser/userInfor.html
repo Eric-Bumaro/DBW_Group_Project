@@ -6,53 +6,52 @@
 
 {% block content %}
 
-
-    <h1>Here is your personal information:</h1>
-    <br>
-    <a href="{% url 'USFP:userViewSuggestions' 1 %}">View your suggestions!</a>
-    <table border="1" cellspacing="0">
-        <tr>
-            <th>Key</th>
-            <th>Value</th>
-            <th>Operation</th>
-        </tr>
-        <tr>
-            <td>ID</td>
-            <td>{{ user.commonUserID }}</td>
-            <td>Change ID is not allowed!</td>
-        </tr>
-        <tr>
-            <td>Name</td>
-            <td>{{ user.commonUserName }}</td>
-            <td><a href="{% url 'USFP:userChangeInfor' 'Name' %}">Click here to change!</a></td>
-        </tr>
-        <tr>
-            <td>Image</td>
-            <td><img src="/media/{{ user.commonUserImage }}"/></td>
-            <td><a href="{% url 'USFP:userChangeInfor' 'Image' %}">Click here to change!</a></td>
-        </tr>
-        <tr>
-            <td>Email</td>
-            <td>{{ user.commonUserEmail }}</td>
-            <td><a href="{% url 'USFP:userChangeInfor' 'EmailAdd' %}">Click here to change!</a></td>
-        </tr>
-        <tr>
-            <td>Area</td>
-            <td>{{ user.area.areaName }}</td>
-            <td>You are not allowed to change your area!</td>
-        </tr>
-        <tr>
-            <td>Verified</td>
-            {% ifequal verified 1%}
-            <td>You have verified!</td>
-            {% else %}
-                <td>You haven't verified! But you can verify through using UIC email.</td>
-            {% endifequal %}
-        </tr>
-    </table>
-    <a href="{% url 'USFP:userChangeInfor' 'Password' %}">Click here to change your password!</a><br>
-    <a href="{% url 'welcome' %}">To welcome</a>
-    <a href="{% url 'welcome' 1 %}">Logout</a>
+    <div  style="display: grid; justify-items: center;">
+        <h1>Here is your personal information:</h1>
+        <br>
+        <a href="{% url 'USFP:userViewSuggestions' 1 %}">View your suggestions!</a>
+        <table border="1" cellspacing="0">
+            <tr>
+                <th>Key</th>
+                <th>Value</th>
+                <th>Operation</th>
+            </tr>
+            <tr>
+                <td>ID</td>
+                <td>{{ user.commonUserID }}</td>
+                <td>Change ID is not allowed!</td>
+            </tr>
+            <tr>
+                <td>Name</td>
+                <td>{{ user.commonUserName }}</td>
+                <td><a href="{% url 'USFP:userChangeInfor' 'Name' %}">Click here to change!</a></td>
+            </tr>
+            <tr>
+                <td>Image</td>
+                <td><img src="/media/{{ user.commonUserImage }}"/></td>
+                <td><a href="{% url 'USFP:userChangeInfor' 'Image' %}">Click here to change!</a></td>
+            </tr>
+            <tr>
+                <td>Email</td>
+                <td>{{ user.commonUserEmail }}</td>
+                <td><a href="{% url 'USFP:userChangeInfor' 'EmailAdd' %}">Click here to change!</a></td>
+            </tr>
+            <tr>
+                <td>Area</td>
+                <td>{{ user.area.areaName }}</td>
+                <td>You are not allowed to change your area!</td>
+            </tr>
+            <tr>
+                <td>Verified</td>
+                {% ifequal verified 1%}
+                <td>You have verified!</td>
+                {% else %}
+                    <td>You haven't verified! But you can verify through using UIC email.</td>
+                {% endifequal %}
+            </tr>
+        </table>
+        <a href="{% url 'USFP:userChangeInfor' 'Password' %}">Click here to change your password!</a><br>
+    </div>
 
 {% endblock %}
 
