@@ -116,6 +116,8 @@ def refreshGraph(request):
         p.vbar(x=tagsList, top=tagsShowNumList, width=0.9,
                fill_color= bp.Blues[256][1:256:26],)
         p.xgrid.grid_line_color = None
+        if os.path.isfile(os.path.join(webImageLocation, "Bar.html")):
+            os.remove(os.path.join(webImageLocation, "Bar.html"))
         path = os.path.join(webImageLocation, "Bar.html")
         output_file(path)
         save(obj=p, filename=path, title="output")
