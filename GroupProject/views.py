@@ -114,7 +114,7 @@ def refreshGraph(request):
         tagsShowNumList=list(Tag.objects.order_by("-tagShowNum")[1:11].values_list("tagShowNum",flat=True))
         p = figure(x_range=tagsList, plot_height=250, title="Tag Counts",tooltips="top: @top")
         p.vbar(x=tagsList, top=tagsShowNumList, width=0.9,
-               fill_color= bp.Blues[256][1:256:26],)
+               fill_color= bp.Blues[256][50:220:17],)
         p.xgrid.grid_line_color = None
         if os.path.isfile(os.path.join(webImageLocation, "Bar.html")):
             os.remove(os.path.join(webImageLocation, "Bar.html"))
