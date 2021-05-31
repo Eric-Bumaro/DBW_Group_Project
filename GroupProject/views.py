@@ -133,8 +133,14 @@ def refreshGraph(request):
 
 
 def page_not_found(request, exception):
+    user = CommonUser.object.get(commonUserID=request.session.get('commonUserID', 5))
+    isAdmin = False
+    if user.isVerified():
+        if user.VerifiedUser.isAdmin:
+            isAdmin = True
     return render(request, 'Error/404.html',
-                  {"allTags": Tag.objects.filter(tagShowNum__gt=0).order_by("-tagShowNum")[1:11]})
+                  {"allTags": Tag.objects.filter(tagShowNum__gt=0).order_by("-tagShowNum")[1:11],"user":user,
+                   "isAdmin":isAdmin})
 
 
 def startScrapy(request):
