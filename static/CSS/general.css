@@ -25,8 +25,8 @@
   }
   .demo-card-wide > .mdl-card__wordCloud {
     color: #fff;
-    height: 176px;
-    background: url('wordCloud.jpg') center / cover;
+    height: 380px;
+    background: url('/media/webImage/WordCloud.PNG') center / cover;
   }
   .demo-card-wide > .mdl-card__menu {
     color: #fff;
