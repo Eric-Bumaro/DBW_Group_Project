@@ -1,47 +1,154 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Change User Information</title>
-    <base href="/">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/water.css@2/out/water.css">
-</head>
+{% extends "base.html" %}
+<title>Change User Information</title>
 <script src="/static/JavaScript/jquery-3.4.1.min.js"></script>
+
+
+{% block content %}
+
+<div class="demo-container mdl-grid">
+    <div class="demo-card-wide mdl-card mdl-shadow--2dp " style="width: max-content; margin: auto;">
+        <div class="mdl-card__title">
+            <h2 class="mdl-card__title-text">Change</h2>
+        </div>
+        <div style="display: grid; justify-items: center;">
+            <form action="{% url 'USFP:userChangeInfor' changeType_py %}" method="post" name="userChaForm"
+                enctype="multipart/form-data" onsubmit="return check()">
+                {% csrf_token %}
+
+
+                <div style="display: grid; justify-items: center;">
+                    {% ifequal changeType_py "EmailAdd" %}
+                    <div class="mdl-card__supporting-text">
+                        If you input your uic email address, you will be verified.
+                        <br>
+                        Otherwise,you will not be verified.
+                    </div>
+                    <div style="display: grid; justify-items: center;">
+                        <br>
+                        Input your new email address:
+                        <input type="email" id="newEmailAdd" name="newEmailAdd" oninput="showWantAdmin()" required>
+                        <br>
+                        <label for="userKeyEmail">Send a check-id key to your new Email address and check it:</label>
+                        <input type="text" id="userKeyEmail" name="userKeyEmail" required>
+                        <label id="sendKeyButton">
+                            <button onclick="sendHideForEmail()">Click here to send!</button>
+                        </label>
+                        <p id="chooseToBeAdmin" style="display: none">
+                            <label for="wantToBeAdmin">If you want to ba an admin, please click</label>
+                            <input type="radio" name="wantToBeAdmin" value="wantToBeAdmin" id="wantToBeAdmin"
+                                onclick="showHideCheckAdmin(this)">
+                        </p>
+                        <p id="adminCheck" style="display: none">
+                            <label for="adminKey">Send a check-id key to the Email of the administrator and check
+                                it:</label>
+                            <input type="text" id="adminKey" name="adminKey">
+                            <label id="sendAdKeyButton">
+                                <button onclick="sendHideAdCheck()">Click here to send!</button>
+                            </label>
+                        </p>
+                    </div>
+                    {% endifequal %}
+                </div>
+
+
+
+
+                {% ifequal changeType_py "Image" %}
+                <div class="mdl-card__supporting-text">
+                    在这里上传你最喜欢的一张图片做为你的头像吧！
+                    <br>
+                    不许传不健康的图片哦！
+                </div>
+                <div style="display: grid; justify-items: center;">
+                    Profile Photo:<input type="file" name="photo" id="photo" accept="image/*" required>
+                </div>
+                {% endifequal %}
+
+
+                {% ifequal changeType_py "Name" %}
+                <div class="mdl-card__supporting-text">
+                    输入你最喜欢的昵称做为你的用户名吧！用真名也行哦！
+                    <br>
+                    不许说不健康的词汇哦！
+                </div>
+                <div style="display: grid; justify-items: center;">
+                    new Name:<input type="text" name="newName" id="newName" maxlength="20" required>
+                </div>
+                {% endifequal %}
+
+
+
+                {% ifequal changeType_py "Password" %}
+                <div>
+                    <label for="password">&emsp;&emsp;&emsp;&emsp;Password:</label>
+                    <input type="password" name="password" id="password" required>
+                    <br>
+                    <label for="checkPassword"> Confirm Password:</label>
+                    <input type="password" name="checkPassword" id="checkPassword" required>
+                    <br>
+                    <label for="userKeyPassword">Send a check-id key to your new Email address and check it:</label>
+                    <input type="text" id="userKeyPassword" name="userKeyPassword" required>
+                    <label id="sendKeyButton">
+                        <button onclick="sendHideForPass()">Click here to send!</button>
+                    </label>
+                </div>
+                {% endifequal %}
+
+
+
+                <div style="display: grid; justify-items: center;">
+                    <p>
+                    <h5 id="errormsg"></h5>
+                    </p>
+                    <label>&emsp;&emsp;&emsp;</label><input type="submit" value="Change">
+                    <a href="{% url 'USFP:userInfor' %}">Back to the Last Page</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+
+
+{% block script %}
 <script>
     var userKey;
     var adminKey;
 
     function sendHideForPass() {
-        var commonUserID = {{commonUserID|safe}};
-        $.ajax({
-            type: "POST",
-            url: "/getUserKey/",
-            data: {
-                csrfmiddlewaretoken: '{{ csrf_token }}',
-                commonUserID: commonUserID,
-            },
-            success: function (response) {
-                userKey = response
-            }
-        });
-        if (userKey == "1") {
-            document.getElementById("errormsg").innerHTML = "Please choose your user type!";
+        var commonUserID = {{ commonUserID| safe
+    }};
+    $.ajax({
+        type: "POST",
+        url: "/getUserKey/",
+        data: {
+            csrfmiddlewaretoken: '{{ csrf_token }}',
+            commonUserID: commonUserID,
+        },
+        success: function (response) {
+            userKey = response
         }
-        if (userKey == "2") {
-            document.getElementById("errormsg").innerHTML = "Wrong ID!";
-        }
-        var sendKeyButton = document.getElementById("sendKeyButton")
-        for (let i = 0; i <= 60; i++) {
-            (function (j) {
-                    setTimeout(function () {
-                        sendKeyButton.innerHTML = "<label>You can try again after " + (60 - j) + " seconds!</label>"
-                        if (j == 60) {
-                            sendKeyButton.innerHTML = "<button onclick='sendHideForPass()'>Click here to send!</button>"
-                        }
-                    }, 1000 * i)
+    });
+    if (userKey == "1") {
+        document.getElementById("errormsg").innerHTML = "Please choose your user type!";
+    }
+    if (userKey == "2") {
+        document.getElementById("errormsg").innerHTML = "Wrong ID!";
+    }
+    var sendKeyButton = document.getElementById("sendKeyButton")
+    for (let i = 0; i <= 60; i++) {
+        (function (j) {
+            setTimeout(function () {
+                sendKeyButton.innerHTML = "<label>You can try again after " + (60 - j) + " seconds!</label>"
+                if (j == 60) {
+                    sendKeyButton.innerHTML = "<button onclick='sendHideForPass()'>Click here to send!</button>"
                 }
-            )(i);
+            }, 1000 * i)
         }
+        )(i);
+    }
     }
 
     function sendHideForEmail() {
@@ -63,49 +170,50 @@
         var sendKeyButton = document.getElementById("sendKeyButton")
         for (let i = 0; i <= 60; i++) {
             (function (j) {
-                    setTimeout(function () {
-                        sendKeyButton.innerHTML = "<label>You can try again after " + (60 - j) + " seconds!</label>"
-                        if (j == 60) {
-                            sendKeyButton.innerHTML = "<button onclick='sendHideForEmail()'>Click here to send!</button>"
-                        }
-                    }, 1000 * i)
-                }
+                setTimeout(function () {
+                    sendKeyButton.innerHTML = "<label>You can try again after " + (60 - j) + " seconds!</label>"
+                    if (j == 60) {
+                        sendKeyButton.innerHTML = "<button onclick='sendHideForEmail()'>Click here to send!</button>"
+                    }
+                }, 1000 * i)
+            }
             )(i);
         }
     }
 
     function check() {
-        if ({{ changeType_js|safe }}=="Password")
-        {
-            var pwOne = document.forms["userChaForm"]["password"].value;
-            var pwTwo = document.forms["userChaForm"]["checkPassword"].value;
-            if (pwOne != pwTwo) {
-                document.getElementById("errormsg").innerHTML = "Not the same password";
-                return false;
-            } else if (pwOne.length < 3) {
-                document.getElementById("errormsg").innerHTML = "The length of the password must be larger than three!";
-                return false;
-            }
-            if (document.getElementById("userKey").value != userKey) {
-                document.getElementById("errormsg").innerHTML = "Wrong check-key!";
-                return false;
-            }
+        if ({{ changeType_js | safe }
+    }== "Password")
+    {
+        var pwOne = document.forms["userChaForm"]["password"].value;
+        var pwTwo = document.forms["userChaForm"]["checkPassword"].value;
+        if (pwOne != pwTwo) {
+            document.getElementById("errormsg").innerHTML = "Not the same password";
+            return false;
+        } else if (pwOne.length < 3) {
+            document.getElementById("errormsg").innerHTML = "The length of the password must be larger than three!";
+            return false;
         }
+        if (document.getElementById("userKey").value != userKey) {
+            document.getElementById("errormsg").innerHTML = "Wrong check-key!";
+            return false;
+        }
+    }
 
-        if ({{ changeType_js|safe }}=="EmailAdd")
-        {
-            if (document.getElementById("userKeyEmail").value != userKey) {
+    if ({{ changeType_js | safe }}== "EmailAdd")
+    {
+        if (document.getElementById("userKeyEmail").value != userKey) {
+            document.getElementById("errormsg").innerHTML = "Wrong check-key!";
+            return false;
+        }
+        if (document.getElementById("wantToBeAdmin").checked) {
+            if (document.getElementById("adminKey").value !== adminKey) {
                 document.getElementById("errormsg").innerHTML = "Wrong check-key!";
                 return false;
             }
-            if (document.getElementById("wantToBeAdmin").checked) {
-                if (document.getElementById("adminKey").value !== adminKey) {
-                    document.getElementById("errormsg").innerHTML = "Wrong check-key!";
-                    return false;
-                }
-            }
         }
-        return true;
+    }
+    return true;
     }
 
     function showWantAdmin() {
@@ -120,7 +228,7 @@
         $.ajax({
             type: "POST",
             url: "{%  url 'getadKey'%}",
-            data: {csrfmiddlewaretoken: '{{ csrf_token }}'},
+            data: { csrfmiddlewaretoken: '{{ csrf_token }}' },
             success: function (response) {
                 adminKey = response
             }
@@ -128,13 +236,13 @@
         var sendAdKeyButton = document.getElementById("sendAdKeyButton")
         for (let i = 0; i <= 60; i++) {
             (function (j) {
-                    setTimeout(function () {
-                        sendAdKeyButton.innerHTML = "<label>You can try again after " + (60 - j) + " seconds!</label>"
-                        if (j == 60) {
-                            sendAdKeyButton.innerHTML = "<button onclick='sendHideAdCheck()'>Click here to send!</button>"
-                        }
-                    }, 1000 * i)
-                }
+                setTimeout(function () {
+                    sendAdKeyButton.innerHTML = "<label>You can try again after " + (60 - j) + " seconds!</label>"
+                    if (j == 60) {
+                        sendAdKeyButton.innerHTML = "<button onclick='sendHideAdCheck()'>Click here to send!</button>"
+                    }
+                }, 1000 * i)
+            }
             )(i);
         }
     }
@@ -154,60 +262,4 @@
         }
     }
 </script>
-<body>
-<form action="{% url 'USFP:userChangeInfor' changeType_py %}" method="post" name="userChaForm"
-      enctype="multipart/form-data" onsubmit="return check()">
-    {% csrf_token %}
-    {% ifequal changeType_py "EmailAdd" %}
-        <h3>If you input your uic email address, you will be verified.</h3>
-        <br>
-        <h3>Otherwise,you will not be verified.</h3>
-        <br>
-        Input your new email address:
-        <input type="email" id="newEmailAdd" name="newEmailAdd" oninput="showWantAdmin()" required>
-        <br>
-        <label for="userKeyEmail">Send a check-id key to your new Email address and check it:</label>
-        <input type="text" id="userKeyEmail" name="userKeyEmail" required>
-        <label id="sendKeyButton">
-            <button onclick="sendHideForEmail()">Click here to send!</button>
-        </label>
-        <p id="chooseToBeAdmin" style="display: none">
-            <label for="wantToBeAdmin">If you want to ba an admin, please click</label>
-            <input type="radio" name="wantToBeAdmin" value="wantToBeAdmin" id="wantToBeAdmin"
-                   onclick="showHideCheckAdmin(this)">
-        </p>
-        <p id="adminCheck" style="display: none">
-            <label for="adminKey">Send a check-id key to the Email of the administrator and check it:</label>
-            <input type="text" id="adminKey" name="adminKey">
-            <label id="sendAdKeyButton">
-                <button onclick="sendHideAdCheck()">Click here to send!</button>
-            </label>
-        </p>
-    {% endifequal %}
-    {% ifequal changeType_py "Image" %}
-        Profile Photo:<input type="file" name="photo" id="photo" accept="image/*" required>
-    {% endifequal %}
-    {% ifequal changeType_py "Name" %}
-        new Name:<input type="text" name="newName" id="newName" maxlength="20" required>
-    {% endifequal %}
-    {% ifequal changeType_py "Password" %}
-        <label for="password">&emsp;&emsp;&emsp;&emsp;Password:</label>
-        <input type="password" name="password" id="password" required>
-        <br>
-        <label for="checkPassword"> Confirm Password:</label>
-        <input type="password" name="checkPassword" id="checkPassword" required>
-        <br>
-        <label for="userKeyPassword">Send a check-id key to your new Email address and check it:</label>
-        <input type="text" id="userKeyPassword" name="userKeyPassword" required>
-        <label id="sendKeyButton">
-            <button onclick="sendHideForPass()">Click here to send!</button>
-        </label>
-    {% endifequal %}
-    <p>
-    <h3 id="errormsg"></h3>
-    </p>
-    <label>&emsp;&emsp;&emsp;</label><input type="submit" value="Change">
-    <a href="{% url 'USFP:userInfor' %}">Back to the Last Page</a>
-</form>
-</body>
-</html>
+{% endblock %}
