@@ -24,9 +24,9 @@
 </head>
 
 
-<body>
+<body style="min-height: 100%;">
 
-    <div id="feedback_div" class="demo-layout mdl-layout mdl-layout--fixed-header mdl-js-layout mdl-color--grey-100" style="position: absolute; bottom: 0; left: 0">
+    <div id="feedback_div" class="demo-layout mdl-layout mdl-layout--fixed-header mdl-js-layout mdl-color--grey-100"  style="flex-direction: column; justify-content: space-between;">
         
         {% block navigation %}
         <header class="demo-header mdl-layout__header mdl-layout__header--scroll mdl-color--grey-100 mdl-color-text--grey-800">
@@ -46,8 +46,9 @@
                 </form>
               </div>
             </div>
+            <div class="demo-ribbon"></div>
         </header>
-        <div class="demo-ribbon"></div>
+        
         {% endblock %}
 
 
@@ -56,7 +57,7 @@
 
 
         {% block footer %}
-        <footer class="demo-footer mdl-mini-footer">
+        <footer class="demo-footer mdl-mini-footer" style="margin-bottom:">
             <div  style="display:flex; width: 100%;  justify-content: space-around;">
                 {% ifnotequal user.commonUserID 5%}
                 <div>
