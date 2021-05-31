@@ -173,12 +173,15 @@
         }
         for (let i = 0; i < nodeToHideList.length; i++) {
             nodeToHideList[i].style.display = "none";
+            nodeToHideList[i].checked=false;
         }
         for (let i = 0; i < nodeToShowList.length; i++) {
             nodeToShowList[i].style.display = "none";
+            nodeToShowList[i].checked = false;
         }
         for (let i = 0; i < nodeToDeleteList.length; i++) {
             nodeToDeleteList[i].style.display = "none";
+            nodeToDeleteList[i].checked=false
         }
         document.getElementById("toChooseButton").style.display = "block";
     }

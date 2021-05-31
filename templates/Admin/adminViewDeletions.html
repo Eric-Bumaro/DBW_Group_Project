@@ -224,14 +224,17 @@
         }
         for (let i = 0; i < areaNodeList.length; i++) {
             areaNodeList[i].style.display = "none";
+            areaNodeList[i].checked = fasle;
         }
         areaOperationList="";
         for (let i = 0; i < userNodeList.length; i++) {
             userNodeList[i].style.display = "none";
+            userNodeList[i].checked=false
         }
         userOperationList="";
         for (let i = 0; i < suggestionNodeList.length; i++) {
             suggestionNodeList[i].style.display = "none";
+            suggestionNodeList[i].checked=false;
         }
         suggestionOperationList="";
         document.getElementById("toChooseButton").style.display = "block";
