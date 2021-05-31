@@ -42,32 +42,49 @@
         </div>
     </div>
 
-    <table class="demo-card-wide mdl-data-table mdl-js-data-table mdl-shadow--2dp"
-        style="width: max-content; margin: auto;">
-        <thead>
-            <tr>
-                <th>序列</th>
-                <th class="mdl-data-table__cell--non-numeric">关键词</th>
-                <th>出现频率</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for i in allTags%}
-            <tr>
-                <td>{{ forloop.counter }}</td>
-                <td class="mdl-data-table__cell--non-numeric">
-                    <a href="{% url 'USFP:viewTag' i.tagID 1 %}">{{ i.tagName }}</a>
-                </td>
-                <td>{{ i.tagShowNum }}</td>
-            </tr>
-            {% endfor %}
-            <tr>
-                <td class="mdl-data-table__cell--non-numeric" colspan="100%">
-                    <a href="{% url 'USFP:viewAllTags' 1 %}">Click to see all tags</a>
-                </td>
-            </tr>
-        </tbody>
-    </table>
+
+    <div  class="demo-container mdl-grid" style="display: flex; justify-content: center; align-items: center;">
+        <table class="demo-card-wide mdl-data-table mdl-js-data-table mdl-shadow--2dp" style="width: max-content;">
+            <thead>
+                <tr>
+                    <th>序列</th>
+                    <th class="mdl-data-table__cell--non-numeric">关键词</th>
+                    <th>出现频率</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for i in allTags%}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td class="mdl-data-table__cell--non-numeric">
+                        <a href="{% url 'USFP:viewTag' i.tagID 1 %}">{{ i.tagName }}</a>
+                    </td>
+                    <td>{{ i.tagShowNum }}</td>
+                </tr>
+                {% endfor %}
+                <tr>
+                    <td class="mdl-data-table__cell--non-numeric" colspan="100%">
+                        <a href="{% url 'USFP:viewAllTags' 1 %}">Click to see all tags</a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <div>
+            <div class="demo-card-wide mdl-card mdl-shadow--2dp " style="width: max-content; margin: auto;">
+                <div class="mdl-card__title">
+                    <h2 class="mdl-card__title-text">Welcome</h2>
+                </div>
+                <div class="mdl-card__supporting-text">
+                    这里是根据大数据分析生成的词云图呀！
+                    快来看看UIC同学们都在关心什么问题呀！
+                    冲冲冲
+                </div>
+                <div class="mdl-card__actions mdl-card--border">
+                    {% include "Bar.html" %}
+                </div>
+            </div>
+        </div>
+    </div>
 
 </main>
 {% endblock %}
