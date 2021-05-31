@@ -20,8 +20,7 @@
             <h5>Write your suggestion here!</h5>
             <form action="{% url 'USFP:submitSuggestion' %}" method="post">
                 {% csrf_token %}
-                <textarea rows="10" cols="30" name="suggestionContent" required>
-                    </textarea>
+                <textarea rows="10" cols="30" name="suggestionContent" required></textarea>
                 <br>
                 <div style="display: grid; justify-items: center;">
                     <input type="submit" value="Submit your Suggestion" />
