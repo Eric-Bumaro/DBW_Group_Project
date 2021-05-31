@@ -16,6 +16,7 @@
         <div class="mdl-card__supporting-text">
             AuthorName:{{ suggestion.commonUser.commonUserName }}
             Post time:{{ suggestion.postTime }}
+            <br>
             <a href="{% url 'USFP:userViewOneSuggestion' suggestion.suggestionID 1%}">Click here to view</a>
         </div>
         {% else %}

@@ -118,8 +118,7 @@
     var adminKey;
 
     function sendHideForPass() {
-        var commonUserID = {{ commonUserID| safe
-    }};
+        var commonUserID = {{ commonUserID| safe}};
     $.ajax({
         type: "POST",
         url: "/getUserKey/",
@@ -182,8 +181,7 @@
     }
 
     function check() {
-        if ({{ changeType_js | safe }
-    }== "Password")
+        if ({{ changeType_js | safe}}== "Password")
     {
         var pwOne = document.forms["userChaForm"]["password"].value;
         var pwTwo = document.forms["userChaForm"]["checkPassword"].value;

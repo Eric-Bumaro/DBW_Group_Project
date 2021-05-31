@@ -241,7 +241,8 @@ def adminViewUser(request, commonUserID):
     if user.isManagedBy(admin):
         areaNameList = admin.VerifiedUser.adminArea.filter(isDelete=False).values_list('areaName', flat=True)
         return render(request, "Admin/adminViewUser.html",
-                      {"user": user, "areaNameList": areaNameList, "isVerified": user.isVerified(),
+                      {"userToView": user, "areaNameList": areaNameList, "isVerified": user.isVerified(),"user":admin,
+                       "isAdmin":True,
                        "allTags": Tag.objects.filter(tagShowNum__gt=0).order_by("-tagShowNum")[1:11]})
     return HttpResponseRedirect(reverse("welcome", args=(1,)))
 
@@ -268,9 +269,9 @@ def adminUpdateUser(request, commonUserID):
                                                commonUser=commonUser, content="Delete photo")
         if request.POST.get("changeArea", "0") == "1":
             originalName = commonUser.area.areaName
-            commonUser.area = Area.objects.get(arName=request.POST.get("newArName"))
+            commonUser.area = Area.objects.get(areaName=request.POST.get("newArName"))
             CommonUserOperation.objects.create(verifiedUser=admin.VerifiedUser, operationType='updateUser',
-                                               commonUser=CommonUser,
+                                               commonUser=commonUser,
                                                content="Original area:" + originalName + " New area:" + request.POST.get(
                                                    "newArName"))
         commonUser.save()

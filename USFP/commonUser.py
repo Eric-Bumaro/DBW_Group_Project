@@ -29,7 +29,7 @@ def userInfor(request):
 
 
 def userChange(request, changeType):
-    user = CommonUser.object.filter(commonUserID=request.session.get('commonUserID',5))
+    user = CommonUser.object.get(commonUserID=request.session.get('commonUserID',5))
     try:
         isAdmin = user.VerifiedUser.isAdmin
     except:
@@ -37,7 +37,8 @@ def userChange(request, changeType):
     if request.method == 'GET':
         if changeType == "EmailAdd" or changeType == "Password":
             return render(request, "CommonUser/userChangeInfor.html",
-                          {"changeType_js": json.dumps(changeType), "changeType_py": changeType,"isAdmin":isAdmin,"user":user,
+                          {"changeType_js": json.dumps(changeType), "changeType_py": changeType,"isAdmin":isAdmin,
+                           "user":user,
                            "commonUserID": request.session['commonUserID'],
                            "allTags": Tag.objects.filter(tagShowNum__gt=0).order_by("-tagShowNum")[1:11]})
         if changeType == "Image" or changeType == "Name":
@@ -46,39 +47,40 @@ def userChange(request, changeType):
                            "allTags": Tag.objects.filter(tagShowNum__gt=0).order_by("-tagShowNum")[1:11]})
     if changeType == "EmailAdd":
         newEmailAdd = request.POST.get("newEmailAdd", "")
-        user.update(commonUserEmail=newEmailAdd)
-        if newEmailAdd.endswith('@mail.uic.edu.cn') and user[0].isVerified():
-            verified = user[0].VerifiedUser
+        user.commonUserEmail=newEmailAdd
+        if newEmailAdd.endswith('@mail.uic.edu.cn') and user.isVerified():
+            verified = user.VerifiedUser
             if request.POST.get('wantToBeAdmin', '') == 'wantToBeAdmin':
                 verified.isAdmin = True
                 verified.save()
         elif newEmailAdd.endswith('@mail.uic.edu.cn'):
             if request.POST.get('wantToBeAdmin', '') == 'wantToBeAdmin':
-                VerifiedUser.objects.create(isAdmin=True, commonUser=user[0])
+                VerifiedUser.objects.create(isAdmin=True, commonUser=user)
             else:
-                VerifiedUser.objects.create(commonUser=user[0])
+                VerifiedUser.objects.create(commonUser=user)
         else:
-            user[0].VerifiedUser.delete()
+            user.VerifiedUser.delete()
     if changeType == "Image":
         photo = request.FILES.get("photo", "")
         photoName = str(request.session['commonUserID']) + "." + photo.name.split(".")[1]
         photo_resize = Image.open(photo)
         photo_resize.thumbnail((371, 475), Image.ANTIALIAS)
-        if os.path.isfile(os.path.join(".", ".", os.getcwd(), "media", str(user[0].commonUserImage))):
-            os.remove(os.path.join(".", ".", os.getcwd(), "media", str(user[0].commonUserImage)))
+        if os.path.isfile(os.path.join(".", ".", os.getcwd(), "media", str(user.commonUserImage))):
+            os.remove(os.path.join(".", ".", os.getcwd(), "media", str(user.commonUserImage)))
         photo_resize.save(os.path.join(".", ".", os.getcwd(), "media", "userImage", photoName))
-        user.update(commonUserImage="userImage/" + photoName)
+        user.commonUserImage="userImage/" + photoName
     if changeType == "Name":
         newName = request.POST.get("newName", "")
-        user.update(commonUserName=newName)
+        user.commonUserName=newName
     if changeType == "Password":
         newPassword = request.POST.get("password", "")
-        user.update(commonUserPassword=newPassword)
+        user.commonUserPassword=newPassword
+    user.save()
     return HttpResponseRedirect(reverse("USFP:userSuChange", args=(changeType,)))
 
 
 def userSuChange(request, changeType):
-    user = CommonUser.object.filter(commonUserID=request.session.get('commonUserID',5))
+    user = CommonUser.object.get(commonUserID=request.session.get('commonUserID',5))
     try:
         isAdmin = user.VerifiedUser.isAdmin
     except:
@@ -244,6 +246,11 @@ def userChangeSuggestion(request, suggestionID):
         suggestion.save()
         if not user.isVerified() or not suggestion.isReplied():
             suggestion.visible = False
+        try:
+            ReplySuggestion.objects.get(selfSuggestion=suggestion)
+            suggestion.visible = True
+        except:
+            pass
         suggestion.save()
         return render(request, "CommonUser/userSuChangeSuggestion.html", {'suggestionID': suggestion.suggestionID,
                                                                           "allTags": Tag.objects.filter(

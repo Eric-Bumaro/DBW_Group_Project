@@ -10,7 +10,7 @@
         <button onclick="showChange()" id="toChangeButton">Click here if you want to make changes</button>
         <h1>For this user:</h1>
         <br>
-        <form action={% url 'USFP:adminUpdateUser' user.commonUserID %} method="post" onsubmit="return checked()">
+        <form action={% url 'USFP:adminUpdateUser' userToView.commonUserID %} method="post" onsubmit="return checked()">
             {% csrf_token %}
             <table border="1" cellspacing="0">
                 <tr>
@@ -22,15 +22,15 @@
                 </tr>
                 <tr>
                     <td>ID</td>
-                    <td>{{ user.commonUserID }}</td>
+                    <td>{{ userToView.commonUserID }}</td>
                 </tr>
                 <tr>
                     <td>Name</td>
-                    <td>{{ user.commonUserName }}</td>
+                    <td>{{ userToView.commonUserName }}</td>
                 </tr>
                 <tr>
                     <td>Image</td>
-                    <td><img src=" /media/{{ user.commonUserImage }}"/></td>
+                    <td><img src=" /media/{{ userToView.commonUserImage }}"/></td>
                     <td class="ChangeFun">
                         <input type="radio" name="deletePhoto" id="deletePhoto" class="ChangeFun"
                                                   onclick="changeDeletePhoto()" style="display: none" value="1">
@@ -39,7 +39,7 @@
                 </tr>
                 <tr>
                     <td>Email</td>
-                    <td>{{ user.commonUserEmail }}</td>
+                    <td>{{ userToView.commonUserEmail }}</td>
                 </tr>
                 <tr>
                     <td>IsVerified</td>
@@ -47,7 +47,7 @@
                 </tr>
                 <tr>
                     <td>Area</td>
-                    <td>{{ user.area.areaName }}</td>
+                    <td>{{ userToView.area.areaName }}</td>
                     <td class="ChangeFun" style="display: none">
                         <input type="radio" name="changeArea" class="ChangeFun" onclick="changeUserArea()"
                                style="display: none" value="1" id="changeArea">
@@ -67,8 +67,8 @@
             <input type="submit" class="ChangeFun" style="display: none" value="Click here to submit"/>
             <button onclick="cancelChange()" class="ChangeFun" style="display: none">Cancel</button>
         </form>
-        <a href="{% url 'USFP:adminViewUserSuggestions' user.commonUserID 1 %}">To view the suggestions of the user</a>
-        <a href="{% url 'USFP:adminViewArea' 1 user.area.areaID %}">To view the area</a>
+        <a href="{% url 'USFP:adminViewUserSuggestions' userToView.commonUserID 1 %}">To view the suggestions of the user</a>
+        <a href="{% url 'USFP:adminViewArea' 1 userToView.area.areaID %}">To view the area</a>
         <a href="{% url 'USFP:adminInfor' %}">Back to your information.</a>
     </div>
 
