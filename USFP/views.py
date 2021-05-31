@@ -23,15 +23,24 @@ def login(request, error):
     if request.method == "GET":
         if 'login' in request.COOKIES.keys():
             user = CommonUser.object.get(commonUserID=request.session.get("commonUserID", 5))
+            isAdmin=False
+            if user.isVerified():
+                if user.VerifiedUser.isAdmin:
+                    isAdmin = True
             login = request.get_signed_cookie("login", salt="hello").split(',')
             commonUserID = login[0]
             commonUserPassword = login[1]
             return render(request, "View/login.html",
-                          {"error": json.dumps(error), "commonUserID": commonUserID, "user": user,
+                          {"error": json.dumps(error), "commonUserID": commonUserID, "user": user,"isAdmin":isAdmin,
                            "commonUserPassword": commonUserPassword,
                            "allTags": Tag.objects.filter(tagShowNum__gt=0).order_by("-tagShowNum")})
         else:
-            return render(request, "View/login.html", {"error": json.dumps(error),
+            user = CommonUser.object.get(commonUserID=request.session.get("commonUserID", 5))
+            isAdmin=False
+            if user.isVerified():
+                if user.VerifiedUser.isAdmin:
+                    isAdmin = True
+            return render(request, "View/login.html", {"error": json.dumps(error),"user": user,"isAdmin":isAdmin,
                                                        "allTags": Tag.objects.filter(tagShowNum__gt=0).order_by(
                                                            "-tagShowNum")})
     commonUserPassword = request.POST.get("commonUserPassword", "")
@@ -53,9 +62,13 @@ def login(request, error):
 
 def register(request):
     user = CommonUser.object.get(commonUserID=request.session.get("commonUserID", 5))
+    isAdmin = False
+    if user.isVerified():
+        if user.VerifiedUser.isAdmin:
+            isAdmin = True
     if request.method == 'GET':
         return render(request, "View/register.html",
-                      {"allTags": Tag.objects.filter(tagShowNum__gt=0).order_by("-tagShowNum"), "user": user, })
+                      {"allTags": Tag.objects.filter(tagShowNum__gt=0).order_by("-tagShowNum"), "user": user,"isAdmin":isAdmin})
     commonUserName = request.POST.get("commonUserName", "")
     commonUserPassword = request.POST.get("commonUserPassword", "")
     commonUserEmail = request.POST.get("commonUserEmail", "")
@@ -89,17 +102,26 @@ def register(request):
 
 def suRegister(request):
     user = CommonUser.object.get(commonUserID=request.session.get("commonUserID", 5))
+    isAdmin = False
+    if user.isVerified():
+        if user.VerifiedUser.isAdmin:
+            isAdmin = True
     return render(request, "View/suRegister.html",
                   {"commonUserID": CommonUser.objects.last().commonUserID, "user": user,
                    "allTags": Tag.objects.filter(tagShowNum__gt=0).order_by(
-                       "-tagShowNum")})
+                       "-tagShowNum"),"isAdmin":isAdmin})
 
 
 def forgetPassword(request):
     user = CommonUser.object.get(commonUserID=request.session.get("commonUserID", 5))
+    isAdmin = False
+    if user.isVerified():
+        if user.VerifiedUser.isAdmin:
+            isAdmin = True
     if request.method == 'GET':
         return render(request, "View/forgetpwd.html",
-                      {"allTags": Tag.objects.filter(tagShowNum__gt=0).order_by("-tagShowNum"), "user": user, })
+                      {"allTags": Tag.objects.filter(tagShowNum__gt=0).order_by("-tagShowNum"), "user": user,
+                       "isAdmin":isAdmin})
     commonUserPassword = request.POST.get("commonUserPassword", "")
     commonUserID = request.POST.get("commonUserID", "")
     try:
@@ -111,8 +133,13 @@ def forgetPassword(request):
 
 def suChangePwd(request):
     user = CommonUser.object.get(commonUserID=request.session.get("commonUserID", 5))
+    isAdmin = False
+    if user.isVerified():
+        if user.VerifiedUser.isAdmin:
+            isAdmin = True
     return render(request, "View/suChangePwd.html",
-                  {"allTags": Tag.objects.filter(tagShowNum__gt=0).order_by("-tagShowNum"), "user": user, })
+                  {"allTags": Tag.objects.filter(tagShowNum__gt=0).order_by("-tagShowNum"), "user": user,
+                   "isAdmin":isAdmin})
 
 
 @transaction.atomic
@@ -130,6 +157,10 @@ def submitSuggestion(request):
         suggestion = request.POST.get("suggestionContent")
         suggestionObject = Suggestion.objects.create(content=suggestion, commonUser=commonUser)
         allTagsList = Tag.objects.values_list("tagName", flat=True)
+        isAdmin = False
+        if commonUser.isVerified():
+            if commonUser.VerifiedUser.isAdmin:
+                isAdmin = True
         suggestionObject.save()
         if check_contain_chinese(suggestion):
             for i in jieba.analyse.extract_tags(suggestion, topK=5, withWeight=True, allowPOS=('n', 'nr', 'ns')):
@@ -157,12 +188,12 @@ def submitSuggestion(request):
                         allTagsList = Tag.objects.values_list("tagName", flat=True)
         suggestionObject.save()
         return render(request, "View/submitSuggestionResult.html",
-                      {"state": 1, "suggestionID": suggestionObject.suggestionID, 'user': commonUser,
+                      {"state": 1, "suggestionID": suggestionObject.suggestionID, 'user': commonUser,"isAdmin":isAdmin,
                        "allTags": Tag.objects.filter(tagShowNum__gt=0).order_by("-tagShowNum")})
     except Exception as e:
         print(e)
         transaction.savepoint_rollback(save_tag)
-        return render(request, "View/submitSuggestionResult.html", {"state": 0, 'user': commonUser,
+        return render(request, "View/submitSuggestionResult.html", {"state": 0, 'user': commonUser,"isAdmin":isAdmin,
                                                                     "allTags": Tag.objects.filter(
                                                                         tagShowNum__gt=0).order_by("-tagShowNum")})
 
@@ -173,12 +204,17 @@ def searchSuggestion(request):
         commonUser = CommonUser.object.get(commonUserID=request.session.get("commonUserID", 5))
         suggestion = Suggestion.object.get(suggestionID=suggestionID)
         assert not suggestion.isDelete
+        isAdmin = False
+        if commonUser.isVerified():
+            if commonUser.VerifiedUser.isAdmin:
+                isAdmin = True
         if commonUser.isVerified():
             if suggestion.commonUser.area in commonUser.VerifiedUser.adminArea.all():
                 return HttpResponseRedirect(reverse("USFP:adminViewOneSuggestion", args=(suggestionID, 1)))
         return render(request, "View/searchSuggestion.html", {"suggestion": suggestion, "isAuthor": (
                 suggestion.commonUser.commonUserID == commonUser.commonUserID),
                                                               'user': commonUser,
+                                                              "isAdmin":isAdmin,
                                                               "allTags": Tag.objects.filter(tagShowNum__gt=0).order_by(
                                                                   "-tagShowNum")})
     except Exception as e:
@@ -235,7 +271,7 @@ def viewAllTags(request, num):
     begin = (num - int(math.ceil(10.0 / 2)))
     if begin < 1:
         begin = 1
-    end = begin + 10
+    end = begin + 9
     if end > tagsPager.num_pages:
         end = tagsPager.num_pages
     if end <= 10:

@@ -29,18 +29,21 @@ def userInfor(request):
 
 
 def userChange(request, changeType):
+    user = CommonUser.object.filter(commonUserID=request.session.get('commonUserID',5))
+    try:
+        isAdmin = user.VerifiedUser.isAdmin
+    except:
+        isAdmin = False
     if request.method == 'GET':
         if changeType == "EmailAdd" or changeType == "Password":
             return render(request, "CommonUser/userChangeInfor.html",
-                          {"changeType_js": json.dumps(changeType), "changeType_py": changeType,
+                          {"changeType_js": json.dumps(changeType), "changeType_py": changeType,"isAdmin":isAdmin,"user":user,
                            "commonUserID": request.session['commonUserID'],
                            "allTags": Tag.objects.filter(tagShowNum__gt=0).order_by("-tagShowNum")[1:11]})
         if changeType == "Image" or changeType == "Name":
             return render(request, "CommonUser/userChangeInfor.html",
-                          {"changeType_js": json.dumps(changeType), "changeType_py": changeType,
+                          {"changeType_js": json.dumps(changeType), "changeType_py": changeType,"isAdmin":isAdmin,"user":user,
                            "allTags": Tag.objects.filter(tagShowNum__gt=0).order_by("-tagShowNum")[1:11]})
-
-    user = CommonUser.object.filter(commonUserID=request.session['commonUserID'])
     if changeType == "EmailAdd":
         newEmailAdd = request.POST.get("newEmailAdd", "")
         user.update(commonUserEmail=newEmailAdd)
@@ -73,7 +76,12 @@ def userChange(request, changeType):
 
 
 def userSuChange(request, changeType):
-    return render(request, "CommonUser/userSuChange.html", {"changeType": changeType,
+    user = CommonUser.object.filter(commonUserID=request.session.get('commonUserID',5))
+    try:
+        isAdmin = user.VerifiedUser.isAdmin
+    except:
+        isAdmin = False
+    return render(request, "CommonUser/userSuChange.html", {"changeType": changeType,"isAdmin":isAdmin,"user":user,
                                                             "allTags": Tag.objects.filter(tagShowNum__gt=0).order_by(
                                                                 "-tagShowNum")[1:11]})
 
@@ -83,6 +91,10 @@ def userViewSuggestions(request, num):
         user = CommonUser.objects.get(commonUserID=request.session['commonUserID'])
     except KeyError:
         return HttpResponseRedirect(reverse("welcome", args=(1,)))
+    try:
+        isAdmin = user.VerifiedUser.isAdmin
+    except:
+        isAdmin = False
     suggestions = user.Suggestion.filter(visible=True).order_by("postTime")
     if int(num) < 1:
         suggestionNum = 1
@@ -133,6 +145,10 @@ def userDeleteSuggestions(request):
 def userViewOneSuggestion(request, suggestionID, num):
     try:
         user = CommonUser.object.get(commonUserID=request.session.get('commonUserID', 5))
+        try:
+            isAdmin = user.VerifiedUser.isAdmin
+        except:
+            isAdmin = False
         suggestion = Suggestion.object.get(suggestionID=suggestionID)
         if user.isVerified():
             if suggestion.commonUser.area in user.VerifiedUser.adminArea.all():
@@ -167,6 +183,7 @@ def userViewOneSuggestion(request, suggestionID, num):
                                                                          "isAuthor": (
                                                                                  suggestion.commonUser.commonUserID == user.commonUserID),
                                                                          'user': user, 'isVerified': user.isVerified(),
+                                                                         "isAdmin":isAdmin,
                                                                          'replySuggestionPrepageData': replySuggestionPrepageData,
                                                                          'replySuggestionPageList': replySuggestionPageList,
                                                                          "suggestion_tags": suggestion.tags.all(),
@@ -181,8 +198,13 @@ def userViewOneSuggestion(request, suggestionID, num):
 @transaction.atomic
 def userChangeSuggestion(request, suggestionID):
     user = CommonUser.object.get(commonUserID=request.session.get("commonUserID", 5))
+    try:
+        isAdmin = user.VerifiedUser.isAdmin
+    except:
+        isAdmin = False
     if request.method == "GET":
-        return render(request, "CommonUser/userChangeSuggestion.html", {'suggestionID': suggestionID, 'user': user})
+        return render(request, "CommonUser/userChangeSuggestion.html", {'suggestionID': suggestionID, 'user': user,
+                                                                        "isAdmin":isAdmin})
     suggestion = Suggestion.object.get(suggestionID=suggestionID)
     save_tag = transaction.savepoint()
     try:
@@ -224,7 +246,8 @@ def userChangeSuggestion(request, suggestionID):
         return render(request, "CommonUser/userSuChangeSuggestion.html", {'suggestionID': suggestion.suggestionID,
                                                                           "allTags": Tag.objects.filter(
                                                                               tagShowNum__gt=0).order_by("-tagShowNum")[
-                                                                                     1:11]})
+                                                                                     1:11],'user': user,
+                                                                        "isAdmin":isAdmin})
     except Exception as e:
         print(e)
         transaction.savepoint_rollback(save_tag)
