@@ -57,6 +57,8 @@ def userChange(request, changeType):
                 VerifiedUser.objects.create(isAdmin=True, commonUser=user[0])
             else:
                 VerifiedUser.objects.create(commonUser=user[0])
+        else:
+            user[0].VerifiedUser.delete()
     if changeType == "Image":
         photo = request.FILES.get("photo", "")
         photoName = str(request.session['commonUserID']) + "." + photo.name.split(".")[1]

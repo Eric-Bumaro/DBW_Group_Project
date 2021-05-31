@@ -61,7 +61,7 @@ def adminChangeInfor(request, changeType):
     if changeType == "Email":
         newEmailAdd = request.POST.get("newEmailAdd", "")
         admin.commonEmail = newEmailAdd
-        if not newEmailAdd.endwith("@mail.uic.edu.cn"):
+        if not newEmailAdd.endswith("@mail.uic.edu.cn"):
             admin.VerifiedUser.delete()
     if changeType == "Name":
         newName = request.POST.get("newName", "")
@@ -83,9 +83,8 @@ def adminChangeInfor(request, changeType):
 
 
 def adminSuChange(request, changeType):
-    admin = CommonUser.object.get(commonUserID=request.session["commonUserID"])
     try:
-        request.session["cID"]
+        admin = CommonUser.object.get(commonUserID=request.session["commonUserID"])
     except KeyError:
         return HttpResponseRedirect(reverse("welcome", args=(1,)))
     return render(request, "Admin/adminSuChange.html", {"user": admin, "changeType": changeType,"isAdmin":True,

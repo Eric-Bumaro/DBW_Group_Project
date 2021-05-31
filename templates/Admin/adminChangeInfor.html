@@ -87,7 +87,7 @@
     }
 
     function sendHideEmail() {
-        var newEmailAdd = document.getElementById("newEmailAdd").value.replace("@", "%40")
+        var newEmailAdd = document.getElementById("newEmailAdd").value
         $.ajax({
             type: "POST",
             url: '/sendCheckKey/',
