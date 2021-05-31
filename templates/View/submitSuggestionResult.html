@@ -14,13 +14,19 @@
         <div class="mdl-card__supporting-text">
             {% if state %}
             <div class="mdl-card__supporting-text">
-                <h4>You have Successfully submit the suggestion!!</h5>
-                    <h5>You can remember your suggestion ID to search it later:{{ suggestionID }}</h5>
+                You have Successfully submit the suggestion!!
+            </div>
+            <div class="mdl-card__actions mdl-card--border">
+                You can remember your suggestion ID to search it later:{{ suggestionID }}
             </div>
             {% else %}
             <div>
-                <h4>Fail to submit the suggestion!!</h4>
-                <h5>Please contact the admin to see why!</h5>
+                <div class="mdl-card__supporting-text">
+                    Fail to submit the suggestion!!
+                </div>
+                <div class="mdl-card__actions mdl-card--border">
+                    Please contact the admin to see why!
+                </div>
             </div>
             {% endif %}
         </div>
