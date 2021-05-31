@@ -23,6 +23,11 @@
     height: 176px;
     background: url('small_background.gif') center / cover;
   }
+  .demo-card-wide > .mdl-card__wordCloud {
+    color: #fff;
+    height: 176px;
+    background: url('wordCloud.jpg') center / cover;
+  }
   .demo-card-wide > .mdl-card__menu {
     color: #fff;
   }

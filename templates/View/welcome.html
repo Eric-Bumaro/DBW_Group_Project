@@ -15,12 +15,33 @@
                 也可以看看最近学校的近况呢！
             </div>
             <div class="mdl-card__actions mdl-card--border">
-                <a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect">
+                <a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect"
+                    onclick="toSubmitSuggestion()">
                     Get Started
                 </a>
             </div>
         </div>
     </div>
+
+    <div class="demo-container mdl-grid">
+        <div class="demo-card-wide mdl-card mdl-shadow--2dp " style="width: max-content; margin: auto;">
+            <div class="mdl-card__wordCloud">
+                <h2 class="mdl-card__title-text">wordCloud</h2>
+            </div>
+            <div class="mdl-card__supporting-text">
+                这里是根据大数据分析生成的词云图呀！
+                快来看看UIC同学们都在关心什么问题呀！
+                冲冲冲
+            </div>
+            <div class="mdl-card__actions mdl-card--border">
+                <a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect"
+                    onclick="toSubmitSuggestion()">
+                    Get Started
+                </a>
+            </div>
+        </div>
+    </div>
+
     <table class="demo-card-wide mdl-data-table mdl-js-data-table mdl-shadow--2dp"
         style="width: max-content; margin: auto;">
         <thead>
@@ -47,5 +68,6 @@
             </tr>
         </tbody>
     </table>
+
 </main>
 {% endblock %}
