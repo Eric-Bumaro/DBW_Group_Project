@@ -7,58 +7,31 @@
 
 {% block content %}
 
-    <div class="demo-container mdl-grid">
-        <div class="demo-card-wide mdl-card mdl-shadow--2dp " style="width: max-content; margin: auto;">
-            <div class="mdl-card__title">
+<div class="demo-container mdl-grid">
+    <div class="demo-card-wide mdl-card mdl-shadow--2dp " style="width: max-content; margin: auto;">
+        <div class="mdl-card__title">
             <h2 class="mdl-card__title-text">Welcome</h2>
-            </div>
-            <div class="mdl-card__supporting-text">
-                这里是UIC同学们的小家呀！
-                大家可以在这里便捷地反馈自己的意见！
-                也可以看看最近学校的近况呢！
-            </div>
-
-            <body>
-                {% ifnotequal user.commonUserID 5%}
-                    <p>userID:{{ user.commonUserID }}</p>
-                    <p>userName:{{ user.commonUserName }}</p>
-                    <p>userImage:<img src="/media/{{ user.commonUserImage }}"/></p>
-                    {% if isAdmin %}
-                        <p>
-                            <a href="{% url 'USFP:adminInfor' %}">View profile</a>
-                        </p>
-                    {% else %}
-                        <p>
-                            <a href="{% url 'USFP:userInfor' %}">View profile</a>
-                        </p>
-                    {% endif %}
-                        <p><a href="{% url 'welcome' 1 %}">Logout</a></p>
-                {% else %}
-                    <br><a href="{% url 'USFP:login' 0 %}">Login</a>
-                    <a href="/USFP/register/">Register</a>
-                {% endifnotequal %}
-                <br>
-                {% if suggestion.visible %}
-                    AuthorName:{{ suggestion.commonUser.commonUserName }}
-                    <br>
-                    Post time:{{ suggestion.postTime }}
-                    <br>
-                    <a href="{% url 'USFP:userViewOneSuggestion' suggestion.suggestionID 1%}">Click here to view</a>
-                {% else %}
-                    {% if isAuthor %}
-                        <h3>It is being checked by the admin! Please wait patiently!</h3>
-                        {% ifnotequal user.commonUserID 5%}
-                            <a href="{% url 'USFP:userChangeSuggestion' suggestion.suggestionID %}">Click here to change your content</a>
-                        {% endifnotequal %}
-                    {% else %}
-                        <h3>The suggestion is not available!</h3>
-                    {% endif %}
-                {% endif %}
-                <br>
-                <a href="/welcome/">Back to the Welcome Page</a>
-                </body>
         </div>
+        {% if suggestion.visible %}
+        <div class="mdl-card__supporting-text">
+            AuthorName:{{ suggestion.commonUser.commonUserName }}
+            Post time:{{ suggestion.postTime }}
+            <a href="{% url 'USFP:userViewOneSuggestion' suggestion.suggestionID 1%}">Click here to view</a>
+        </div>
+        {% else %}
+        <div class="mdl-card__supporting-text">
+            {% if isAuthor %}
+            <h3>It is being checked by the admin! Please wait patiently!</h3>
+            {% ifnotequal user.commonUserID 5%}
+            <a href="{% url 'USFP:userChangeSuggestion' suggestion.suggestionID %}">Click here to change your
+                content</a>
+            {% endifnotequal %}
+            {% else %}
+            <h3>The suggestion is not available!</h3>
+            {% endif %}
+        </div>
+        {% endif %}
     </div>
+</div>
 
 {% endblock %}
- 
