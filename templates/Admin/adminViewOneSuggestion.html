@@ -59,10 +59,6 @@
             <br>
             <a href="{% url 'USFP:userViewOneSuggestion' i.selfSuggestion.suggestionID 1 %}">Click to view</a>
             <br>
-            {% for i in suggestion_tags%}
-            <a href="{% url 'USFP:viewTag' i.tagID 1 %}">{{ i.tagName }}</a>
-            {% endfor %}
-            <br>
             <br><br>
             {% endfor %}
             <br>

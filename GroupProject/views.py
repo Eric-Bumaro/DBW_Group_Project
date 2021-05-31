@@ -77,6 +77,10 @@ def refreshDB(request):
     suggestionList = Suggestion.objects.filter(isDelete=True)
     deleteList = [userList, areaList, suggestionList]
     nowDate = datetime.now()
+    for i in suggestionList:
+        if i.isReplied:
+            for j in i.ReplySuggestion.all():
+                j.delete()
     for i in deleteList:
         for j in i:
             try:

@@ -94,11 +94,11 @@ function sendHideCommonUserCheck() {
             if (response != "1") {
                 commonUserKey = response
             } else {
-                document.getElementById("checkRes").innerHTML = "Wrong email!";
+                document.getElementById("checkResult").innerHTML = "Wrong email!";
             }
         }
     });
-    var sendCuKeybutton = document.getElementById("sendCuKeybutton")
+    var sendCuKeybutton = document.getElementById("sendCuKeyButton")
     for (let i = 0; i <= 60; i++) {
         (function (j) {
                 setTimeout(function () {
@@ -136,22 +136,22 @@ function sendHideAdminCheck() {
 }
 
 function check() {
-    var pwOne = document.getElementById("cuPassword").value;
+    var pwOne = document.getElementById("commonUserPassword").value;
     var pwTwo = document.getElementById("checkPassword").value;
     if (pwOne !== pwTwo) {
-        document.getElementById("checkRes").innerHTML = "Not the same password";
+        document.getElementById("checkResult").innerHTML = "Not the same password";
         return false;
     } else if (pwOne.length < 3) {
-        document.getElementById("checkRes").innerHTML = "The length of the password must be larger than three!";
+        document.getElementById("checkResult").innerHTML = "The length of the password must be larger than three!";
         return false;
     }
     if (document.getElementById("wantToBeAdmin").checked) {
         if (document.getElementById("adminKey").value !== adminkey) {
-            document.getElementById("checkRes").innerHTML = "Wrong check-key!";
+            document.getElementById("checkResult").innerHTML = "Wrong check-key!";
             return false;
         }
         if (document.getElementById("commonUserKey").value !== commonUserKey) {
-            document.getElementById("checkRes").innerHTML = "Wrong check-key!";
+            document.getElementById("checkResult").innerHTML = "Wrong check-key!";
             return false;
         }
     }
