@@ -7,107 +7,112 @@
 
 {% block content %}
 
-    <div style="display: grid; justify-items: center;">
-        <h1>You can view your suggestions here:</h1>
-        <button onclick="showChoose()" id="tochooseButton">Click to choose</button>
-        <button onclick="toOperate()" class="ChooseFunction" style="display: none">Operate</button>
-        <button onclick="allChooseToDelete()" class="ChooseFunction" style="display: none">Select all to delete</button>
-        <button onclick="allChooseToHide()" class="ChooseFunction" style="display: none">Select all to hide</button>
-        <button onclick="allChooseToShow()" class="ChooseFunction" style="display: none">Select all to show</button>
-        <button onclick="cancel()" class="ChooseFunction" style="display: none">Cancel</button>
-        <table border="1" cellspacing="0">
-            <tr>
-                <th class="ChooseFunction" style="display: none">
-                    Choose To Delete
-                </th>
-                <th>
-                    Count
-                </th>
-                <th>
-                    Suggestion ID
-                </th>
-                <th>
-                    Post Time
-                </th>
-                <th>
-                    Last Modify Time
-                </th>
-                <th>
-                    View
-                </th>
-                <th>
-                    Visible
-                </th>
-                <th class="ChooseFunction" style="display: none">
-                    Choose To Hide
-                </th>
-                <th class="ChooseFunction" style="display: none">
-                    Choose To Show
-                </th>
-            </tr>
-            {% for i in prepageData %}
-                <tr>
-                    <td class="ChooseFunction" style="display: none">
-                        Delete it<input type="checkbox" class="ChooseToDeleteFunction" value={{ i.suggestionID }} onclick="oneChooseToDelete(this)">
-                    </td>
-                    <td>
-                        {{ forloop.counter }}
-                    </td>
-                    <td>
-                        {{ i.suggestionID }}
-                    </td>
-                    <td>
-                        {{ i.postTime }}
-                    </td>
-                    <td>
-                        {{ i.modifyTime }}
-                    </td>
-                    <td>
-                        <a href="{% url 'USFP:adminViewOneSuggestion' i.suggestionID 1%}">View the suggestion</a>
-                    </td>
-                    <td>
-                        {{ i.visible }}
-                    </td>
-                    <td class="ChooseFunction" style="display: none">
-                        {% if i.visible %}
-                            Hide the suggestion<input type="checkbox" class="ChooseToHideFunction" value={{ i.suggestionID }} onclick="oneChooseToHide(this)">
-                        {% endif %}
-                    </td>
-                    <td class="ChooseFunction" style="display: none">
-                        {% if not i.visible %}
-                            Show it to the public<input type="checkbox" class="ChooseToShowFunction" value={{ i.suggestionID }} onclick="oneChooseToShow(this)">
-                        {% endif %}
-                    </td>
-                </tr>
-            {% endfor %}
-        </table>
-        <br>
+<div style="display: grid; justify-items: center;">
+    <h1>You can view your suggestions here:</h1>
+    <button onclick="showChoose()" id="tochooseButton">Click to choose</button>
+    <button onclick="toOperate()" class="ChooseFunction" style="display: none">Operate</button>
+    <button onclick="allChooseToDelete()" class="ChooseFunction" style="display: none">Select all to delete</button>
+    <button onclick="allChooseToHide()" class="ChooseFunction" style="display: none">Select all to hide</button>
+    <button onclick="allChooseToShow()" class="ChooseFunction" style="display: none">Select all to show</button>
+    <button onclick="cancel()" class="ChooseFunction" style="display: none">Cancel</button>
+    <table border="1" cellspacing="0">
+        <tr>
+            <th class="ChooseFunction" style="display: none">
+                Choose To Delete
+            </th>
+            <th>
+                Count
+            </th>
+            <th>
+                Suggestion ID
+            </th>
+            <th>
+                Post Time
+            </th>
+            <th>
+                Last Modify Time
+            </th>
+            <th>
+                View
+            </th>
+            <th>
+                Visible
+            </th>
+            <th class="ChooseFunction" style="display: none">
+                Choose To Hide
+            </th>
+            <th class="ChooseFunction" style="display: none">
+                Choose To Show
+            </th>
+        </tr>
+        {% for i in prepageData %}
+        <tr>
+            <td class="ChooseFunction" style="display: none">
+                Delete it<input type="checkbox" class="ChooseToDeleteFunction" value={{ i.suggestionID }}
+                    onclick="oneChooseToDelete(this)">
+            </td>
+            <td>
+                {{ forloop.counter }}
+            </td>
+            <td>
+                {{ i.suggestionID }}
+            </td>
+            <td>
+                {{ i.postTime }}
+            </td>
+            <td>
+                {{ i.modifyTime }}
+            </td>
+            <td>
+                <a href="{% url 'USFP:adminViewOneSuggestion' i.suggestionID 1%}">View the suggestion</a>
+            </td>
+            <td>
+                {{ i.visible }}
+            </td>
+            <td class="ChooseFunction" style="display: none">
+                {% if i.visible %}
+                Hide the suggestion<input type="checkbox" class="ChooseToHideFunction" value={{ i.suggestionID }}
+                    onclick="oneChooseToHide(this)">
+                {% endif %}
+            </td>
+            <td class="ChooseFunction" style="display: none">
+                {% if not i.visible %}
+                Show it to the public<input type="checkbox" class="ChooseToShowFunction" value={{ i.suggestionID }}
+                    onclick="oneChooseToShow(this)">
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+    <br>
+    <div style="display: flex; justify-content: center;">
         {% if prepageData.has_previous %}
-            <a href="{% url 'USFP:adminViewUserSuggestions' commonUserID prepageData.previous_page_number  %}">Last Page</a>
+        <a href="{% url 'USFP:adminViewUserSuggestions' commonUserID prepageData.previous_page_number  %}">Last Page</a>
         {% endif %}&emsp;
-        {% for n in  pageList %}
-            <a href="{% url 'USFP:adminViewUserSuggestions' commonUserID n  %}">{{ n }}</a> &emsp;
+        {% for n in pageList %}
+        <a href="{% url 'USFP:adminViewUserSuggestions' commonUserID n  %}">{{ n }}</a> &emsp;
         {% endfor %}
         {% if prepageData.has_next %}
-            <a href="{% url 'USFP:adminViewUserSuggestions' commonUserID prepageData.next_page_number  %}">Next Page</a>
+        <a href="{% url 'USFP:adminViewUserSuggestions' commonUserID prepageData.next_page_number  %}">Next Page</a>
         {% endif %}&emsp;
         <br>
         <a href="{% url 'USFP:adminViewUser' commonUserID%}">Back</a>
     </div>
+</div>
 
 {% endblock %}
- 
+
 
 
 {% block script %}
 <script>
     var nodeList = document.getElementsByClassName("ChooseFunction");
-    var nodeToDeleteList=document.getElementsByClassName("ChooseToDeleteFunction");
-    var nodeToShowList=document.getElementsByClassName("ChooseToShowFunction");
-    var nodeToHideList=document.getElementsByClassName("ChooseToHideFunction");
+    var nodeToDeleteList = document.getElementsByClassName("ChooseToDeleteFunction");
+    var nodeToShowList = document.getElementsByClassName("ChooseToShowFunction");
+    var nodeToHideList = document.getElementsByClassName("ChooseToHideFunction");
     var listToDelete = "";
-    var listToHide="";
-    var listToShow="";
+    var listToHide = "";
+    var listToShow = "";
     function showChoose() {
         for (let i = 0; i < nodeList.length; i++) {
             nodeList[i].style.display = "block";
@@ -133,8 +138,8 @@
             url: "{% url 'USFP:adminOperateSuggestions' %}",
             data: {
                 csrfmiddlewaretoken: '{{ csrf_token }}',
-                listToDelete:listToDelete,
-                operateType:"delete",
+                listToDelete: listToDelete,
+                operateType: "delete",
             },
             success: function (response) {
                 window.location.reload();
@@ -145,8 +150,8 @@
             url: "{% url 'USFP:adminOperateSuggestions' %}",
             data: {
                 csrfmiddlewaretoken: '{{ csrf_token }}',
-                listToHide:listToHide,
-                operateType:"hide",
+                listToHide: listToHide,
+                operateType: "hide",
             },
             success: function (response) {
                 window.location.reload();
@@ -157,8 +162,8 @@
             url: "{% url 'USFP:adminOperateSuggestions' %}",
             data: {
                 csrfmiddlewaretoken: '{{ csrf_token }}',
-                listToShow:listToShow,
-                operateType:"show",
+                listToShow: listToShow,
+                operateType: "show",
             },
             success: function (response) {
                 window.location.reload();
@@ -168,14 +173,14 @@
 
     function cancel() {
         listToDelete = "";
-        listToHide="";
-        listToShow="";
+        listToHide = "";
+        listToShow = "";
         for (let i = 0; i < nodeList.length; i++) {
             nodeList[i].style.display = "none";
         }
         for (let i = 0; i < nodeToHideList.length; i++) {
             nodeToHideList[i].style.display = "none";
-            nodeToHideList[i].checked=false;
+            nodeToHideList[i].checked = false;
         }
         for (let i = 0; i < nodeToShowList.length; i++) {
             nodeToShowList[i].style.display = "none";
@@ -183,7 +188,7 @@
         }
         for (let i = 0; i < nodeToDeleteList.length; i++) {
             nodeToDeleteList[i].style.display = "none";
-            nodeToDeleteList[i].checked=false
+            nodeToDeleteList[i].checked = false
         }
         document.getElementById("toChooseButton").style.display = "block";
     }
@@ -193,7 +198,7 @@
         for (let i = 0; i < nodeToDeleteList.length; i++) {
             nodeToDeleteList[i].checked = true;
             if (nodeToDeleteList[i].value !== undefined && !isNaN(nodeToDeleteList[i].value)) {
-                listToDelete += nodeToDeleteList[i].value+"-";
+                listToDelete += nodeToDeleteList[i].value + "-";
             }
         }
     }
@@ -203,17 +208,17 @@
         for (let i = 0; i < nodeToHideList.length; i++) {
             nodeToHideList[i].checked = true;
             if (nodeToHideList[i].value !== undefined && !isNaN(nodeToHideList[i].value)) {
-                listToHide += nodeToHideList[i].value+"-";
+                listToHide += nodeToHideList[i].value + "-";
             }
         }
     }
 
-    function allChooseToShow(){
-        listToShow="";
+    function allChooseToShow() {
+        listToShow = "";
         for (let i = 0; i < nodeToShowList.length; i++) {
             nodeToShowList[i].checked = true;
             if (nodeToShowList[i].value !== undefined && !isNaN(nodeToShowList[i].value)) {
-                listToShow += nodeToShowList[i].value+"-";
+                listToShow += nodeToShowList[i].value + "-";
             }
         }
     }
