@@ -14,8 +14,8 @@
         </div>
         {% if suggestion.visible %}
         <div class="mdl-card__supporting-text">
-            AuthorName:{{ suggestion.commonUser.commonUserName }}
-            Post time:{{ suggestion.postTime }}
+            <p>AuthorName:{{ suggestion.commonUser.commonUserName }}</p>
+            <p>Post time:{{ suggestion.postTime }}</p>
             <br>
             <a href="{% url 'USFP:userViewOneSuggestion' suggestion.suggestionID 1%}">Click here to view</a>
         </div>

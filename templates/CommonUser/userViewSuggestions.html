@@ -13,72 +13,68 @@
             <h2 class="mdl-card__title-text">Welcome</h2>
             </div>
             <div class="mdl-card__supporting-text">
-                这里是UIC同学们的小家呀！
-                大家可以在这里便捷地反馈自己的意见！
-                也可以看看最近学校的近况呢！
+                <h3>You can view your suggestions here:</h3>
             </div>
-
-            <div style="display: grid; justify-items: center;">
-                <h1>You can view your suggestions here:</h1>
-                <button onclick="showChoose()" id="tochooseButton">Click to choose</button>
-                <button onclick="allChoose()" class="ChooseFunction" style="display: none">Select all</button>
-                <button onclick="toDelete()" class="ChooseFunction" style="display: none">Delete</button>
-                <button onclick="cancelDelete()" class="ChooseFunction" style="display: none">Cancel</button>
-                <table border="1" cellspacing="0">
+        </div>
+        <div style="display: grid; justify-items: center;">
+            <button onclick="showChoose()" id="tochooseButton">Click to choose</button>
+            <button onclick="allChoose()" class="ChooseFunction" style="display: none">Select all</button>
+            <button onclick="toDelete()" class="ChooseFunction" style="display: none">Delete</button>
+            <button onclick="cancelDelete()" class="ChooseFunction" style="display: none">Cancel</button>
+            <table border="1" cellspacing="0">
+                <tr>
+                    <th>
+                        Count
+                    </th>
+                    <th>
+                        Suggestion ID
+                    </th>
+                    <th>
+                        PostTime
+                    </th>
+                    <th>
+                        View
+                    </th>
+                    <th class="ChooseFunction" style="display: none">
+                        To choose
+                    </th>
+                </tr>
+                {% for i in suggestionPrepageData %}
                     <tr>
-                        <th>
-                            Count
-                        </th>
-                        <th>
-                            Suggestion ID
-                        </th>
-                        <th>
-                            PostTime
-                        </th>
-                        <th>
-                            View
-                        </th>
-                        <th class="ChooseFunction" style="display: none">
-                            To choose
-                        </th>
+                        <td>
+                            {{ forloop.counter }}
+                        </td>
+                        <td>
+                            {{ i.suggestionID }}
+                        </td>
+                        <td>
+                            {{ i.postTime }}
+                        </td>
+                        <td>
+                            <a href="{% url 'USFP:userViewOneSuggestion' i.suggestionID 1 %}">View the suggestion</a>
+                        </td>
+                        <td class="ChooseFunction" style="display: none">
+                            <input type="checkbox" class="ChooseFunction" value={{ i.suggestionID }} onclick="onechoose(this)">
+                        </td>
                     </tr>
-                    {% for i in suggestionPrepageData %}
-                        <tr>
-                            <td>
-                                {{ forloop.counter }}
-                            </td>
-                            <td>
-                                {{ i.suggestionID }}
-                            </td>
-                            <td>
-                                {{ i.postTime }}
-                            </td>
-                            <td>
-                                <a href="{% url 'USFP:userViewOneSuggestion' i.suggestionID 1 %}">View the suggestion</a>
-                            </td>
-                            <td class="ChooseFunction" style="display: none">
-                                <input type="checkbox" class="ChooseFunction" value={{ i.suggestionID }} onclick="onechoose(this)">
-                            </td>
-                        </tr>
-                    {% endfor %}
-                    </table>
-                    <br>
-                    {% if suggestionPrepageData.has_previous %}
-                        <a href="{% url 'USFP:userViewSuggestions' suggestionPrepageData.previous_page_number  %}">Last Page</a>
-                    {% endif %}&emsp;
-                    {% for n in  suggestionPageList %}
-                        <a href="{% url 'USFP:userViewSuggestions' n  %}">{{ n }}</a> &emsp;
-                    {% endfor %}
-                    {% if suggestionPrepageData.has_next %}
-                        <a href="{% url 'USFP:userViewSuggestions' suggestionPrepageData.next_page_number  %}">Next Page</a>
-                    {% endif %}&emsp;
-                    <br>
-                    {% if isAdmin %}
-                    <a href="{% url 'USFP:adminInfor' %}">Back</a>
-                    {% else %}
-                    <a href="{% url 'USFP:userInfor' %}">Back</a>
-                    {% endif %}
-            </div>
+                {% endfor %}
+                </table>
+                <br>
+                {% if suggestionPrepageData.has_previous %}
+                    <a href="{% url 'USFP:userViewSuggestions' suggestionPrepageData.previous_page_number  %}">Last Page</a>
+                {% endif %}&emsp;
+                {% for n in  suggestionPageList %}
+                    <a href="{% url 'USFP:userViewSuggestions' n  %}">{{ n }}</a> &emsp;
+                {% endfor %}
+                {% if suggestionPrepageData.has_next %}
+                    <a href="{% url 'USFP:userViewSuggestions' suggestionPrepageData.next_page_number  %}">Next Page</a>
+                {% endif %}&emsp;
+                <br>
+                {% if isAdmin %}
+                <a href="{% url 'USFP:adminInfor' %}">Back</a>
+                {% else %}
+                <a href="{% url 'USFP:userInfor' %}">Back</a>
+                {% endif %}
         </div>
     </div>
 
