@@ -84,6 +84,7 @@
 
 
             {% ifnotequal user.commonUserID 5 %}
+                {% if isVerified %}
             <br>
             <br>
             <br>    
@@ -97,8 +98,11 @@
                     </div>
                 </form>
             </div>
+                {% else %}
+                    <h4>You must verify to comment!</h4>
+                {% endif %}
             {% else %}
-            <h4>You can login to comment!</h4>
+            <h4>You must login to comment!</h4>
             {% endifnotequal %}
 
             {% else %}
