@@ -86,7 +86,7 @@
             {% ifnotequal user.commonUserID 5 %}
             <br>
             <br>
-            <br>
+            <br>    
             <p>You can comment the suggestion here:</p>
             <div style="display: grid; justify-items: center;">
                 <form action="{% url 'USFP:userSubmitComment' suggestion.suggestionID %}" method="post">
