@@ -97,8 +97,7 @@
     }
 
     function toDelete() {
-        if ({{ isAdmin | safe }
-    }) {
+        if ("{{ isAdmin | safe }}"!="False") {
         $.ajax({
             type: "POST",
             url: "{% url 'USFP:adminOperateSuggestions' %}",

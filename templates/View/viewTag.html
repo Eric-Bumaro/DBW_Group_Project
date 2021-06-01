@@ -16,19 +16,6 @@
             大家可以在这里便捷地反馈自己的意见！
             也可以看看最近学校的近况呢！
         </div>
-
-        <div style="margin: 39px; margin-top:0; background-color:whitesmoke; padding: 10px; border-radius: 20px; 
-            box-shadow: 5px 5px rgb(0,0,0,20%);">
-            {{ i.selfSuggestion.commonUser.commonUserName }}:
-            <br>
-            Post time:{{ i.selfSuggestion.postTime }}
-            <br>
-            Suggestion ID:{{ i.selfSuggestion.suggestionID }}
-            <p>{{ i.selfSuggestion.content }}</p>
-        </div>
-
-
-
         <h4>The suggestion with tag:{{ tag.tagName }}</h4>
         {% for i in suggestionPrepageData %}
         <div style="margin: 39px; margin-top:0; background-color:whitesmoke; padding: 10px; border-radius: 20px; 
