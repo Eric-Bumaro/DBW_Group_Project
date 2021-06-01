@@ -84,11 +84,13 @@
 
 
             {% ifnotequal user.commonUserID 5 %}
+                {% if isVerified %}
             <br>
             <br>
             <br>
             <p>You can comment the suggestion here:</p>
             <div style="display: grid; justify-items: center;"></div>
+<<<<<<< HEAD
             <form action="{% url 'USFP:userSubmitComment' suggestion.suggestionID %}" method="post">
                 {% csrf_token %}
                 <textarea rows="10" cols="30" name="replySuggestionContent"></textarea>
@@ -96,6 +98,36 @@
                     <input type="submit" value="Submit">
                 </div>
             </form>
+=======
+                <form action="{% url 'USFP:userSubmitComment' suggestion.suggestionID %}" method="post">
+                    {% csrf_token %}
+                    <textarea rows="10" cols="30" name="replySuggestionContent"></textarea>
+                    <div style="display: grid; justify-items: center;">
+                        <input type="submit" value="Submit">
+                    </div>
+                </form>
+            </div>
+                {% else %}
+                    <h4>You must verify to comment!</h4>
+                {% endif %}
+            {% else %}
+            <h4>You must login to comment!</h4>
+            {% endifnotequal %}
+
+            {% else %}
+            {% ifnotequal user.commonUserID 5%}
+            {% if isAuthor%}
+            <h3>It is being checked by the admin! Please wait patiently!</h3>
+            <a href="{% url 'USFP:userChangeSuggestion' suggestion.suggestionID %}">Click here to change your
+                content</a>
+            {% else %}
+            <h3>The suggestion is not available!</h3>
+            {% endif %}
+            {% else %}
+            <h3>The suggestion is not available!</h3>
+            {% endifnotequal %}
+            {% endif %}
+>>>>>>> c489cf6ba603f19db909447fa25810db1728865c
         </div>
         {% else %}
         <h4>You can login to comment!</h4>

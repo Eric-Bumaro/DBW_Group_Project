@@ -7,6 +7,7 @@
 
 {% block content %}
 
+<<<<<<< HEAD
 <div style="display: grid; justify-items: center;">
     <h1>You can view your suggestions here:</h1>
     <button onclick="showChoose()" id="tochooseButton">Click to choose</button>
@@ -86,6 +87,84 @@
     </table>
     <br>
     <div style="display: flex; justify-content: center;">
+=======
+    <div style="display: grid; justify-items: center;">
+        <h1>You can view your suggestions here:</h1>
+        <button onclick="showChoose()" id="tochooseButton">Click to choose</button>
+        <button onclick="toOperate()" class="ChooseFunction" style="display: none">Operate</button>
+        <button onclick="allChooseToDelete()" class="ChooseFunction" style="display: none">Select all to delete</button>
+        <button onclick="allChooseToHide()" class="ChooseFunction" style="display: none">Select all to hide</button>
+        <button onclick="allChooseToShow()" class="ChooseFunction" style="display: none">Select all to show</button>
+        <button onclick="cancel()" class="ChooseFunction" style="display: none">Cancel</button>
+        <table border="1" cellspacing="0">
+            <tr>
+                <th class="ChooseFunction" style="display: none">
+                    Choose To Delete
+                </th>
+                <th>
+                    Count
+                </th>
+                <th>
+                    Suggestion ID
+                </th>
+                <th>
+                    Post Time
+                </th>
+                <th>
+                    Last Modify Time
+                </th>
+                <th>
+                    View
+                </th>
+                <th>
+                    Visible
+                </th>
+                <th class="ChooseFunction" style="display: none">
+                    Choose To Hide
+                </th>
+                <th class="ChooseFunction" style="display: none">
+                    Choose To Show
+                </th>
+            </tr>
+            {% for i in prepageData %}
+                <tr>
+                    <td class="ChooseFunction" style="display: none">
+                        Delete it<input type="checkbox" class="ChooseToDeleteFunction" value={{ i.suggestionID }} onclick="oneChooseToDelete(this)">
+                    </td>
+                    <td>
+                        {{ forloop.counter }}
+                    </td>
+                    <td>
+                        {{ i.suggestionID }}
+                    </td>
+                    <td>
+                        {{ i.postTime }}
+                    </td>
+                    <td>
+                        {{ i.modifyTime }}
+                    </td>
+                    <td>
+                        <a href="{% url 'USFP:adminViewOneSuggestion' i.suggestionID 1%}">View the suggestion</a>
+                    </td>
+                    <td>
+                        {{ i.visible }}
+                    </td>
+                    <td class="ChooseFunction" style="display: none">
+                        {% if i.visible %}
+                            Hide the suggestion<input type="checkbox" class="ChooseToHideFunction" value={{ i.suggestionID }} onclick="oneChooseToHide(this)">
+                        {% endif %}
+                    </td>
+                    <td class="ChooseFunction" style="display: none">
+                        {% if not i.visible %}
+                            Show it to the public<input type="checkbox" class="ChooseToShowFunction" value={{ i.suggestionID }} onclick="oneChooseToShow(this)">
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endfor %}
+        </table>
+        <br>
+        <div style="display: flex; justify-content: center;">
+>>>>>>> c489cf6ba603f19db909447fa25810db1728865c
         {% if prepageData.has_previous %}
         <a href="{% url 'USFP:adminViewUserSuggestions' commonUserID prepageData.previous_page_number  %}">Last Page</a>
         {% endif %}&emsp;
@@ -96,7 +175,8 @@
         <a href="{% url 'USFP:adminViewUserSuggestions' commonUserID prepageData.next_page_number  %}">Next Page</a>
         {% endif %}&emsp;
         <br>
-        <a href="{% url 'USFP:adminViewUser' commonUserID%}">Back</a>
+        </div>
+     <a href="{% url 'USFP:adminViewUser' commonUserID%}">Back</a>
     </div>
 </div>
 
