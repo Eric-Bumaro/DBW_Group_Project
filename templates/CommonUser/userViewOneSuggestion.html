@@ -23,10 +23,10 @@
                 <br>
                 Suggestion ID:{{ suggestion.suggestionID }}
                 <br>
-                <p style="margin: 39px; margin-top:0; background-color:whitesmoke; padding: 10px; border-radius: 20px; 
-                box-shadow: 5px 5px rgb(0,0,0,20%);">{{ suggestion.content }}</p>
-                {% endif %}
             </div>
+            <p style="margin: 39px; margin-top:0; background-color:whitesmoke; padding: 10px; border-radius: 20px;
+                box-shadow: 5px 5px rgb(0,0,0,20%);">{{ suggestion.content }}</p>
+
 
             {% for i in suggestion_tags%}
             <a href="{% url 'USFP:viewTag' i.tagID 1 %}">{{ i.tagName }}</a>
@@ -51,7 +51,7 @@
                 <br>
                 Suggestion ID:{{ i.selfSuggestion.suggestionID }}
                 <br>
-                <p style="margin: 39px; margin-top:0; background-color:whitesmoke; padding: 10px; border-radius: 20px; 
+                <p style="margin: 39px; margin-top:0; background-color:whitesmoke; padding: 10px; border-radius: 20px;
                 box-shadow: 5px 5px rgb(0,0,0,20%);">{{ i.selfSuggestion.content }}</p>
                 <a href="{% url 'USFP:userViewOneSuggestion' i.selfSuggestion.suggestionID 1 %}">Click to view</a>
                 <br>
@@ -90,15 +90,6 @@
             <br>
             <p>You can comment the suggestion here:</p>
             <div style="display: grid; justify-items: center;"></div>
-<<<<<<< HEAD
-            <form action="{% url 'USFP:userSubmitComment' suggestion.suggestionID %}" method="post">
-                {% csrf_token %}
-                <textarea rows="10" cols="30" name="replySuggestionContent"></textarea>
-                <div style="display: grid; justify-items: center;">
-                    <input type="submit" value="Submit">
-                </div>
-            </form>
-=======
                 <form action="{% url 'USFP:userSubmitComment' suggestion.suggestionID %}" method="post">
                     {% csrf_token %}
                     <textarea rows="10" cols="30" name="replySuggestionContent"></textarea>
@@ -127,27 +118,14 @@
             <h3>The suggestion is not available!</h3>
             {% endifnotequal %}
             {% endif %}
->>>>>>> c489cf6ba603f19db909447fa25810db1728865c
         </div>
-        {% else %}
-        <h4>You can login to comment!</h4>
-        {% endifnotequal %}
-
-        {% else %}
-        {% ifnotequal user.commonUserID 5%}
-        {% if isAuthor%}
-        <h3>It is being checked by the admin! Please wait patiently!</h3>
-        <a href="{% url 'USFP:userChangeSuggestion' suggestion.suggestionID %}">Click here to change your
-            content</a>
-        {% else %}
-        <h3>The suggestion is not available!</h3>
-        {% endif %}
-        {% else %}
-        <h3>The suggestion is not available!</h3>
-        {% endifnotequal %}
-        {% endif %}
     </div>
 </div>
-</div>
+
+{% endblock %}
+
+
+
+{% block script %}
 
 {% endblock %}
