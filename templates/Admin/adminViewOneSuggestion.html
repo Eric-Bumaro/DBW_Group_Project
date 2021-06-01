@@ -39,51 +39,67 @@
             <a href="{% url 'USFP:userChangeSuggestion' suggestion.suggestionID%}">Click to change</a>
             {% endif %}
 
-
-            {% for i in suggestion_tags%}
-            <a href="{% url 'USFP:viewTag' i.tagID 1 %}">{{ i.tagName }}</a>
-            {% endfor %}
+            <div>
+                {% for i in suggestion_tags%}
+                <a href="{% url 'USFP:viewTag' i.tagID 1 %}">{{ i.tagName }}</a>
+                {% endfor %}
+            </div>
 
 
             <br>
             <br>
+
+
 
             {% if isReplied %}
             {% for i in replySuggestionPrepageData %}
-            {{ i.selfSuggestion.commonUser.commonUserName }}:
+            <div style="display: grid; justify-items: center;">
+                <div style="margin: 39px; margin-top:0; background-color:whitesmoke; padding: 10px; border-radius: 20px; 
+                box-shadow: 5px 5px rgb(0,0,0,20%);">
+                    {{ i.selfSuggestion.commonUser.commonUserName }}:
+                    <br>
+                    Post time:{{ i.selfSuggestion.postTime }}
+                    <br>
+                    Suggestion ID:{{ i.selfSuggestion.suggestionID }}
+                    <p>{{ i.selfSuggestion.content }}</p>
+                </div>
+
+                <a href="{% url 'USFP:userViewOneSuggestion' i.selfSuggestion.suggestionID 1 %}">Click to view</a>
+                <br>
+                <br>
+                {% endfor %}
+                <br>
+
+                <div>
+
+                    {% if replySuggestionPrepageData.has_previous %}
+
+                    <a href="{% url 'USFP:adminViewOneSuggestion' suggestion.suggestion IsuggestionPrepageData.previous_page_number  %}">
+                        Last Page</a>
+                    {% endif %}
+                    {% for n in replySuggestionPageList %}
+                    <a href="{% url 'USFP:adminViewOneSuggestion' suggestion.suggestionID n  %}">{{ n }}</a>
+                    {% endfor %}
+                    {% if replySuggestionPrepageData.has_next %}
+                    <a
+                        href="{% url 'USFP:adminViewOneSuggestion' suggestion.suggestionID suggestionPrepageData.next_page_number  %}">Next
+                        Page</a>
+                    {% endif %}
+                    {% else %}
+                    <h5>It has not been replied!</h5>
+
+                    {% endif %}
+                </div>
+            </div>
             <br>
-            {{ i.selfSuggestion.content }}
             <br>
-            Post time:{{ i.selfSuggestion.postTime }}&emsp;Suggestion ID:{{ i.selfSuggestion.suggestionID }}
-            <br>
-            <a href="{% url 'USFP:userViewOneSuggestion' i.selfSuggestion.suggestionID 1 %}">Click to view</a>
-            <br>
-            <br><br>
-            {% endfor %}
-            <br>
-            {% if replySuggestionPrepageData.has_previous %}
-            <a
-                href="{% url 'USFP:adminViewOneSuggestion' suggestion.suggestion IsuggestionPrepageData.previous_page_number  %}">Last
-                Page</a>
-            {% endif %}&emsp;
-            {% for n in replySuggestionPageList %}
-            <a href="{% url 'USFP:adminViewOneSuggestion' suggestion.suggestionID n  %}">{{ n }}</a> &emsp;
-            {% endfor %}
-            {% if replySuggestionPrepageData.has_next %}
-            <a
-                href="{% url 'USFP:adminViewOneSuggestion' suggestion.suggestionID suggestionPrepageData.next_page_number  %}">Next
-                Page</a>
-            {% endif %}&emsp;
-            {% else %}
-            <h5>It has not been replied!</h5>
-            {% endif %}
 
             {% if isManagedBy %}
             <div style="display: grid; justify-items: center;">
                 <form action="{% url 'USFP:adminSubmitComment' suggestion.suggestionID %}" method="post">
                     {% csrf_token %}
-                    Comment here:
-                    <br>
+                    <p style="display: grid; justify-items: center;">Comment here:</p>
+                    
                     <textarea name="comment" rows="10" cols="30"></textarea>
                     <br>
                     <input type="radio" name="choice" value=1 onclick="toChoose(this)"><label for="deleteRadio">Delete
