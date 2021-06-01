@@ -82,6 +82,7 @@
             {% endfor %}
         </table>
         <br>
+        <div style="display: flex; justify-content: center;">
         {% if prepageData.has_previous %}
             <a href="{% url 'USFP:adminViewUserSuggestions' commonUserID prepageData.previous_page_number  %}">Last Page</a>
         {% endif %}&emsp;
@@ -93,6 +94,7 @@
         {% endif %}&emsp;
         <br>
         <a href="{% url 'USFP:adminViewUser' commonUserID%}">Back</a>
+        </div>
     </div>
 
 {% endblock %}
