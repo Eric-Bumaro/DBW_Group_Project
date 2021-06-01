@@ -56,13 +56,13 @@
     var userKey;
 
     function sendHidePassword() {
-        var commonUserID = "{{commonUserID|safe}}"
+        var commonUserID = {{commonUserID|safe}}
         $.ajax({
             type: "POST",
             url: "/getUserKey/",
             data: {
                 csrfmiddlewaretoken: '{{ csrf_token }}',
-                cuID:commonUserID,
+                commonUserID:commonUserID,
             },
             success: function (response) {
                 if (userKey == "1") {
@@ -129,14 +129,14 @@
                 document.getElementById("errormsg").innerHTML = "The length of the password must be larger than three!";
                 return false;
             }
-            if (document.forms["adminChangeForm"]["userKey"].value != userKey) {
+            if (document.getElementById("userKey").value != userKey) {
                 document.getElementById("errormsg").innerHTML = "Wrong check-key!";
                 return false;
             }
         }
         if ({{ changeType_js|safe }}=="Email")
         {
-            if (document.forms["adminChangeForm"]["userKey"].value != userKey) {
+            if (document.getElementById("userKey").value != userKey) {
                 document.getElementById("errormsg").innerHTML = "Wrong check-key!";
                 return false;
             }

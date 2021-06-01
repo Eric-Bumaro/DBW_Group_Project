@@ -131,9 +131,11 @@
         }
     });
     if (userKey == "1") {
+        userkey=""
         document.getElementById("errormsg").innerHTML = "Please choose your user type!";
     }
     if (userKey == "2") {
+        userkey=""
         document.getElementById("errormsg").innerHTML = "Wrong ID!";
     }
     var sendKeyButton = document.getElementById("sendKeyButton")
@@ -164,6 +166,7 @@
             }
         });
         if (userKey == 1) {
+            userKey=""
             document.getElementById("errormsg").innerHTML = "Invalid email address!";
         }
         var sendKeyButton = document.getElementById("sendKeyButton")
@@ -181,8 +184,7 @@
     }
 
     function check() {
-        if ({{ changeType_js | safe}}== "Password")
-    {
+        if ({{ changeType_js | safe}}== "Password"){
         var pwOne = document.forms["userChaForm"]["password"].value;
         var pwTwo = document.forms["userChaForm"]["checkPassword"].value;
         if (pwOne != pwTwo) {
@@ -192,14 +194,13 @@
             document.getElementById("errormsg").innerHTML = "The length of the password must be larger than three!";
             return false;
         }
-        if (document.getElementById("userKey").value != userKey) {
+        if (document.getElementById("userKeyPassword").value != userKey) {
             document.getElementById("errormsg").innerHTML = "Wrong check-key!";
             return false;
         }
     }
 
-    if ({{ changeType_js | safe }}== "EmailAdd")
-    {
+    if ({{ changeType_js | safe }}== "EmailAdd"){
         if (document.getElementById("userKeyEmail").value != userKey) {
             document.getElementById("errormsg").innerHTML = "Wrong check-key!";
             return false;
