@@ -88,7 +88,7 @@
             <br>
             <br>    
             <p>You can comment the suggestion here:</p>
-            <div style="display: grid; justify-items: center;">
+            <div style="display: grid; justify-items: center;"></div>
                 <form action="{% url 'USFP:userSubmitComment' suggestion.suggestionID %}" method="post">
                     {% csrf_token %}
                     <textarea rows="10" cols="30" name="replySuggestionContent"></textarea>
